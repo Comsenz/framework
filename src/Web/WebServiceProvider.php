@@ -3,6 +3,7 @@
 namespace Discuz\Web;
 
 use Discuz\Http\Middleware\DispatchRoute;
+use Discuz\Http\Middleware\WebBaseServiceProviderMiddleware;
 use Franzl\Middleware\Whoops\WhoopsMiddleware;
 use Illuminate\Support\ServiceProvider;
 use Discuz\Http\RouteCollection;
@@ -29,7 +30,9 @@ class WebServiceProvider extends ServiceProvider
         $this->app->singleton('discuz.web.middleware', function() {
            $pipe = new MiddlewarePipe;
             //todo
-            $pipe->pipe(new WhoopsMiddleware);
+
+            $pipe->pipe($this->app->make(WebBaseServiceProviderMiddleware::class));
+            $pipe->pipe($this->app->make(WhoopsMiddleware::class));
 
            return $pipe;
         });

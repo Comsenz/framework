@@ -9,7 +9,6 @@ use Discuz\Web\WebServiceProvider;
 use Exception;
 use Illuminate\Contracts\Config\Repository as RepositoryContract;
 use Illuminate\Config\Repository as ConfigRepository;
-use Illuminate\Database\DatabaseServiceProvider;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
@@ -35,7 +34,7 @@ class Site implements SiteInterface
         $laravel->instance('config', $config = $this->getIlluminateConfig($laravel));
 
         $laravel->register(WebServiceProvider::class);
-        $laravel->register(DatabaseServiceProvider::class);
+//        $laravel->register(DatabaseServiceProvider::class);
 //        $laravel->register(ServiceProvider::class);
 //        $laravel->register(ExtensionServiceProvider::class);
 

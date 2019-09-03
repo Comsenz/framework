@@ -7,6 +7,7 @@ use Discuz\Foundation\SiteInterface;
 use ErrorException;
 use Exception;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Symfony\Component\Debug\Exception\FatalErrorException;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Throwable;
 use Zend\Diactoros\Response;
@@ -29,7 +30,7 @@ class Server
     {
         $this->site = $site;
 
-        $this->bootstrap();
+//        $this->bootstrap();
     }
 
     public function listen() {
@@ -111,7 +112,23 @@ class Server
     }
 
     public function handleShutdown() {
-        dd(3);
+        if (! is_null($error = error_get_last()) && $this->isFatal($error['type'])) {
+            $this->handleException($this->fatalExceptionFromError($error, 0));
+        }
+    }
+
+    /**
+     * Create a new fatal exception instance from an error array.
+     *
+     * @param  array  $error
+     * @param  int|null  $traceOffset
+     * @return \Symfony\Component\Debug\Exception\FatalErrorException
+     */
+    protected function fatalExceptionFromError(array $error, $traceOffset = null)
+    {
+        return new FatalErrorException(
+            $error['message'], $error['type'], 0, $error['file'], $error['line'], $traceOffset
+        );
     }
 
     /**
@@ -122,6 +139,17 @@ class Server
     protected function getExceptionHandler()
     {
         return new Handler;
+    }
+
+    /**
+     * Determine if the error type is fatal.
+     *
+     * @param  int  $type
+     * @return bool
+     */
+    protected function isFatal($type)
+    {
+        return in_array($type, [E_COMPILE_ERROR, E_CORE_ERROR, E_ERROR, E_PARSE]);
     }
 
     /**

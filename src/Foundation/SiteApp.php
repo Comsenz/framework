@@ -4,6 +4,7 @@
 namespace Discuz\Foundation;
 
 
+use Discuz\Event\ConfigureMiddleware;
 use Discuz\Http\Middleware\DispatchRoute;
 use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Stratigility\MiddlewarePipe;
@@ -23,8 +24,9 @@ class SiteApp implements AppInterface
 
         $pipe = new MiddlewarePipe();
 
+//        $this->app->make('events')->dispatch(ConfigureMiddleware::class, $pipe);
 
-        $pipe->pipe($this->app->get('discuz.web.middleware'));
+        $pipe->pipe($this->app->make('discuz.web.middleware'));
         return $pipe;
     }
 }
