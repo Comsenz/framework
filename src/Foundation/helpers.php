@@ -33,6 +33,19 @@ if (! function_exists('storage_path')) {
     }
 }
 
+if (! function_exists('resource_path')) {
+    /**
+     * Get the path to the storage folder.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function resource_path($path = '')
+    {
+        return app('path.resources').($path ? DIRECTORY_SEPARATOR.$path : $path);
+    }
+}
+
 if (! function_exists('config')) {
     /**
      * Get / set the specified configuration value.

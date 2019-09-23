@@ -2,11 +2,12 @@
 
 namespace Discuz\Http;
 
+use Discuz\Api\ApiServiceProvider;
+use Discuz\Foundation\Application;
 use Discuz\Foundation\Exceptions\Handler;
-use Discuz\Foundation\SiteInterface;
 use ErrorException;
 use Exception;
-use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Config\Repository as ConfigRepository;
 use Symfony\Component\Debug\Exception\FatalErrorException;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Throwable;
@@ -16,6 +17,8 @@ use Zend\Diactoros\ServerRequestFactory;
 use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
 use Zend\HttpHandlerRunner\RequestHandlerRunner;
 use Zend\Stratigility\Middleware\ErrorResponseGenerator;
+use Zend\Stratigility\MiddlewarePipe;
+use function Zend\Stratigility\path;
 
 class Server
 {
@@ -24,30 +27,64 @@ class Server
      */
     private static $reservedMemory;
 
-    protected $site;
+    protected $app;
 
-    public function __construct(SiteInterface $site)
+//    protected $site;
+
+    public function __construct(Application $app)
     {
-        $this->site = $site;
+//        $this->site = $site;
+        $this->app = $app;
 
 //        $this->bootstrap();
     }
 
     public function listen() {
 
-        $app = $this->site->bootApp();
+//        $app = $this->site->bootApp();
+
+
+        $this->siteBoot();
+
+        $pipe = new MiddlewarePipe();
+
+//        $pipe->pipe($this->app->make('discuz.http.middleware'));
+        $pipe->pipe(path('/api', $this->app->make('discuz.api.middleware')));
+//        $pipe->pipe(path('/', new class implements MiddlewareInterface {
+//            public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+//            {
+//                // TODO: Implement process() method.
+//                return new Response\HtmlResponse('web');
+//            }
+//        }));
+
+//        $pipe->pipe(path('/', $this->app->make('discuz.web.middleware')));
+
 
         $runner = new RequestHandlerRunner(
-            $app->getRequestHandler(),
+            $pipe,
             new SapiEmitter,
             [ServerRequestFactory::class, 'fromGlobals'],
             function (Throwable $e) {
+                dd($e);
                 $generator = new ErrorResponseGenerator;
                 return $generator($e, new ServerRequest, new Response);
             }
         );
 
         $runner->run();
+    }
+
+    protected function siteBoot() {
+        $this->app->instance('discuz.config', $this->loadConfig());
+        $this->app->instance('config', new ConfigRepository());
+        $this->app->register(HttpServiceProvider::class);
+        $this->app->register(ApiServiceProvider::class);
+        $this->app->boot();
+    }
+
+    protected function loadConfig() {
+        return include $this->app->basePath('config/config.php');
     }
 
     protected function bootstrap() {

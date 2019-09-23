@@ -128,7 +128,7 @@ class Application extends Container implements ContainerContract
      */
     protected function registerBaseServiceProviders()
     {
-        $this->register(new EventServiceProvider($this));
+        $this->register(EventServiceProvider::class);
 //        $this->register(new LogServiceProvider($this));
 //        $this->register(new RoutingServiceProvider($this));
     }
@@ -160,7 +160,7 @@ class Application extends Container implements ContainerContract
 //        $this->instance('path.public', $this->publicPath());
         $this->instance('path.storage', $this->storagePath());
 //        $this->instance('path.database', $this->databasePath());
-//        $this->instance('path.resources', $this->resourcePath());
+        $this->instance('path.resources', $this->resourcePath());
 //        $this->instance('path.bootstrap', $this->bootstrapPath());
     }
 
@@ -209,6 +209,34 @@ class Application extends Container implements ContainerContract
         return $this->storagePath ?: $this->basePath.DIRECTORY_SEPARATOR.'storage';
     }
 
+    /**
+     * Get the path to the storage directory.
+     *
+     * @return string
+     */
+    public function resourcePath()
+    {
+        return $this->storagePath ?: $this->basePath.DIRECTORY_SEPARATOR.'resources';
+    }
+
+    /**
+     * Determine if the application configuration is cached.
+     *
+     * @return bool
+     */
+    public function configurationIsCached()
+    {
+        return false;
+    }
+    /**
+     * Get the path to the configuration cache file.
+     *
+     * @return string
+     */
+    public function getCachedConfigPath()
+    {
+        return '';
+    }
 
     /**
      * Register a service provider with the application.
@@ -464,7 +492,7 @@ class Application extends Container implements ContainerContract
                      'app'                  => [self::class, \Illuminate\Contracts\Container\Container::class, \Illuminate\Contracts\Foundation\Application::class, \Psr\Container\ContainerInterface::class],
 //                     'auth'                 => [\Illuminate\Auth\AuthManager::class, \Illuminate\Contracts\Auth\Factory::class],
 //                     'auth.driver'          => [\Illuminate\Contracts\Auth\Guard::class],
-//                     'blade.compiler'       => [\Illuminate\View\Compilers\BladeCompiler::class],
+                     'blade.compiler'       => [\Illuminate\View\Compilers\BladeCompiler::class],
 //                     'cache'                => [\Illuminate\Cache\CacheManager::class, \Illuminate\Contracts\Cache\Factory::class],
 //                     'cache.store'          => [\Illuminate\Cache\Repository::class, \Illuminate\Contracts\Cache\Repository::class],
                      'config'               => [\Illuminate\Config\Repository::class, \Illuminate\Contracts\Config\Repository::class],
@@ -472,11 +500,11 @@ class Application extends Container implements ContainerContract
 //                     'encrypter'            => [\Illuminate\Encryption\Encrypter::class, \Illuminate\Contracts\Encryption\Encrypter::class],
                      'db'                   => [\Illuminate\Database\DatabaseManager::class],
                      'db.connection'        => [\Illuminate\Database\Connection::class, \Illuminate\Database\ConnectionInterface::class],
-//                     'events'               => [\Illuminate\Events\Dispatcher::class, \Illuminate\Contracts\Events\Dispatcher::class],
-//                     'files'                => [\Illuminate\Filesystem\Filesystem::class],
-//                     'filesystem'           => [\Illuminate\Filesystem\FilesystemManager::class, \Illuminate\Contracts\Filesystem\Factory::class],
-//                     'filesystem.disk'      => [\Illuminate\Contracts\Filesystem\Filesystem::class],
-//                     'filesystem.cloud'     => [\Illuminate\Contracts\Filesystem\Cloud::class],
+                     'events'               => [\Illuminate\Events\Dispatcher::class, \Illuminate\Contracts\Events\Dispatcher::class],
+                     'files'                => [\Illuminate\Filesystem\Filesystem::class],
+                     'filesystem'           => [\Illuminate\Filesystem\FilesystemManager::class, \Illuminate\Contracts\Filesystem\Factory::class],
+                     'filesystem.disk'      => [\Illuminate\Contracts\Filesystem\Filesystem::class],
+                     'filesystem.cloud'     => [\Illuminate\Contracts\Filesystem\Cloud::class],
 //                     'hash'                 => [\Illuminate\Hashing\HashManager::class],
 //                     'hash.driver'          => [\Illuminate\Contracts\Hashing\Hasher::class],
 //                     'translator'           => [\Illuminate\Translation\Translator::class, \Illuminate\Contracts\Translation\Translator::class],
@@ -491,11 +519,11 @@ class Application extends Container implements ContainerContract
 //                     'redis'                => [\Illuminate\Redis\RedisManager::class, \Illuminate\Contracts\Redis\Factory::class],
 //                     'request'              => [\Illuminate\Http\Request::class, \Symfony\Component\HttpFoundation\Request::class],
 //                     'router'               => [\Illuminate\Routing\Router::class, \Illuminate\Contracts\Routing\Registrar::class, \Illuminate\Contracts\Routing\BindingRegistrar::class],
-//                     'session'              => [\Illuminate\Session\SessionManager::class],
-//                     'session.store'        => [\Illuminate\Session\Store::class, \Illuminate\Contracts\Session\Session::class],
+                     'session'              => [\Illuminate\Session\SessionManager::class],
+                     'session.store'        => [\Illuminate\Session\Store::class, \Illuminate\Contracts\Session\Session::class],
 //                     'url'                  => [\Illuminate\Routing\UrlGenerator::class, \Illuminate\Contracts\Routing\UrlGenerator::class],
 //                     'validator'            => [\Illuminate\Validation\Factory::class, \Illuminate\Contracts\Validation\Factory::class],
-//                     'view'                 => [\Illuminate\View\Factory::class, \Illuminate\Contracts\View\Factory::class],
+                     'view'                 => [\Illuminate\View\Factory::class, \Illuminate\Contracts\View\Factory::class],
                  ] as $key => $aliases) {
             foreach ($aliases as $alias) {
                 $this->alias($key, $alias);
@@ -521,5 +549,16 @@ class Application extends Container implements ContainerContract
         $this->resolvingCallbacks = [];
         $this->afterResolvingCallbacks = [];
         $this->globalResolvingCallbacks = [];
+    }
+
+
+    /**
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public function config($key, $default = null)
+    {
+        return Arr::get($this->make('discuz.config'), $key, $default);
     }
 }

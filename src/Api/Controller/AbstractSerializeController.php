@@ -10,6 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Tobscure\JsonApi\Document;
+use Tobscure\JsonApi\Parameters;
 
 abstract class AbstractSerializeController implements RequestHandlerInterface
 {
@@ -17,15 +18,18 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
 
     public $serializer;
 
+    public $include = [];
+
     public function __construct(Application $app)
     {
         $this->app = $app;
     }
 
+
     /**
-     * Handles a request and produces a response.
-     *
-     * May call other collaborating code to generate the response.
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     * @throws \Tobscure\JsonApi\Exception\InvalidParameterException
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
@@ -35,7 +39,7 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
 
         $serializer = $this->app->make($this->serializer);
 
-        $element = $this->createElement($data, $serializer);
+        $element = $this->createElement($data, $serializer)->with($this->extractIncludes($request));
 
         $document->setData($element);
         return new JsonApiResponse($document);
@@ -44,4 +48,12 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     abstract public function data(ServerRequestInterface $request, Document $document);
 
     abstract public function createElement($data, $serializer);
+
+    protected function buildParameters(ServerRequestInterface $request) {
+        return $this->app->make(Parameters::class, ['input' => $request->getQueryParams()]);
+    }
+
+    protected function extractIncludes(ServerRequestInterface $request) {
+        return $this->buildParameters($request)->getInclude($this->include);
+    }
 }
