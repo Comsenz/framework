@@ -9,6 +9,7 @@ use Discuz\Http\Middleware\DispatchRoute;
 use Discuz\Http\RouteCollection;
 use Discuz\Http\RouteHandlerFactory;
 use Discuz\Http\RouteTrait;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 use Zend\Stratigility\MiddlewarePipe;
 
@@ -18,10 +19,10 @@ class ApiServiceProvider extends ServiceProvider
 
     protected $prefixPath = 'api';
 
+
     public function register()
     {
         $this->app->singleton('discuz.api.middleware', function($app) {
-
 
             $app->register(DatabaseServiceProvider::class);
             $pipe = new MiddlewarePipe();
@@ -35,7 +36,15 @@ class ApiServiceProvider extends ServiceProvider
     }
 
     public function boot() {
+
         $this->populateRoutes($this->app->make(RouteCollection::class));
+    }
+
+    protected function populateRoutes(RouteCollection $route)
+    {
+        $route->group('/api', function(RouteCollection $route) {
+            require $this->app->basePath('routes/api.php');
+        });
     }
 
 }

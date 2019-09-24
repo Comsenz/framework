@@ -39,4 +39,10 @@ class WebServiceProvider extends ServiceProvider
         $this->populateRoutes($this->app->make(RouteCollection::class));
     }
 
+    protected function populateRoutes(RouteCollection $route)
+    {
+        $route->group('', function(RouteCollection $route) {
+            require $this->app->basePath('routes/web.php');
+        });
+    }
 }

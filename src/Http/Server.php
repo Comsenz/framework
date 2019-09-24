@@ -5,6 +5,7 @@ namespace Discuz\Http;
 use Discuz\Api\ApiServiceProvider;
 use Discuz\Foundation\Application;
 use Discuz\Foundation\Exceptions\Handler;
+use Discuz\Http\Middleware\RequestHandler;
 use Discuz\Web\WebServiceProvider;
 use ErrorException;
 use Exception;
@@ -19,7 +20,6 @@ use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
 use Zend\HttpHandlerRunner\RequestHandlerRunner;
 use Zend\Stratigility\Middleware\ErrorResponseGenerator;
 use Zend\Stratigility\MiddlewarePipe;
-use function Zend\Stratigility\path;
 
 class Server
 {
@@ -49,18 +49,10 @@ class Server
 
         $pipe = new MiddlewarePipe();
 
-//        $pipe->pipe($this->app->make('discuz.http.middleware'));
-        $pipe->pipe(path('/api', $this->app->make('discuz.api.middleware')));
-        $pipe->pipe(path('/', $this->app->make('discuz.web.middleware')));
-//        $pipe->pipe(path('/', new class implements MiddlewareInterface {
-//            public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-//            {
-//                // TODO: Implement process() method.
-//                return new Response\HtmlResponse('web');
-//            }
-//        }));
-
-//        $pipe->pipe(path('/', $this->app->make('discuz.web.middleware')));
+        $pipe->pipe(new RequestHandler([
+            '/api' => 'discuz.api.middleware',
+            '/' => 'discuz.web.middleware'
+        ], $this->app));
 
 
         $runner = new RequestHandlerRunner(
@@ -84,6 +76,8 @@ class Server
         $this->app->register(HttpServiceProvider::class);
         $this->app->register(ApiServiceProvider::class);
         $this->app->register(WebServiceProvider::class);
+//        $this->app->register(ApiServiceProvider::class);
+//        $this->app->register(WebServiceProvider::class);
         $this->app->boot();
     }
 
