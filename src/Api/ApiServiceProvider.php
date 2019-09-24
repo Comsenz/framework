@@ -6,6 +6,7 @@ namespace Discuz\Api;
 
 use Discuz\Database\DatabaseServiceProvider;
 use Discuz\Http\Middleware\DispatchRoute;
+use Discuz\Http\Middleware\ParseJsonBody;
 use Discuz\Http\RouteCollection;
 use Discuz\Http\RouteHandlerFactory;
 use Discuz\Http\RouteTrait;
@@ -26,6 +27,7 @@ class ApiServiceProvider extends ServiceProvider
 
             $app->register(DatabaseServiceProvider::class);
             $pipe = new MiddlewarePipe();
+            $pipe->pipe($app->make(ParseJsonBody::class));
             return $pipe;
         });
 

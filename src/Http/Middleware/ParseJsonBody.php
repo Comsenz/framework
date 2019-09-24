@@ -4,14 +4,13 @@
 namespace Discuz\Http\Middleware;
 
 
-use Franzl\Middleware\Whoops\WhoopsRunner;
+use Illuminate\Support\Str;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Throwable;
 
-class HandleErrorsWithWhoops implements MiddlewareInterface
+class ParseJsonBody implements MiddlewareInterface
 {
 
     /**
@@ -23,11 +22,12 @@ class HandleErrorsWithWhoops implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // TODO: Implement process() method.
-        try {
-            return $handler->handle($request);
-        } catch (Throwable $e) {
-            return WhoopsRunner::handle($e, $request);
+        if (Str::contains($request->getHeaderLine('content-type'), 'json')) {
+            $input = json_decode($request->getBody(), true);
+
+            $request = $request->withParsedBody($input ?: []);
         }
+
+        return $handler->handle($request);
     }
 }

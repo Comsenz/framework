@@ -6,6 +6,8 @@ namespace Discuz\Web;
 
 use Discuz\Database\DatabaseServiceProvider;
 use Discuz\Http\Middleware\DispatchRoute;
+use Discuz\Http\Middleware\HandleErrorsWithView;
+use Discuz\Http\Middleware\HandleErrorsWithWhoops;
 use Discuz\Http\RouteCollection;
 use Discuz\Http\RouteHandlerFactory;
 use Discuz\Http\RouteTrait;
@@ -26,6 +28,11 @@ class WebServiceProvider extends ServiceProvider
             $app->register(FilesystemServiceProvider::class);
             $app->register(ViewServiceProvider::class);
             $pipe = new MiddlewarePipe();
+            if($app->config('debug')) {
+                $pipe->pipe($app->make(HandleErrorsWithWhoops::class));
+            } else {
+                $pipe->pipe($app->make(HandleErrorsWithView::class));
+            }
             return $pipe;
         });
 

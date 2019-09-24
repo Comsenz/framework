@@ -30,21 +30,15 @@ class Server
 
     protected $app;
 
-//    protected $site;
-
     public function __construct(Application $app)
     {
-//        $this->site = $site;
         $this->app = $app;
 
 //        $this->bootstrap();
     }
 
-    public function listen() {
-
-//        $app = $this->site->bootApp();
-
-
+    public function listen()
+    {
         $this->siteBoot();
 
         $pipe = new MiddlewarePipe();
@@ -76,8 +70,6 @@ class Server
         $this->app->register(HttpServiceProvider::class);
         $this->app->register(ApiServiceProvider::class);
         $this->app->register(WebServiceProvider::class);
-//        $this->app->register(ApiServiceProvider::class);
-//        $this->app->register(WebServiceProvider::class);
         $this->app->boot();
     }
 
@@ -102,7 +94,7 @@ class Server
     protected function bootstrap() {
         self::$reservedMemory = str_repeat('x', 10240);
 
-        error_reporting(-1);
+        error_reporting(E_ALL);
 
         set_error_handler([$this, 'handleError']);
 
@@ -143,6 +135,7 @@ class Server
      */
     public function handleException($e)
     {
+
         if (! $e instanceof Exception) {
             $e = new FatalThrowableError($e);
         }
@@ -156,6 +149,7 @@ class Server
 //        if ($this->app->runningInConsole()) {
 //            $this->renderForConsole($e);
 //        } else {
+
             $this->renderHttpResponse($e);
 //        }
     }
@@ -201,12 +195,7 @@ class Server
         return in_array($type, [E_COMPILE_ERROR, E_CORE_ERROR, E_ERROR, E_PARSE]);
     }
 
-    /**
-     * Render an exception as an HTTP response and send it.
-     *
-     * @param  \Exception  $e
-     * @return void
-     */
+
     protected function renderHttpResponse(Exception $e)
     {
         $this->getExceptionHandler()->render((ServerRequestFactory::fromGlobals()), $e);
