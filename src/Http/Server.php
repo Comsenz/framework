@@ -5,6 +5,7 @@ namespace Discuz\Http;
 use Discuz\Api\ApiServiceProvider;
 use Discuz\Foundation\Application;
 use Discuz\Foundation\Exceptions\Handler;
+use Discuz\Web\WebServiceProvider;
 use ErrorException;
 use Exception;
 use Illuminate\Config\Repository as ConfigRepository;
@@ -50,6 +51,7 @@ class Server
 
 //        $pipe->pipe($this->app->make('discuz.http.middleware'));
         $pipe->pipe(path('/api', $this->app->make('discuz.api.middleware')));
+        $pipe->pipe(path('/', $this->app->make('discuz.web.middleware')));
 //        $pipe->pipe(path('/', new class implements MiddlewareInterface {
 //            public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
 //            {
@@ -76,15 +78,31 @@ class Server
     }
 
     protected function siteBoot() {
+
         $this->app->instance('discuz.config', $this->loadConfig());
-        $this->app->instance('config', new ConfigRepository());
+        $this->app->instance('config', $this->getIlluminateConfig());
         $this->app->register(HttpServiceProvider::class);
         $this->app->register(ApiServiceProvider::class);
+        $this->app->register(WebServiceProvider::class);
         $this->app->boot();
     }
 
     protected function loadConfig() {
         return include $this->app->basePath('config/config.php');
+    }
+
+    protected function getIlluminateConfig() {
+
+        $config = new ConfigRepository([
+            'view' => [
+                'paths' => [
+                    resource_path('views'),
+                ],
+                'compiled' => realpath(storage_path('views')),
+            ]
+        ]);
+
+        return $config;
     }
 
     protected function bootstrap() {
