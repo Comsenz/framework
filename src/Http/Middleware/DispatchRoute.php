@@ -70,13 +70,4 @@ class DispatchRoute implements MiddlewareInterface
         }
         return $this->dispatcher;
     }
-
-    private function normalizePrefix(string $prefix) : string
-    {
-        $prefix = strlen($prefix) > 1 ? rtrim($prefix, '/') : $prefix;
-        if (0 !== strpos($prefix, '/')) {
-            $prefix = '/' . $prefix;
-        }
-        return $prefix;
-    }
 }

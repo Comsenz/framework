@@ -3,11 +3,19 @@
 namespace Discuz\Http;
 
 use Discuz\Api\ApiServiceProvider;
+
 use Discuz\Foundation\Application;
 use Discuz\Foundation\Exceptions\Handler;
+use Discuz\Http\Middleware\RequestHandler;
+use Discuz\Web\WebServiceProvider;
+use Illuminate\Bus\BusServiceProvider;
 use ErrorException;
 use Exception;
 use Illuminate\Config\Repository as ConfigRepository;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Debug\Exception\FatalErrorException;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Throwable;
@@ -18,7 +26,6 @@ use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
 use Zend\HttpHandlerRunner\RequestHandlerRunner;
 use Zend\Stratigility\Middleware\ErrorResponseGenerator;
 use Zend\Stratigility\MiddlewarePipe;
-use function Zend\Stratigility\path;
 
 class Server
 {
@@ -29,36 +36,21 @@ class Server
 
     protected $app;
 
-//    protected $site;
-
     public function __construct(Application $app)
     {
-//        $this->site = $site;
         $this->app = $app;
-
-//        $this->bootstrap();
     }
 
-    public function listen() {
-
-//        $app = $this->site->bootApp();
-
-
+    public function listen()
+    {
         $this->siteBoot();
 
         $pipe = new MiddlewarePipe();
 
-//        $pipe->pipe($this->app->make('discuz.http.middleware'));
-        $pipe->pipe(path('/api', $this->app->make('discuz.api.middleware')));
-//        $pipe->pipe(path('/', new class implements MiddlewareInterface {
-//            public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-//            {
-//                // TODO: Implement process() method.
-//                return new Response\HtmlResponse('web');
-//            }
-//        }));
-
-//        $pipe->pipe(path('/', $this->app->make('discuz.web.middleware')));
+        $pipe->pipe(new RequestHandler([
+            '/api' => 'discuz.api.middleware',
+            '/' => 'discuz.web.middleware'
+        ], $this->app));
 
 
         $runner = new RequestHandlerRunner(
@@ -66,7 +58,6 @@ class Server
             new SapiEmitter,
             [ServerRequestFactory::class, 'fromGlobals'],
             function (Throwable $e) {
-                dd($e);
                 $generator = new ErrorResponseGenerator;
                 return $generator($e, new ServerRequest, new Response);
             }
@@ -76,27 +67,62 @@ class Server
     }
 
     protected function siteBoot() {
+
+        $this->app->instance('env', 'production');
         $this->app->instance('discuz.config', $this->loadConfig());
-        $this->app->instance('config', new ConfigRepository());
+        $this->app->instance('config', $this->getIlluminateConfig());
+
+        $this->registerBaseEnv();
+        $this->registerLogger();
+
         $this->app->register(HttpServiceProvider::class);
         $this->app->register(ApiServiceProvider::class);
+        $this->app->register(WebServiceProvider::class);
+        $this->app->register(BusServiceProvider::class);
         $this->app->boot();
     }
 
-    protected function loadConfig() {
+    private function loadConfig() {
         return include $this->app->basePath('config/config.php');
     }
 
-    protected function bootstrap() {
-        self::$reservedMemory = str_repeat('x', 10240);
+    private function getIlluminateConfig() {
 
-        error_reporting(-1);
+        $config = new ConfigRepository([
+            'view' => [
+                'paths' => [
+                    resource_path('views'),
+                ],
+                'compiled' => realpath(storage_path('views')),
+            ]
+        ]);
 
-        set_error_handler([$this, 'handleError']);
+        return $config;
+    }
 
-        set_exception_handler([$this, 'handleException']);
+    private function registerLogger()
+    {
+        $logPath = storage_path('logs/discuss.log');
+        $handler = new RotatingFileHandler($logPath, Logger::INFO);
+        $handler->setFormatter(new LineFormatter(null, null, true, true));
 
-        register_shutdown_function([$this, 'handleShutdown']);
+        $this->app->instance('log', new Logger($this->app->environment(), [$handler]));
+        $this->app->alias('log', LoggerInterface::class);
+    }
+
+    protected function registerBaseEnv() {
+
+        date_default_timezone_set($this->app->config('timezone', 'UTC'));
+
+//        self::$reservedMemory = str_repeat('x', 10240);
+//
+//        error_reporting(E_ALL);
+//
+//        set_error_handler([$this, 'handleError']);
+//
+//        set_exception_handler([$this, 'handleException']);
+//
+//        register_shutdown_function([$this, 'handleShutdown']);
 
     }
 
@@ -131,6 +157,7 @@ class Server
      */
     public function handleException($e)
     {
+
         if (! $e instanceof Exception) {
             $e = new FatalThrowableError($e);
         }
@@ -144,6 +171,7 @@ class Server
 //        if ($this->app->runningInConsole()) {
 //            $this->renderForConsole($e);
 //        } else {
+
             $this->renderHttpResponse($e);
 //        }
     }
@@ -189,12 +217,7 @@ class Server
         return in_array($type, [E_COMPILE_ERROR, E_CORE_ERROR, E_ERROR, E_PARSE]);
     }
 
-    /**
-     * Render an exception as an HTTP response and send it.
-     *
-     * @param  \Exception  $e
-     * @return void
-     */
+
     protected function renderHttpResponse(Exception $e)
     {
         $this->getExceptionHandler()->render((ServerRequestFactory::fromGlobals()), $e);

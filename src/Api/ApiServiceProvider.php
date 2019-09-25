@@ -6,25 +6,24 @@ namespace Discuz\Api;
 
 use Discuz\Database\DatabaseServiceProvider;
 use Discuz\Http\Middleware\DispatchRoute;
+use Discuz\Http\Middleware\ParseJsonBody;
 use Discuz\Http\RouteCollection;
 use Discuz\Http\RouteHandlerFactory;
 use Discuz\Http\RouteTrait;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 use Zend\Stratigility\MiddlewarePipe;
 
 class ApiServiceProvider extends ServiceProvider
 {
-    use RouteTrait;
-
-    protected $prefixPath = 'api';
 
     public function register()
     {
         $this->app->singleton('discuz.api.middleware', function($app) {
 
-
             $app->register(DatabaseServiceProvider::class);
             $pipe = new MiddlewarePipe();
+            $pipe->pipe($app->make(ParseJsonBody::class));
             return $pipe;
         });
 
@@ -35,7 +34,15 @@ class ApiServiceProvider extends ServiceProvider
     }
 
     public function boot() {
+
         $this->populateRoutes($this->app->make(RouteCollection::class));
+    }
+
+    protected function populateRoutes(RouteCollection $route)
+    {
+        $route->group('/api', function(RouteCollection $route) {
+            require $this->app->basePath('routes/api.php');
+        });
     }
 
 }

@@ -587,4 +587,9 @@ class Application extends Container implements ContainerContract
 
         throw new RuntimeException('Unable to detect application namespace.');
     }
+
+    public function environment()
+    {
+        return $this['env'];
+    }
 }
