@@ -561,4 +561,9 @@ class Application extends Container implements ContainerContract
     {
         return Arr::get($this->make('discuz.config'), $key, $default);
     }
+
+    public function environment()
+    {
+        return $this['env'];
+    }
 }

@@ -4,14 +4,26 @@
 namespace Discuz\Http\Middleware;
 
 
+use Discuz\Foundation\Application;
+use Illuminate\View\Factory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 use Throwable;
+use Zend\Diactoros\Response\HtmlResponse;
 
 class HandleErrorsWithView implements MiddlewareInterface
 {
+    protected $log;
+    protected $view;
+
+    public function __construct(LoggerInterface $log, Factory $view)
+    {
+        $this->log = $log;
+        $this->view = $view;
+    }
 
     /**
      * Process an incoming server request.
@@ -26,7 +38,27 @@ class HandleErrorsWithView implements MiddlewareInterface
         try {
             return $handler->handle($request);
         } catch (Throwable $e) {
-//            return WhoopsRunner::handle($e, $request);
+            return $this->showExceptions($e);
         }
+    }
+
+    protected function showExceptions(Throwable $error)
+    {
+
+        $code = $error->getCode();
+
+        $name = 'errors.'.$code;
+
+        if(!$this->view->exists($name)) {
+            $name = 'errors.500';
+            $code = 500;
+            $this->log->error($error);
+        }
+
+        $view = $this->view->make($name);
+
+        return new HtmlResponse($view->render(), $code);
+
+
     }
 }
