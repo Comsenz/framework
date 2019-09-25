@@ -18,10 +18,6 @@ use Zend\Stratigility\MiddlewarePipe;
 
 class WebServiceProvider extends ServiceProvider
 {
-    use RouteTrait;
-
-    protected $prefixPath = 'web';
-
     public function register()
     {
         $this->app->singleton('discuz.web.middleware', function($app) {

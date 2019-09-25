@@ -16,10 +16,6 @@ use Zend\Stratigility\MiddlewarePipe;
 
 class ApiServiceProvider extends ServiceProvider
 {
-    use RouteTrait;
-
-    protected $prefixPath = 'api';
-
 
     public function register()
     {
