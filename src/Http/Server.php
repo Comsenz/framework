@@ -3,10 +3,12 @@
 namespace Discuz\Http;
 
 use Discuz\Api\ApiServiceProvider;
+
 use Discuz\Foundation\Application;
 use Discuz\Foundation\Exceptions\Handler;
 use Discuz\Http\Middleware\RequestHandler;
 use Discuz\Web\WebServiceProvider;
+use Illuminate\Bus\BusServiceProvider;
 use ErrorException;
 use Exception;
 use Illuminate\Config\Repository as ConfigRepository;
@@ -76,6 +78,7 @@ class Server
         $this->app->register(HttpServiceProvider::class);
         $this->app->register(ApiServiceProvider::class);
         $this->app->register(WebServiceProvider::class);
+        $this->app->register(BusServiceProvider::class);
         $this->app->boot();
     }
 
