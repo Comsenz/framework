@@ -72,7 +72,7 @@ class Server
         $this->app->instance('discuz.config', $this->loadConfig());
         $this->app->instance('config', $this->getIlluminateConfig());
 
-        $this->registerBaseEvn();
+        $this->registerBaseEnv();
         $this->registerLogger();
 
         $this->app->register(HttpServiceProvider::class);
@@ -110,7 +110,7 @@ class Server
         $this->app->alias('log', LoggerInterface::class);
     }
 
-    protected function registerBaseEvn() {
+    protected function registerBaseEnv() {
 
         date_default_timezone_set($this->app->config('timezone', 'UTC'));
 
