@@ -21,7 +21,6 @@ class WebServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('discuz.web.middleware', function($app) {
-            $app->register(FilesystemServiceProvider::class);
             $app->register(ViewServiceProvider::class);
             $pipe = new MiddlewarePipe();
             if($app->config('debug')) {

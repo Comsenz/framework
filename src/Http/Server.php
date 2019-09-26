@@ -4,14 +4,15 @@ namespace Discuz\Http;
 
 use Discuz\Api\ApiServiceProvider;
 
+use Discuz\Cache\CacheServiceProvider;
 use Discuz\Foundation\Application;
-use Discuz\Foundation\Exceptions\Handler;
 use Discuz\Http\Middleware\RequestHandler;
 use Discuz\Web\WebServiceProvider;
 use Illuminate\Bus\BusServiceProvider;
 use ErrorException;
 use Exception;
 use Illuminate\Config\Repository as ConfigRepository;
+use Illuminate\Filesystem\FilesystemServiceProvider;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
@@ -73,9 +74,12 @@ class Server
         $this->app->instance('config', $this->getIlluminateConfig());
 
         $this->registerBaseEnv();
+//        $this->registerCache();
         $this->registerLogger();
 
         $this->app->register(HttpServiceProvider::class);
+        $this->app->register(FilesystemServiceProvider::class);
+        $this->app->register(CacheServiceProvider::class);
         $this->app->register(ApiServiceProvider::class);
         $this->app->register(WebServiceProvider::class);
         $this->app->register(BusServiceProvider::class);
@@ -99,6 +103,22 @@ class Server
 
         return $config;
     }
+
+//    private function registerCache() {
+//
+//        $driver = Arr::get($this->app->config('cache'), 'default');
+//
+//        $driver_name = 'cache.'.$driver.'store';
+//
+//        $this->app->singleton($driver_name, function () {
+//            return new FileStore(new Filesystem, $this->app->storagePath().'cache');
+//        });
+//
+//        $this->app->singleton('cache.store', function($app) {
+//
+//            return $app['cache']->driver(Arr::get($this->app->config('cache'), 'default'));
+//        });
+//    }
 
     private function registerLogger()
     {

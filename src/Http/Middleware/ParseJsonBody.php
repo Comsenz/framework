@@ -13,17 +13,16 @@ use Psr\Http\Server\RequestHandlerInterface;
 class ParseJsonBody implements MiddlewareInterface
 {
 
+
     /**
-     * Process an incoming server request.
-     *
-     * Processes an incoming server request in order to produce a response.
-     * If unable to produce the response itself, it may delegate to the provided
-     * request handler to do so.
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (Str::contains($request->getHeaderLine('content-type'), 'json')) {
-            $input = json_decode($request->getBody(), true);
+            $input = collect(json_decode($request->getBody()));
 
             $request = $request->withParsedBody($input ?: []);
         }
