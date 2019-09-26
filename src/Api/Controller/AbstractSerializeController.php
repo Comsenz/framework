@@ -6,6 +6,7 @@ namespace Discuz\Api\Controller;
 
 use Discuz\Api\JsonApiResponse;
 use Discuz\Foundation\Application;
+use Illuminate\Contracts\Bus\Dispatcher;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -16,13 +17,22 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
 {
     protected $app;
 
+    /**
+     * 命令集调用工具类.
+     *
+     * @var Dispatcher
+     */
+    protected $bus;
+
     public $serializer;
 
     public $include = [];
 
-    public function __construct(Application $app)
+    public function __construct(Application $app, Dispatcher $bus)
     {
         $this->app = $app;
+
+        $this->bus = $bus;
     }
 
 
