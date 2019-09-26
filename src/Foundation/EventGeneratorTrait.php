@@ -13,14 +13,14 @@ namespace Discuz\Foundation;
 trait EventGeneratorTrait
 {
     /**
-     * 暂存将发生的事件
+     * 暂存将发生的事件.
      *
      * @var array
      */
     protected $pendingEvents = [];
 
     /**
-     * 添加新事件
+     * 添加新事件.
      *
      * @param mixed $event
      */
@@ -30,7 +30,7 @@ trait EventGeneratorTrait
     }
 
     /**
-     * 获取并清空暂存的事件
+     * 获取并清空暂存的事件.
      *
      * @return array
      */

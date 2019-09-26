@@ -12,15 +12,17 @@ namespace Discuz\Foundation;
 
 use Illuminate\Contracts\Events\Dispatcher;
 
-class EventsDispatchTrait
+trait EventsDispatchTrait
 {
     /**
+     * 事件类.
+     *
      * @var Dispatcher
      */
     protected $events;
 
     /**
-     * 分发并清空某一个实体的所有暂存事件
+     * 分发并清空某一个实体的所有暂存事件.
      *
      * @param object $entity
      * @param User $actor
