@@ -9,6 +9,7 @@ use Psr\Log\LoggerInterface;
 use Throwable;
 use Tobscure\JsonApi\Document;
 use Tobscure\JsonApi\ErrorHandler as JsonApiErrorHandler;
+use Tobscure\JsonApi\Exception\Handler\ExceptionHandlerInterface;
 
 class ErrorHandler
 {

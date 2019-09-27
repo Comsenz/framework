@@ -4,6 +4,7 @@
 namespace Discuz\Api;
 
 
+use Discuz\Api\ExceptionHandler\ApiExceptionHandler;
 use Discuz\Api\ExceptionHandler\RouteNotFoundExceptionHandler;
 use Discuz\Api\Middleware\HandlerErrors;
 use Discuz\Database\DatabaseServiceProvider;
@@ -21,7 +22,6 @@ class ApiServiceProvider extends ServiceProvider
     public function register()
     {
 
-
         $this->app->singleton('discuz.api.middleware', function($app) {
 
             $app->register(DatabaseServiceProvider::class);
@@ -38,8 +38,8 @@ class ApiServiceProvider extends ServiceProvider
 
         $this->app->singleton(ErrorHandler::class, function($app) {
             $errorHandler = new ErrorHandler;
-
             $errorHandler->registerHandler(new RouteNotFoundExceptionHandler());
+            $errorHandler->registerHandler(new ApiExceptionHandler());
             $errorHandler->registerHandler(new FallbackExceptionHandler($this->app->config('debug')));
             return $errorHandler;
         });
