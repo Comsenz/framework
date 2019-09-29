@@ -3,16 +3,17 @@
 namespace Discuz\Http;
 
 use Discuz\Api\ApiServiceProvider;
-
-use Discuz\Cache\CacheServiceProvider;
+use Discuz\Filesystem\FilesystemServiceProvider;
 use Discuz\Foundation\Application;
 use Discuz\Http\Middleware\RequestHandler;
+use Discuz\Locale\LocaleServiceProvider;
 use Discuz\Web\WebServiceProvider;
 use Illuminate\Bus\BusServiceProvider;
 use ErrorException;
 use Exception;
+use Illuminate\Cache\CacheServiceProvider;
 use Illuminate\Config\Repository as ConfigRepository;
-use Illuminate\Filesystem\FilesystemServiceProvider;
+use Illuminate\Support\Arr;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
@@ -83,6 +84,7 @@ class Server
         $this->app->register(ApiServiceProvider::class);
         $this->app->register(WebServiceProvider::class);
         $this->app->register(BusServiceProvider::class);
+        $this->app->register(LocaleServiceProvider::class);
         $this->app->boot();
     }
 
@@ -91,15 +93,18 @@ class Server
     }
 
     private function getIlluminateConfig() {
-
-        $config = new ConfigRepository([
-            'view' => [
-                'paths' => [
-                    resource_path('views'),
-                ],
-                'compiled' => realpath(storage_path('views')),
-            ]
-        ]);
+        $config = new ConfigRepository(array_merge([
+                'view' => [
+                        'paths' => [
+                            resource_path('views'),
+                        ],
+                        'compiled' => realpath(storage_path('views')),
+                    ]
+                ], ['cache' => $this->app->config('cache'),
+                    'filesystems' => $this->app->config('filesystems')
+                ]
+            )
+        );
 
         return $config;
     }

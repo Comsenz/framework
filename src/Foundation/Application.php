@@ -507,8 +507,7 @@ class Application extends Container implements ContainerContract
                      'filesystem.cloud'     => [\Illuminate\Contracts\Filesystem\Cloud::class],
 //                     'hash'                 => [\Illuminate\Hashing\HashManager::class],
 //                     'hash.driver'          => [\Illuminate\Contracts\Hashing\Hasher::class],
-//                     'translator'           => [\Illuminate\Translation\Translator::class, \Illuminate\Contracts\Translation\Translator::class],
-//                     'log'                  => [\Illuminate\Log\LogManager::class, \Psr\Log\LoggerInterface::class],
+                       'log'                  => [\Illuminate\Log\LogManager::class, \Psr\Log\LoggerInterface::class],
 //                     'mailer'               => [\Illuminate\Mail\Mailer::class, \Illuminate\Contracts\Mail\Mailer::class, \Illuminate\Contracts\Mail\MailQueue::class],
 //                     'auth.password'        => [\Illuminate\Auth\Passwords\PasswordBrokerManager::class, \Illuminate\Contracts\Auth\PasswordBrokerFactory::class],
 //                     'auth.password.broker' => [\Illuminate\Auth\Passwords\PasswordBroker::class, \Illuminate\Contracts\Auth\PasswordBroker::class],
@@ -591,5 +590,15 @@ class Application extends Container implements ContainerContract
     public function environment()
     {
         return $this['env'];
+    }
+
+    /**
+     * Get the current application locale.
+     *
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->config('locale');
     }
 }
