@@ -25,7 +25,9 @@
         "tobscure/json-api": "^0.4.1",
         "dflydev/fig-cookies": "^2.0.0",
         "vlucas/phpdotenv": "^3.3",
-        "guzzlehttp/guzzle": "^6.3.3"
+        "guzzlehttp/guzzle": "^6.3.3",
+        "qcloud/cos-sdk-v5": "^2.0",
+        "league/flysystem": "^1.0.55"
     },
     "autoload": {
         "files": [
