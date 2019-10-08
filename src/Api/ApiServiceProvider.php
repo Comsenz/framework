@@ -6,8 +6,10 @@ namespace Discuz\Api;
 
 use Discuz\Api\ExceptionHandler\ApiExceptionHandler;
 use Discuz\Api\ExceptionHandler\RouteNotFoundExceptionHandler;
+use Discuz\Api\Listeners\AutoResisterApiExceptionRegisterHandler;
 use Discuz\Api\Middleware\HandlerErrors;
-use Discuz\Database\DatabaseServiceProvider;
+use Discuz\Api\Events\ApiExceptionRegisterHandler;
+use Discuz\Foundation\Application;
 use Discuz\Http\Middleware\DispatchRoute;
 use Discuz\Http\Middleware\ParseJsonBody;
 use Discuz\Http\RouteCollection;
@@ -22,7 +24,8 @@ class ApiServiceProvider extends ServiceProvider
     public function register()
     {
 
-        $this->app->singleton('discuz.api.middleware', function($app) {
+        $this->app->singleton('discuz.api.middleware', function(Application $app) {
+
             $pipe = new MiddlewarePipe();
             $pipe->pipe($app->make(HandlerErrors::class));
             $pipe->pipe($app->make(ParseJsonBody::class));
@@ -37,7 +40,9 @@ class ApiServiceProvider extends ServiceProvider
         $this->app->singleton(ErrorHandler::class, function($app) {
             $errorHandler = new ErrorHandler;
             $errorHandler->registerHandler(new RouteNotFoundExceptionHandler());
-            $errorHandler->registerHandler(new ApiExceptionHandler());
+
+            $this->app->make('events')->dispatch(new ApiExceptionRegisterHandler($errorHandler));
+
             $errorHandler->registerHandler(new FallbackExceptionHandler($this->app->config('debug')));
             return $errorHandler;
         });
@@ -46,6 +51,8 @@ class ApiServiceProvider extends ServiceProvider
     public function boot() {
 
         $this->populateRoutes($this->app->make(RouteCollection::class));
+
+        $this->app->make('events')->listen(ApiExceptionRegisterHandler::class, AutoResisterApiExceptionRegisterHandler::class);
     }
 
     protected function populateRoutes(RouteCollection $route)

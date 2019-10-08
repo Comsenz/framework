@@ -10,6 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
+use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\Response\HtmlResponse;
 
 class RequestHandler implements MiddlewareInterface
@@ -53,7 +54,8 @@ class RequestHandler implements MiddlewareInterface
                 throw new RuntimeException(sprintf('Invalid request handler: %s', gettype($requestHandler)));
             }
         }
-        return new HtmlResponse('404', 404);
+
+        return new EmptyResponse(500);
     }
 
     private function getNormalizedPath(ServerRequestInterface $request): ServerRequestInterface
