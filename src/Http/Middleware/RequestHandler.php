@@ -4,6 +4,7 @@
 namespace Discuz\Http\Middleware;
 
 use Discuz\Foundation\Application;
+use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -32,7 +33,8 @@ class RequestHandler implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $requestPath = $this->getNormalizedPath($request);
+        $request = $this->getNormalizedPath($request);
+        $requestPath = $request->getUri()->getPath();
 
         foreach ($this->middlewares as $pathPrefix => $middleware) {
 
@@ -54,14 +56,17 @@ class RequestHandler implements MiddlewareInterface
         return new HtmlResponse('404', 404);
     }
 
-    private function getNormalizedPath(ServerRequestInterface $request): string
+    private function getNormalizedPath(ServerRequestInterface $request): ServerRequestInterface
     {
-        $path = $request->getUri()->getPath();
+        $uri = $request->getUri();
 
-        if (empty($path)) {
-            $path = '/';
+        $baseUrl = dirname(Arr::get($request->getServerParams(), 'SCRIPT_NAME'));
+        $requestUri = $uri->getPath() ?: '/';
+
+        if('/' !== $baseUrl && \strlen($requestUri) >= \strlen($baseUrl)) {
+            $request = $request->withUri($uri->withPath(substr($requestUri, strlen($baseUrl))));
         }
 
-        return $path;
+        return $request;
     }
 }
