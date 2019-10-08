@@ -155,7 +155,7 @@ class Application extends Container implements ContainerContract
     {
         $this->instance('path', $this->path());
         $this->instance('path.base', $this->basePath());
-//        $this->instance('path.lang', $this->langPath());
+        $this->instance('path.lang', $this->langPath());
         $this->instance('path.config', $this->configPath());
 //        $this->instance('path.public', $this->publicPath());
         $this->instance('path.storage', $this->storagePath());
@@ -207,6 +207,16 @@ class Application extends Container implements ContainerContract
     public function storagePath()
     {
         return $this->storagePath ?: $this->basePath.DIRECTORY_SEPARATOR.'storage';
+    }
+
+    /**
+     * Get the path to the language files.
+     *
+     * @return string
+     */
+    public function langPath()
+    {
+        return $this->resourcePath().DIRECTORY_SEPARATOR.'lang';
     }
 
     /**
@@ -507,7 +517,7 @@ class Application extends Container implements ContainerContract
                      'filesystem.cloud'     => [\Illuminate\Contracts\Filesystem\Cloud::class],
 //                     'hash'                 => [\Illuminate\Hashing\HashManager::class],
 //                     'hash.driver'          => [\Illuminate\Contracts\Hashing\Hasher::class],
-                       'log'                  => [\Illuminate\Log\LogManager::class, \Psr\Log\LoggerInterface::class],
+//                       'log'                  => [\Illuminate\Log\LogManager::class, \Psr\Log\LoggerInterface::class],
 //                     'mailer'               => [\Illuminate\Mail\Mailer::class, \Illuminate\Contracts\Mail\Mailer::class, \Illuminate\Contracts\Mail\MailQueue::class],
 //                     'auth.password'        => [\Illuminate\Auth\Passwords\PasswordBrokerManager::class, \Illuminate\Contracts\Auth\PasswordBrokerFactory::class],
 //                     'auth.password.broker' => [\Illuminate\Auth\Passwords\PasswordBroker::class, \Illuminate\Contracts\Auth\PasswordBroker::class],
@@ -521,7 +531,7 @@ class Application extends Container implements ContainerContract
                      'session'              => [\Illuminate\Session\SessionManager::class],
                      'session.store'        => [\Illuminate\Session\Store::class, \Illuminate\Contracts\Session\Session::class],
 //                     'url'                  => [\Illuminate\Routing\UrlGenerator::class, \Illuminate\Contracts\Routing\UrlGenerator::class],
-//                     'validator'            => [\Illuminate\Validation\Factory::class, \Illuminate\Contracts\Validation\Factory::class],
+                     'validator'            => [\Illuminate\Validation\Factory::class, \Illuminate\Contracts\Validation\Factory::class],
                      'view'                 => [\Illuminate\View\Factory::class, \Illuminate\Contracts\View\Factory::class],
                  ] as $key => $aliases) {
             foreach ($aliases as $alias) {

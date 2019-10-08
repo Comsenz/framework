@@ -3,6 +3,7 @@
 namespace Discuz\Http;
 
 use Discuz\Api\ApiServiceProvider;
+use Discuz\Database\DatabaseServiceProvider;
 use Discuz\Filesystem\FilesystemServiceProvider;
 use Discuz\Foundation\Application;
 use Discuz\Http\Middleware\RequestHandler;
@@ -14,6 +15,8 @@ use Exception;
 use Illuminate\Cache\CacheServiceProvider;
 use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Support\Arr;
+use Illuminate\Translation\TranslationServiceProvider;
+use Illuminate\Validation\ValidationServiceProvider;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
@@ -79,12 +82,15 @@ class Server
         $this->registerLogger();
 
         $this->app->register(HttpServiceProvider::class);
+        $this->app->register(DatabaseServiceProvider::class);
         $this->app->register(FilesystemServiceProvider::class);
         $this->app->register(CacheServiceProvider::class);
         $this->app->register(ApiServiceProvider::class);
         $this->app->register(WebServiceProvider::class);
         $this->app->register(BusServiceProvider::class);
-        $this->app->register(LocaleServiceProvider::class);
+//        $this->app->register(LocaleServiceProvider::class);
+        $this->app->register(ValidationServiceProvider::class);
+        $this->app->register(TranslationServiceProvider::class);
         $this->app->boot();
     }
 
@@ -101,7 +107,11 @@ class Server
                         'compiled' => realpath(storage_path('views')),
                     ]
                 ], ['cache' => $this->app->config('cache'),
-                    'filesystems' => $this->app->config('filesystems')
+                    'filesystems' => $this->app->config('filesystems'),
+                    'app' => [
+                        'locale' => $this->app->config('locale'),
+                        'fallback_locale' => $this->app->config('fallback_locale'),
+                    ]
                 ]
             )
         );

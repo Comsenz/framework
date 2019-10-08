@@ -23,8 +23,6 @@ class ApiServiceProvider extends ServiceProvider
     {
 
         $this->app->singleton('discuz.api.middleware', function($app) {
-
-            $app->register(DatabaseServiceProvider::class);
             $pipe = new MiddlewarePipe();
             $pipe->pipe($app->make(HandlerErrors::class));
             $pipe->pipe($app->make(ParseJsonBody::class));
