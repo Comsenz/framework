@@ -3,23 +3,14 @@
 
 namespace Discuz\Api\ExceptionHandler;
 
-use Discuz\Api\ApiExceptionHandlerInterface;
 use Exception;
-use Illuminate\Validation\Factory;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
-use Throwable;
+use Tobscure\JsonApi\Exception\Handler\ExceptionHandlerInterface;
 use Tobscure\JsonApi\Exception\Handler\ResponseBag;
 
-class ValidationExceptionHandler extends Exception implements ApiExceptionHandlerInterface
+class ValidationExceptionHandler implements ExceptionHandlerInterface
 {
-
-    protected $validator;
-
-    public function __construct(Validator $validator)
-    {
-        $this->validator = $validator;
-        parent::__construct(implode("\n", $validator->getMessageBag()->all()));
-    }
 
     private function buildErrors(array $messages, $pointer)
     {
@@ -38,5 +29,18 @@ class ValidationExceptionHandler extends Exception implements ApiExceptionHandle
         $errors = $this->buildErrors($e->validator->getMessageBag()->messages(), '/data/attributes');
 
         return new ResponseBag(422, $errors);
+    }
+
+    /**
+     * If the exception handler is able to format a response for the provided exception,
+     * then the implementation should return true.
+     *
+     * @param \Exception $e
+     *
+     * @return bool
+     */
+    public function manages(Exception $e)
+    {
+        return $e instanceof ValidationException;
     }
 }

@@ -6,6 +6,7 @@ namespace Discuz\Api;
 
 use Discuz\Api\ExceptionHandler\ApiExceptionHandler;
 use Discuz\Api\ExceptionHandler\RouteNotFoundExceptionHandler;
+use Discuz\Api\ExceptionHandler\ValidationExceptionHandler;
 use Discuz\Api\Listeners\AutoResisterApiExceptionRegisterHandler;
 use Discuz\Api\Middleware\HandlerErrors;
 use Discuz\Api\Events\ApiExceptionRegisterHandler;
@@ -40,6 +41,7 @@ class ApiServiceProvider extends ServiceProvider
         $this->app->singleton(ErrorHandler::class, function($app) {
             $errorHandler = new ErrorHandler;
             $errorHandler->registerHandler(new RouteNotFoundExceptionHandler());
+            $errorHandler->registerHandler(new ValidationExceptionHandler());
 
             $this->app->make('events')->dispatch(new ApiExceptionRegisterHandler($errorHandler));
 

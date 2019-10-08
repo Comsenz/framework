@@ -5,6 +5,7 @@ namespace Discuz\Foundation;
 use Discuz\Api\ExceptionHandler\ValidationExceptionHandler;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Factory;
+use Illuminate\Validation\ValidationException;
 
 abstract class AbstractValidator
 {
@@ -21,13 +22,13 @@ abstract class AbstractValidator
 
     /**
      * @param array $attributes
-     * @throws ValidationExceptionHandler
+     * @throws ValidationException
      */
     public function valid(array $attributes) {
         $validator = $this->make($attributes);
 
         if ($validator->fails()) {
-            throw new ValidationExceptionHandler($validator);
+            throw new ValidationException($validator);
         }
     }
 
