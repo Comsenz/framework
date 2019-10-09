@@ -62,7 +62,12 @@ class RequestHandler implements MiddlewareInterface
     {
         $uri = $request->getUri();
 
-        $baseUrl = dirname(Arr::get($request->getServerParams(), 'SCRIPT_NAME'));
+        $baseUrl = Arr::get($request->getServerParams(), 'SCRIPT_NAME');
+        if('\\' === \DIRECTORY_SEPARATOR) {
+            $baseUrl = str_replace('\\', '/', $baseUrl);
+        }
+        $baseUrl = dirname($baseUrl);
+
         $requestUri = $uri->getPath() ?: '/';
 
         if('/' !== $baseUrl && \strlen($requestUri) >= \strlen($baseUrl)) {
