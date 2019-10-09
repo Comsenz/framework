@@ -70,7 +70,7 @@ class RequestHandler implements MiddlewareInterface
 
         $requestUri = $uri->getPath() ?: '/';
 
-        if('/' !== $baseUrl && \strlen($requestUri) >= \strlen($baseUrl)) {
+        if('/' !== $requestUri && \strlen($requestUri) >= \strlen($baseUrl)) {
             $request = $request->withUri($uri->withPath(substr($requestUri, strlen($baseUrl))));
         }
 
