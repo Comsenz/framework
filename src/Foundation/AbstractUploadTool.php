@@ -5,7 +5,7 @@ declare(strict_types=1);
  *      Discuz & Tencent Cloud
  *      This is NOT a freeware, use is subject to license terms
  *
- *      Id: AbstractUploadTool.phppository.php 28830 2019-10-08 16:39 chenkeke $
+ *      Id: AbstractUploadTool.php 28830 2019-10-08 16:39 chenkeke $
  */
 
 namespace Discuz\Foundation;
