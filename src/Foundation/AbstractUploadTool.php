@@ -71,7 +71,7 @@ abstract class AbstractUploadTool implements UploadTool
     public function getType()
     {
         return $this->type;
-    };
+    }
 
     /**
      * {@inheritdoc}
