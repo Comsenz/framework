@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Discuz\Contracts\Tool;
 
 use Illuminate\Database\Eloquent\Model;
+use Psr\Http\Message\UploadedFileInterface;
 
 interface UploadTool
 {
@@ -33,6 +34,16 @@ interface UploadTool
      * {@inheritdoc}
      */
     public function getMultipleData();
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFile(UploadedFileInterface $file);
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFile();
 
     /**
      * {@inheritdoc}
