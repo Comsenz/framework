@@ -75,7 +75,7 @@ abstract class AbstractUploadTool implements UploadTool
     /**
      * {@inheritdoc}
      */
-    public function getSingleData(): Model
+    public function getSingleData()
     {
         return $this->single;
     }
@@ -92,7 +92,7 @@ abstract class AbstractUploadTool implements UploadTool
     /**
      * {@inheritdoc}
      */
-    public function getMultipleData(): Model
+    public function getMultipleData()
     {
         return $this->multiple;
     }
