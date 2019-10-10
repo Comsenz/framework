@@ -24,6 +24,11 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
      */
     protected $bus;
 
+    /**
+     * The name of the serializer class to output results with.
+     *
+     * @var string
+     */
     public $serializer;
 
     public $include = [];
@@ -55,6 +60,13 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
         return new JsonApiResponse($document);
     }
 
+    /**
+     * Get the data to be serialized and assigned to the response document.
+     *
+     * @param ServerRequestInterface $request
+     * @param Document $document
+     * @return mixed
+     */
     abstract public function data(ServerRequestInterface $request, Document $document);
 
     abstract public function createElement($data, $serializer);
