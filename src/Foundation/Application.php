@@ -611,4 +611,12 @@ class Application extends Container implements ContainerContract
     {
         return $this->config('locale');
     }
+
+    public function registerConfiguredProviders() {
+        $providers = $this->config('providers');
+        foreach($providers as $provider) {
+            $this->register($provider);
+        }
+    }
+
 }

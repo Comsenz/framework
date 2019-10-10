@@ -14,6 +14,8 @@ use ErrorException;
 use Exception;
 use Illuminate\Cache\CacheServiceProvider;
 use Illuminate\Config\Repository as ConfigRepository;
+use Illuminate\Encryption\Encrypter;
+use Illuminate\Encryption\EncryptionServiceProvider;
 use Illuminate\Support\Arr;
 use Illuminate\Translation\TranslationServiceProvider;
 use Illuminate\Validation\ValidationServiceProvider;
@@ -78,19 +80,21 @@ class Server
         $this->app->instance('config', $this->getIlluminateConfig());
 
         $this->registerBaseEnv();
-//        $this->registerCache();
         $this->registerLogger();
 
         $this->app->register(HttpServiceProvider::class);
         $this->app->register(DatabaseServiceProvider::class);
         $this->app->register(FilesystemServiceProvider::class);
+        $this->app->register(EncryptionServiceProvider::class);
         $this->app->register(CacheServiceProvider::class);
         $this->app->register(ApiServiceProvider::class);
         $this->app->register(WebServiceProvider::class);
         $this->app->register(BusServiceProvider::class);
-//        $this->app->register(LocaleServiceProvider::class);
         $this->app->register(ValidationServiceProvider::class);
         $this->app->register(TranslationServiceProvider::class);
+
+        $this->app->registerConfiguredProviders();
+
         $this->app->boot();
     }
 
@@ -106,9 +110,12 @@ class Server
                         ],
                         'compiled' => realpath(storage_path('views')),
                     ]
-                ], ['cache' => $this->app->config('cache'),
+                ], [
+                    'cache' => $this->app->config('cache'),
                     'filesystems' => $this->app->config('filesystems'),
                     'app' => [
+                        'key' => $this->app->config('key'),
+                        'cipher' => $this->app->config('cipher'),
                         'locale' => $this->app->config('locale'),
                         'fallback_locale' => $this->app->config('fallback_locale'),
                     ]
@@ -118,22 +125,6 @@ class Server
 
         return $config;
     }
-
-//    private function registerCache() {
-//
-//        $driver = Arr::get($this->app->config('cache'), 'default');
-//
-//        $driver_name = 'cache.'.$driver.'store';
-//
-//        $this->app->singleton($driver_name, function () {
-//            return new FileStore(new Filesystem, $this->app->storagePath().'cache');
-//        });
-//
-//        $this->app->singleton('cache.store', function($app) {
-//
-//            return $app['cache']->driver(Arr::get($this->app->config('cache'), 'default'));
-//        });
-//    }
 
     private function registerLogger()
     {
@@ -146,115 +137,7 @@ class Server
     }
 
     protected function registerBaseEnv() {
-
         date_default_timezone_set($this->app->config('timezone', 'UTC'));
-
-//        self::$reservedMemory = str_repeat('x', 10240);
-//
-//        error_reporting(E_ALL);
-//
-//        set_error_handler([$this, 'handleError']);
-//
-//        set_exception_handler([$this, 'handleException']);
-//
-//        register_shutdown_function([$this, 'handleShutdown']);
-
     }
 
-    /**
-     * Convert PHP errors to ErrorException instances.
-     *
-     * @param  int  $level
-     * @param  string  $message
-     * @param  string  $file
-     * @param  int  $line
-     * @param  array  $context
-     * @return void
-     *
-     * @throws \ErrorException
-     */
-    public function handleError($level, $message, $file = '', $line = 0, $context = [])
-    {
-        if (error_reporting() & $level) {
-            throw new ErrorException($message, 0, $level, $file, $line);
-        }
-    }
-
-    /**
-     * Handle an uncaught exception from the application.
-     *
-     * Note: Most exceptions can be handled via the try / catch block in
-     * the HTTP and Console kernels. But, fatal error exceptions must
-     * be handled differently since they are not normal exceptions.
-     *
-     * @param  \Throwable  $e
-     * @return void
-     */
-    public function handleException($e)
-    {
-
-        if (! $e instanceof Exception) {
-            $e = new FatalThrowableError($e);
-        }
-
-        try {
-            self::$reservedMemory = null;
-            $this->getExceptionHandler()->report($e);
-        } catch (Exception $e) {
-            //
-        }
-//        if ($this->app->runningInConsole()) {
-//            $this->renderForConsole($e);
-//        } else {
-
-            $this->renderHttpResponse($e);
-//        }
-    }
-
-    public function handleShutdown() {
-        if (! is_null($error = error_get_last()) && $this->isFatal($error['type'])) {
-            $this->handleException($this->fatalExceptionFromError($error, 0));
-        }
-    }
-
-    /**
-     * Create a new fatal exception instance from an error array.
-     *
-     * @param  array  $error
-     * @param  int|null  $traceOffset
-     * @return \Symfony\Component\Debug\Exception\FatalErrorException
-     */
-    protected function fatalExceptionFromError(array $error, $traceOffset = null)
-    {
-        return new FatalErrorException(
-            $error['message'], $error['type'], 0, $error['file'], $error['line'], $traceOffset
-        );
-    }
-
-    /**
-     * Get an instance of the exception handler.
-     *
-     * @return \Illuminate\Contracts\Debug\ExceptionHandler
-     */
-    protected function getExceptionHandler()
-    {
-        return new Handler;
-    }
-
-    /**
-     * Determine if the error type is fatal.
-     *
-     * @param  int  $type
-     * @return bool
-     */
-    protected function isFatal($type)
-    {
-        return in_array($type, [E_COMPILE_ERROR, E_CORE_ERROR, E_ERROR, E_PARSE]);
-    }
-
-
-    protected function renderHttpResponse(Exception $e)
-    {
-        $this->getExceptionHandler()->render((ServerRequestFactory::fromGlobals()), $e);
-    }
 }
