@@ -16,6 +16,7 @@ use Illuminate\Cache\CacheServiceProvider;
 use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Encryption\EncryptionServiceProvider;
+use Illuminate\Hashing\HashServiceProvider;
 use Illuminate\Support\Arr;
 use Illuminate\Translation\TranslationServiceProvider;
 use Illuminate\Validation\ValidationServiceProvider;
@@ -91,6 +92,7 @@ class Server
         $this->app->register(WebServiceProvider::class);
         $this->app->register(BusServiceProvider::class);
         $this->app->register(ValidationServiceProvider::class);
+        $this->app->register(HashServiceProvider::class);
         $this->app->register(TranslationServiceProvider::class);
 
         $this->app->registerConfiguredProviders();

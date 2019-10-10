@@ -515,7 +515,7 @@ class Application extends Container implements ContainerContract
                      'filesystem'           => [\Illuminate\Filesystem\FilesystemManager::class, \Illuminate\Contracts\Filesystem\Factory::class],
                      'filesystem.disk'      => [\Illuminate\Contracts\Filesystem\Filesystem::class],
                      'filesystem.cloud'     => [\Illuminate\Contracts\Filesystem\Cloud::class],
-//                     'hash'                 => [\Illuminate\Hashing\HashManager::class],
+                     'hash'                 => [\Illuminate\Hashing\HashManager::class],
 //                     'hash.driver'          => [\Illuminate\Contracts\Hashing\Hasher::class],
 //                       'log'                  => [\Illuminate\Log\LogManager::class, \Psr\Log\LoggerInterface::class],
 //                     'mailer'               => [\Illuminate\Mail\Mailer::class, \Illuminate\Contracts\Mail\Mailer::class, \Illuminate\Contracts\Mail\MailQueue::class],
