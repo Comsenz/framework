@@ -10,8 +10,7 @@ declare(strict_types=1);
 
 namespace Discuz\Database;
 
-
-use Flarum\Event\ScopeModelVisibility;
+use Discuz\Api\Events\ScopeModelVisibility;
 use Illuminate\Database\Eloquent\Builder;
 
 trait ScopeVisibilityTrait
@@ -25,7 +24,7 @@ trait ScopeVisibilityTrait
     public function scopeWhereVisibleTo(Builder $query, $actor)
     {
         static::$dispatcher->dispatch(
-            new ScopeModelVisibility($query, $actor, 'view')
+            new ScopeModelVisibility($actor, $query, 'find')
         );
     }
 }

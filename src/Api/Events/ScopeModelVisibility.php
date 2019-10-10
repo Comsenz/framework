@@ -16,14 +16,14 @@ use Illuminate\Database\Eloquent\Builder;
 class ScopeModelVisibility
 {
     /**
-     * @var Builder
-     */
-    public $query;
-
-    /**
      * @var Model
      */
     public $actor;
+
+    /**
+     * @var Builder
+     */
+    public $query;
 
     /**
      * @var string
@@ -40,10 +40,10 @@ class ScopeModelVisibility
      * @param Model $actor
      * @param string $ability
      */
-    public function __construct(Builder $query, Model $actor, $ability)
+    public function __construct(Model $actor, Builder $query, $ability)
     {
-        $this->query = $query;
         $this->actor = $actor;
+        $this->query = $query;
         $this->ability = $ability;
         $this->model = $query->getModel();
     }

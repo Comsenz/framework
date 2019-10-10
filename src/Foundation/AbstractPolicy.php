@@ -13,6 +13,7 @@ namespace Discuz\Foundation;
 use Discuz\Api\Events\GetPermission;
 use Discuz\Api\Events\ScopeModelVisibility;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 abstract class AbstractPolicy implements Policy
@@ -29,6 +30,17 @@ abstract class AbstractPolicy implements Policy
      * @return bool
      */
     abstract public function canPermission(Model $actor, Model $model, $ability): bool;
+
+    /**
+     * @param Model $actor
+     * @param Builder $query
+     * @param string $ability
+     * @return void
+     */
+    public function findVisibility(Model $actor, Builder $query, $ability)
+    {
+
+    }
 
     /**
      * @param Dispatcher $events
