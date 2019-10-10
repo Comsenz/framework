@@ -26,7 +26,17 @@ abstract class AbstractUploadTool implements UploadTool
     /**
      * @var string
      */
-    protected $fileName = '';
+    protected $uploadName = '';
+
+    /**
+     * @var string
+     */
+    protected $uploadPath = '';
+
+    /**
+     * @var string
+     */
+    protected $fullPath = '';
 
     /**
      * @var type
@@ -90,20 +100,33 @@ abstract class AbstractUploadTool implements UploadTool
     /**
      * {@inheritdoc}
      */
-    public function saveFile()
+    public function saveFile($uploadPath, $uploadName, $options = [])
     {
-        $extension = pathinfo($this->file->getClientFilename(), PATHINFO_EXTENSION);
+        $options = is_string($options)
+            ? ['visibility' => $options]
+            : (array) $options;
 
-        $uploadPath = $this->getUploadPath();
+        $path = trim($uploadPath.'/'.$uploadName, '/');
 
-        $uploadName = $this->getUploadName($extension);
+        $stream = $this->file->getStream();
 
-        if ($this->driver->put($uploadPath.$uploadName, $this->file, 'public')){
-            $this->fileName = '';
-            return false;
+        if ($this->file->getSize() > 10*1024*1024)
+        {
+            $resource = $stream->detach();
+
+            $result = $this->driver->putStream($path, $resource, $options);
+
+            if (is_resource($resource)) {
+                fclose($resource);
+            }
+
+        } else {
+            $result = $this->driver->put($path, $stream->getContents(), $options);
+
+            $stream->close();
         }
 
-        return true;
+        return $result ? $this->fullPath = $path : false;
     }
 
     /**
@@ -134,19 +157,44 @@ abstract class AbstractUploadTool implements UploadTool
     /**
      * {@inheritdoc}
      */
-    public function getUploadPath(string $path = '')
+    public function getUploadName(string $extension = '', $reset = false)
     {
-        return ($path?$path:$this->type).'/';
+        if ($reset)
+        {
+            $this->uploadName = '';
+        }
+
+        if (empty($this->uploadName))
+        {
+            $this->uploadName = Str::random().($extension?'.'.$extension:'');
+        }
+
+        return $this->uploadName;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getUploadName(string $extension = '')
+    public function getUploadPath(string $path = '', $reset = false)
     {
-        if (empty($this->fileName)){
-            $this->fileName = Str::random().($extension?'.'.$extension:'');
+        if ($reset)
+        {
+            $this->uploadPath = '';
         }
-        return $this->fileName;
+
+        if (empty($this->uploadPath))
+        {
+            $this->uploadPath = ($path?$path:$this->type);
+        }
+
+        return $this->uploadPath;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFullName()
+    {
+        return $this->fullPath;
     }
 }
