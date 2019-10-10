@@ -66,11 +66,13 @@ class RequestHandler implements MiddlewareInterface
         if('\\' === \DIRECTORY_SEPARATOR) {
             $baseUrl = str_replace('\\', '/', $baseUrl);
         }
-        $baseUrl = dirname($baseUrl);
 
+        $baseUri = basename($baseUrl);
+
+        $baseUrl = rtrim(substr($baseUrl, 0, strlen($baseUrl) - strlen($baseUri)), '/'.\DIRECTORY_SEPARATOR);
         $requestUri = $uri->getPath() ?: '/';
 
-        if('/' !== $requestUri && \strlen($requestUri) >= \strlen($baseUrl)) {
+        if('/' !== $baseUrl && \strlen($requestUri) >= \strlen($baseUrl)) {
             $request = $request->withUri($uri->withPath(substr($requestUri, strlen($baseUrl))));
         }
 
