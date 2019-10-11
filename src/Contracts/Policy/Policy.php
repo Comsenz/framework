@@ -10,7 +10,8 @@ declare(strict_types=1);
 
 namespace Discuz\Contracts\Policy;
 
-use Flarum\Event\GetPermission;
+use Discuz\Api\Events\GetPermission;
+use Discuz\Api\Events\ScopeModelVisibility;
 use Illuminate\Contracts\Events\Dispatcher;
 
 interface Policy
@@ -24,11 +25,11 @@ interface Policy
      * @param GetPermission $event
      * @return bool|void
      */
-    public function getPermission($event);
+    public function getPermission(GetPermission $event);
 
     /**
      * @param ScopeModelVisibility $event
      */
-    public function scopeModelVisibility($event);
+    public function scopeModelVisibility(ScopeModelVisibility$event);
 
 }

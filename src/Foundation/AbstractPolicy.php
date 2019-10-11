@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Discuz\Foundation;
 
+use Discuz\Contracts\Policy\Policy;
 use Discuz\Api\Events\GetPermission;
 use Discuz\Api\Events\ScopeModelVisibility;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -34,10 +35,9 @@ abstract class AbstractPolicy implements Policy
     /**
      * @param Model $actor
      * @param Builder $query
-     * @param string $ability
      * @return void
      */
-    public function findVisibility(Model $actor, Builder $query, $ability)
+    public function findVisibility(Model $actor, Builder $query)
     {
 
     }
