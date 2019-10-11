@@ -21,6 +21,7 @@ class AutoResisterApiExceptionRegisterHandler
     }
 
     public function handle(ApiExceptionRegisterHandler $event) {
+
         $exceptions = $this->discoverExceptions((new Finder())->files()->in($this->discoverApiExceptionsWithin()), $this->app->basePath());
 
         foreach($exceptions as $exception) {
@@ -29,6 +30,7 @@ class AutoResisterApiExceptionRegisterHandler
     }
 
     protected function discoverExceptions($files, $basePath) {
+
         $exceptions = [];
         foreach($files as $file) {
             $class = new ReflectionClass($this->classFromFile($file, $basePath));
@@ -59,6 +61,10 @@ class AutoResisterApiExceptionRegisterHandler
     }
 
     protected function discoverApiExceptionsWithin() {
-        return $this->app->path('Api/Exceptions');
+        $dir = $this->app->path('Api/Exceptions');
+
+        return collect($dir)->reject(function($directory) {
+            return ! is_dir($directory);
+        })->toArray();
     }
 }
