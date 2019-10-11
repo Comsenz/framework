@@ -110,8 +110,7 @@ abstract class AbstractUploadTool implements UploadTool
 
         $stream = $this->file->getStream();
 
-        if ($this->file->getSize() > 10*1024*1024)
-        {
+        if ($this->file->getSize() > 10*1024*1024) {
             $resource = $stream->detach();
 
             $result = $this->driver->putStream($path, $resource, $options);
@@ -119,7 +118,6 @@ abstract class AbstractUploadTool implements UploadTool
             if (is_resource($resource)) {
                 fclose($resource);
             }
-
         } else {
             $result = $this->driver->put($path, $stream->getContents(), $options);
 
@@ -159,13 +157,11 @@ abstract class AbstractUploadTool implements UploadTool
      */
     public function getUploadName(string $extension = '', $reset = false)
     {
-        if ($reset)
-        {
+        if ($reset) {
             $this->uploadName = '';
         }
 
-        if (empty($this->uploadName))
-        {
+        if (empty($this->uploadName)) {
             $this->uploadName = Str::random().($extension?'.'.$extension:'');
         }
 
@@ -177,13 +173,11 @@ abstract class AbstractUploadTool implements UploadTool
      */
     public function getUploadPath(string $path = '', $reset = false)
     {
-        if ($reset)
-        {
+        if ($reset) {
             $this->uploadPath = '';
         }
 
-        if (empty($this->uploadPath))
-        {
+        if (empty($this->uploadPath)) {
             $this->uploadPath = ($path?$path:$this->type);
         }
 

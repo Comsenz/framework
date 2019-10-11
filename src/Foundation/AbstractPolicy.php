@@ -61,8 +61,7 @@ abstract class AbstractPolicy implements Policy
             return false;
         }
 
-        if (method_exists($this, $event->ability.'Permission'))
-        {
+        if (method_exists($this, $event->ability.'Permission')) {
             return call_user_func_array([$this, $event->ability.'Permission'], [$event->actor, $event->model]);
         }
 
@@ -76,8 +75,7 @@ abstract class AbstractPolicy implements Policy
     public function scopeModelVisibility(ScopeModelVisibility $event)
     {
         if ($event->model instanceof $this->model) {
-            if (method_exists($this, $event->ability.'Visibility'))
-            {
+            if (method_exists($this, $event->ability.'Visibility')) {
                 call_user_func_array([$this, $event->ability.'Visibility'], [$event->actor, $event->query]);
             }
         }
