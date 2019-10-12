@@ -20,11 +20,12 @@ trait ScopeVisibilityTrait
      *
      * @param Builder $query
      * @param User $actor
+     * @param string $ability
      */
-    public function scopeWhereVisibleTo(Builder $query, $actor)
+    public function scopeWhereVisibleTo(Builder $query, $actor, $ability = 'find')
     {
         static::$dispatcher->dispatch(
-            new ScopeModelVisibility($actor, $query, 'find')
+            new ScopeModelVisibility($actor, $query, $ability)
         );
     }
 }

@@ -25,6 +25,19 @@ abstract class AbstractPolicy implements Policy
     protected $model;
 
     /**
+     * @var Dispatcher
+     */
+    protected $events;
+
+    /**
+     * @param Dispatcher $events
+     */
+    public function __construct(Dispatcher $events)
+    {
+        $this->events = $events;
+    }
+
+    /**
      * @param Model $actor
      * @param Model $model
      * @param string $ability
