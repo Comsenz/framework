@@ -3,8 +3,10 @@
 
 namespace Discuz\Http;
 
+use Discuz\Api\Events\ConfigureMiddleware;
 use FastRoute\DataGenerator;
 use FastRoute\RouteParser;
+use Illuminate\Support\Arr;
 
 class RouteCollection
 {
@@ -12,6 +14,10 @@ class RouteCollection
      * @var array
      */
     protected $reverse = [];
+
+    protected $middleware;
+    protected $middlewares = [];
+
     /**
      * @var DataGenerator
      */
@@ -51,6 +57,11 @@ class RouteCollection
         return $this->addRoute('DELETE', $path, $name, $handler);
     }
 
+    public function middleware() {
+        $this->middleware = func_get_args();
+        return $this;
+    }
+
     public function group($prefix, callable $callback)
     {
         $previousGroupPrefix = $this->currentGroupPrefix;
@@ -67,7 +78,12 @@ class RouteCollection
         foreach ($routeDatas as $routeData) {
             $this->dataGenerator->addRoute($method, $routeData, $handler);
         }
+
         $this->reverse[$name] = $routeDatas;
+        if($this->middleware) {
+            $this->middlewares[$method.'|'.$path] = $this->middleware;
+        }
+        $this->middleware = null;
         return $this;
     }
     public function getRouteData()
@@ -88,5 +104,10 @@ class RouteCollection
             return '/'.ltrim(implode('', $parts), '/');
         }
         throw new \RuntimeException("Route $name not found");
+    }
+
+    public function getMiddlewares($method, $path) {
+        return isset($this->middlewares[$method.'|'.$path]) ? $this->middlewares[$method.'|'.$path] : [];
+
     }
 }

@@ -4,6 +4,7 @@
 namespace Discuz\Http\Middleware;
 
 use Discuz\Foundation\Application;
+use Discuz\Http\RouteCollection;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -37,11 +38,21 @@ class RequestHandler implements MiddlewareInterface
         $request = $this->getNormalizedPath($request);
         $requestPath = $request->getUri()->getPath();
 
+        $routes = $this->app->make(RouteCollection::class);
+
         foreach ($this->middlewares as $pathPrefix => $middleware) {
 
             if (strpos($requestPath, $pathPrefix) === 0) {
 
                 $requestHandler = $this->app->make($middleware);
+
+                $pathMiddlewares = $routes->getMiddlewares($request->getMethod(), $requestPath);
+
+                foreach($pathMiddlewares as $pathMiddleware) {
+                    $requestHandler->pipe($this->app->make($pathMiddleware));
+                }
+
+                $requestHandler->pipe($this->app->make(DispatchRoute::class));
 
                 if ($requestHandler instanceof MiddlewareInterface) {
                     return $requestHandler->process($request, $handler);

@@ -31,10 +31,6 @@ class WebServiceProvider extends ServiceProvider
             return $pipe;
         });
 
-        //保证路由中间件最后执行
-        $this->app->afterResolving('discuz.web.middleware', function(MiddlewarePipe $pipe) {
-            $pipe->pipe($this->app->make(DispatchRoute::class));
-        });
     }
 
     public function boot() {
