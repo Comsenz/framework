@@ -20,6 +20,20 @@ if (! function_exists('app')) {
     }
 }
 
+
+if (! function_exists('base_path')) {
+    /**
+     * Get the path to the base of the install.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function base_path($path = '')
+    {
+        return app()->basePath($path);
+    }
+}
+
 if (! function_exists('app_path')) {
     /**
      * Get the path to the application folder.
@@ -80,5 +94,4 @@ if (! function_exists('config')) {
         return app('config')->get($key, $default);
     }
 }
-
 

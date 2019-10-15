@@ -3,12 +3,14 @@
 
 namespace Discuz\Api;
 
+use Discuz\Api\ExceptionHandler\PermissionDeniedExceptionHandler;
 use Discuz\Api\ExceptionHandler\RouteNotFoundExceptionHandler;
 use Discuz\Api\ExceptionHandler\ValidationExceptionHandler;
 use Discuz\Api\Listeners\AutoResisterApiExceptionRegisterHandler;
 use Discuz\Api\Middleware\HandlerErrors;
 use Discuz\Api\Events\ApiExceptionRegisterHandler;
 use Discuz\Foundation\Application;
+use Discuz\Http\Middleware\AuthenticateWithHeader;
 use Discuz\Http\Middleware\ParseJsonBody;
 use Discuz\Http\RouteCollection;
 use Illuminate\Support\ServiceProvider;
@@ -27,6 +29,7 @@ class ApiServiceProvider extends ServiceProvider
             $pipe = new MiddlewarePipe();
             $pipe->pipe($app->make(HandlerErrors::class));
             $pipe->pipe($app->make(ParseJsonBody::class));
+            $pipe->pipe($app->make(AuthenticateWithHeader::class));
             return $pipe;
         });
 
@@ -34,6 +37,7 @@ class ApiServiceProvider extends ServiceProvider
             $errorHandler = new ErrorHandler;
             $errorHandler->registerHandler(new RouteNotFoundExceptionHandler());
             $errorHandler->registerHandler(new ValidationExceptionHandler());
+            $errorHandler->registerHandler(new PermissionDeniedExceptionHandler());
 
             $this->app->make('events')->dispatch(new ApiExceptionRegisterHandler($errorHandler));
 

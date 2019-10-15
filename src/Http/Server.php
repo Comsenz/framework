@@ -3,6 +3,7 @@
 namespace Discuz\Http;
 
 use Discuz\Api\ApiServiceProvider;
+use Discuz\Auth\AuthServiceProvider;
 use Discuz\Database\DatabaseServiceProvider;
 use Discuz\Filesystem\FilesystemServiceProvider;
 use Discuz\Foundation\Application;
@@ -92,8 +93,9 @@ class Server
         $this->app->register(WebServiceProvider::class);
         $this->app->register(BusServiceProvider::class);
         $this->app->register(ValidationServiceProvider::class);
-//        $this->app->register(HashServiceProvider::class);
+        $this->app->register(HashServiceProvider::class);
         $this->app->register(TranslationServiceProvider::class);
+        $this->app->register(AuthServiceProvider::class);
 
         $this->app->registerConfiguredProviders();
 
