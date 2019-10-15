@@ -23,5 +23,10 @@ abstract class AbstractDeleteController extends AbstractResourceController
         return new EmptyResponse(204);
     }
 
+    /**
+     * Delete the resource.
+     *
+     * @param ServerRequestInterface $request
+     */
     abstract public function delete(ServerRequestInterface $request);
 }

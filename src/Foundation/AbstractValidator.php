@@ -41,8 +41,14 @@ abstract class AbstractValidator
         return $validator;
     }
 
+    /**
+     * @return array
+     */
     abstract protected function getRules();
 
+    /**
+     * @return array
+     */
     abstract protected function getMessages();
 
 }
