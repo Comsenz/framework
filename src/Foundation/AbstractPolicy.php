@@ -66,12 +66,12 @@ abstract class AbstractPolicy implements Policy
 
     /**
      * @param GetPermission $event
-     * @return bool
+     * @return bool|null
      */
     public function getPermission(GetPermission $event)
     {
         if (! $event->model instanceof $this->model) {
-            return false;
+            return null;
         }
 
         if (method_exists($this, $event->ability.'Permission')) {

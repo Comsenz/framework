@@ -8,25 +8,18 @@ use Discuz\Database\DatabaseServiceProvider;
 use Discuz\Filesystem\FilesystemServiceProvider;
 use Discuz\Foundation\Application;
 use Discuz\Http\Middleware\RequestHandler;
-use Discuz\Locale\LocaleServiceProvider;
 use Discuz\Web\WebServiceProvider;
 use Illuminate\Bus\BusServiceProvider;
-use ErrorException;
-use Exception;
 use Illuminate\Cache\CacheServiceProvider;
 use Illuminate\Config\Repository as ConfigRepository;
-use Illuminate\Encryption\Encrypter;
 use Illuminate\Encryption\EncryptionServiceProvider;
 use Illuminate\Hashing\HashServiceProvider;
-use Illuminate\Support\Arr;
 use Illuminate\Translation\TranslationServiceProvider;
 use Illuminate\Validation\ValidationServiceProvider;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Debug\Exception\FatalErrorException;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Throwable;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
@@ -38,11 +31,6 @@ use Zend\Stratigility\MiddlewarePipe;
 
 class Server
 {
-    /**
-     * @var string
-     */
-    private static $reservedMemory;
-
     protected $app;
 
     public function __construct(Application $app)
