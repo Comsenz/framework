@@ -12,8 +12,6 @@ abstract class AbstractValidator
 
     protected $validator;
 
-    protected $rules = [];
-
     public function __construct(Factory $validator)
     {
         $this->validator = $validator;
@@ -49,6 +47,8 @@ abstract class AbstractValidator
     /**
      * @return array
      */
-    abstract protected function getMessages();
+    protected function getMessages() {
+        return [];
+    }
 
 }

@@ -22,7 +22,7 @@ class ParseJsonBody implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (Str::contains($request->getHeaderLine('content-type'), 'json')) {
-            $input = collect(json_decode($request->getBody()));
+            $input = collect(json_decode($request->getBody(), true));
 
             $request = $request->withParsedBody($input ?: []);
         }
