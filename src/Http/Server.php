@@ -4,6 +4,7 @@ namespace Discuz\Http;
 
 use Discuz\Api\ApiServiceProvider;
 use Discuz\Auth\AuthServiceProvider;
+use Discuz\Censor\CensorServiceProvider;
 use Discuz\Database\DatabaseServiceProvider;
 use Discuz\Filesystem\FilesystemServiceProvider;
 use Discuz\Foundation\Application;
@@ -84,6 +85,7 @@ class Server
         $this->app->register(HashServiceProvider::class);
         $this->app->register(TranslationServiceProvider::class);
         $this->app->register(AuthServiceProvider::class);
+        $this->app->register(CensorServiceProvider::class);
 
         $this->app->registerConfiguredProviders();
 
