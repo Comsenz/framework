@@ -14,6 +14,7 @@ use Discuz\Contracts\Search\Search;
 use Discuz\Contracts\Search\SearchBuilder;
 use Discuz\Contracts\Search\Searcher;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
@@ -239,9 +240,9 @@ class MysqlSearcher implements Searcher
      * 返回查询的结果[单条].
      *
      * @param bool $reset 是否重新获取结果
-     * @return Collection
+     * @return Model
      */
-    public function getSingle($reset = false): Collection
+    public function getSingle($reset = false): Model
     {
         if ($reset || !($this->searchResults instanceof Collection)) {
 
