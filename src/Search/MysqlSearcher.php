@@ -236,12 +236,29 @@ class MysqlSearcher implements Searcher
     }
 
     /**
-     * 返回查询的结果.
+     * 返回查询的结果[单条].
      *
      * @param bool $reset 是否重新获取结果
      * @return Collection
      */
-    public function getResults($reset = false): Collection
+    public function getSingle($reset = false): Collection
+    {
+        if ($reset || !($this->searchResults instanceof Collection)) {
+
+            $this->searchResults = $this->searchSource->getQuery()->first();
+
+        }
+
+        return $this->searchResults;
+    }
+
+    /**
+     * 返回查询的结果[多条].
+     *
+     * @param bool $reset 是否重新获取结果
+     * @return Collection
+     */
+    public function getMultiple($reset = false): Collection
     {
         if ($reset || !($this->searchResults instanceof Collection)) {
 

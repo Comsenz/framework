@@ -19,7 +19,9 @@ interface Searcher
 
     public function conditions(array $condition = []);
 
-    public function getResults($reset = false);
+    public function getSingle($reset = false);
+
+    public function getMultiple($reset = false);
 
     public function getIncludes();
 }
