@@ -5,8 +5,10 @@ namespace Discuz\Api\Controller;
 
 
 use Discuz\Api\JsonApiResponse;
+use Discuz\Contracts\Search\Searcher;
 use Discuz\Foundation\Application;
-use Illuminate\Contracts\Bus\Dispatcher;
+use Illuminate\Contracts\Bus\Dispatcher as BusDispatcher;
+use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -25,19 +27,26 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     protected $bus;
 
     /**
+     * 搜索驱动类.
+     *
+     * @var Dispatcher
+     */
+    protected $searcher;
+
+    /**
      * The name of the serializer class to output results with.
      *
      * @var string
      */
     public $serializer;
 
-    public $include = [];
-
-    public function __construct(Application $app, Dispatcher $bus)
+    public function __construct(Application $app, BusDispatcher $bus, Searcher $searcher)
     {
         $this->app = $app;
 
         $this->bus = $bus;
+
+        $this->searcher = $searcher;
     }
 
 
@@ -54,7 +63,8 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
 
         $serializer = $this->app->make($this->serializer);
 
-        $element = $this->createElement($data, $serializer)->with($this->extractIncludes($request));
+        $element = $this->createElement($data, $serializer)
+            ->with($this->searcher->getIncludes());
 
         $document->setData($element);
         return new JsonApiResponse($document);
@@ -71,11 +81,4 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
 
     abstract public function createElement($data, $serializer);
 
-    protected function buildParameters(ServerRequestInterface $request) {
-        return $this->app->make(Parameters::class, ['input' => $request->getQueryParams()]);
-    }
-
-    protected function extractIncludes(ServerRequestInterface $request) {
-        return $this->buildParameters($request)->getInclude($this->include);
-    }
 }

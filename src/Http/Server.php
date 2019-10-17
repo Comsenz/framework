@@ -7,6 +7,7 @@ use Discuz\Auth\AuthServiceProvider;
 use Discuz\Censor\CensorServiceProvider;
 use Discuz\Database\DatabaseServiceProvider;
 use Discuz\Filesystem\FilesystemServiceProvider;
+use Discuz\Search\SearchServiceProvider;
 use Discuz\Foundation\Application;
 use Discuz\Http\Middleware\RequestHandler;
 use Discuz\Web\WebServiceProvider;
@@ -86,6 +87,7 @@ class Server
         $this->app->register(TranslationServiceProvider::class);
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(CensorServiceProvider::class);
+        $this->app->register(SearchServiceProvider::class);
 
         $this->app->registerConfiguredProviders();
 

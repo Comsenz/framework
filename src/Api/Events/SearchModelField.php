@@ -5,15 +5,15 @@ declare(strict_types=1);
  *      Discuz & Tencent Cloud
  *      This is NOT a freeware, use is subject to license terms
  *
- *      Id: ScopeModelVisibility.php 28830 2019-10-10 15:45 chenkeke $
+ *      Id: SearchModelField.php 28830 2019-10-16 11:38 chenkeke $
  */
 
 namespace Discuz\Api\Events;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
-class ScopeModelVisibility
+class SearchModelField
 {
     /**
      * @var Model
@@ -28,7 +28,12 @@ class ScopeModelVisibility
     /**
      * @var string
      */
-    public $ability;
+    public $field;
+
+    /**
+     * @var String
+     */
+    public $content;
 
     /**
      * @var mixed
@@ -38,13 +43,15 @@ class ScopeModelVisibility
     /**
      * @param Model $actor
      * @param Builder $query
-     * @param string $ability
+     * @param String $field
+     * @param String $content
      */
-    public function __construct(Model $actor, Builder $query, $ability)
+    public function __construct(Model $actor, Builder $query, $field, $content = "")
     {
         $this->actor = $actor;
         $this->query = $query;
-        $this->ability = $ability;
+        $this->field = $field;
+        $this->content = $content;
         $this->model = $query->getModel();
     }
 }
