@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Discuz\Contracts\Tool;
 
-use Illuminate\Database\Eloquent\Model;
 use Psr\Http\Message\UploadedFileInterface;
 
 interface UploadTool
@@ -18,45 +17,35 @@ interface UploadTool
     /**
      * {@inheritdoc}
      */
-    public function setSingleData(Model $single);
+    public function upload(UploadedFileInterface $file);
 
     /**
      * {@inheritdoc}
      */
-    public function getSingleData();
+    public function save();
 
     /**
      * {@inheritdoc}
      */
-    public function setMultipleData(Model $multiple);
+    public function verifyFileType(array $type = []);
 
     /**
      * {@inheritdoc}
      */
-    public function getMultipleData();
+    public function verifyFileSize(int $size = 0);
 
     /**
      * {@inheritdoc}
      */
-    public function setFile(UploadedFileInterface $file);
+    public function getUploadPath();
 
     /**
      * {@inheritdoc}
      */
-    public function getFile();
+    public function getUploadName();
 
     /**
      * {@inheritdoc}
      */
-    public function getType();
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUploadPath(string $path = '');
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUploadName(string $extension = '');
+    public function getUploadFullPath();
 }

@@ -11,13 +11,19 @@ declare(strict_types=1);
 namespace Discuz\Foundation;
 
 use Discuz\Contracts\Tool\UploadTool;
+use Discuz\Http\Exception\UploadVerifyException;
 use Illuminate\Contracts\Filesystem\Factory as FileFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Psr\Http\Message\UploadedFileInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 abstract class AbstractUploadTool implements UploadTool
 {
+    /**
+     * @var FileFactory
+     */
+    protected $driver;
+
     /**
      * @model UploadedFileInterface
      */
@@ -31,7 +37,7 @@ abstract class AbstractUploadTool implements UploadTool
     /**
      * @var string
      */
-    protected $uploadPath = '';
+    protected $uploadPath = 'attachment';
 
     /**
      * @var string
@@ -41,22 +47,22 @@ abstract class AbstractUploadTool implements UploadTool
     /**
      * @var type
      */
-    protected $type = 'common';
+    protected $fileType = [];
 
     /**
-     * @var FileFactory
+     * @var type
      */
-    protected $driver;
+    protected $fileSize = 5*1024*1024;
 
     /**
-     * @model model
+     * @var type
      */
-    protected $single;
+    protected $options = ['visibility' => 'public'];
 
     /**
-     * @model model
+     * @var type
      */
-    protected $multiple;
+    protected $error = 0;
 
     public function __construct(FileFactory $driver)
     {
@@ -66,128 +72,109 @@ abstract class AbstractUploadTool implements UploadTool
     /**
      * {@inheritdoc}
      */
-    public function setSingleData(Model $single)
+    public function upload(UploadedFileInterface $file, $uploadPath = '', $uploadName = '', $options = [])
     {
-        $this->single = $single;
-        return $this;
-    }
+        $this->file = $file;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSingleData()
-    {
-        return $this->single;
-    }
+        $extension = pathinfo($this->file->getClientFilename(), PATHINFO_EXTENSION);
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setMultipleData(Model $multiple)
-    {
-        $this->multiple = $multiple;
-        return $this;
-    }
+        $this->uploadPath = $uploadPath?:$this->uploadPath;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMultipleData()
-    {
-        return $this->multiple;
-    }
+        $this->uploadName = $uploadName?:Str::random().'.'.$extension;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function saveFile($uploadPath, $uploadName, $options = [])
-    {
-        $options = is_string($options)
+        $this->options = is_string($options)
             ? ['visibility' => $options]
-            : (array) $options;
+            : $options?:$this->options;
 
-        $path = trim($uploadPath.'/'.$uploadName, '/');
+        $this->fullPath = trim($this->uploadPath.'/'.$this->uploadName, '/');
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function save(array $type = [], int $size = 0)
+    {
+
+        $this->verifyFileType();
+
+        $this->verifyFileSize();
+
+        if ($this->error){
+            throw new UploadVerifyException();
+        }
 
         $stream = $this->file->getStream();
 
         if ($this->file->getSize() > 10*1024*1024) {
             $resource = $stream->detach();
 
-            $result = $this->driver->putStream($path, $resource, $options);
+            $result = $this->driver->putStream($this->fullPath, $resource, $this->options);
 
             if (is_resource($resource)) {
                 fclose($resource);
             }
         } else {
-            $result = $this->driver->put($path, $stream->getContents(), $options);
+            $result = $this->driver->put($this->fullPath, $stream->getContents(), $this->options);
 
             $stream->close();
         }
 
-        return $result ? $this->fullPath = $path : false;
+        return $result ? new UploadedFile(
+                    $this->driver->path($this->fullPath),
+                    $this->file->getClientFilename(),
+                    $this->file->getClientMediaType(),
+                    $this->file->getSize(),
+                    $this->file->getError(),
+                    true
+                ) : false;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setFile(UploadedFileInterface $file)
+    public function verifyFileType(array $type = [])
     {
-        $this->file = $file;
+        $this->error = 0;
+
+        $type = $type?:$this->fileType;
+
         return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getFile(): UploadedFileInterface
+    public function verifyFileSize(int $size = 0)
     {
-        return $this->file;
+        $this->error = 0;
+
+        $size = $size?:$this->fileSize;
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getUploadName()
     {
-        return $this->type;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUploadName(string $extension = '', $reset = false)
-    {
-        if ($reset) {
-            $this->uploadName = '';
-        }
-
-        if (empty($this->uploadName)) {
-            $this->uploadName = Str::random().($extension?'.'.$extension:'');
-        }
-
         return $this->uploadName;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getUploadPath(string $path = '', $reset = false)
+    public function getUploadPath()
     {
-        if ($reset) {
-            $this->uploadPath = '';
-        }
-
-        if (empty($this->uploadPath)) {
-            $this->uploadPath = ($path?$path:$this->type);
-        }
-
         return $this->uploadPath;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getFullName()
+    public function getUploadFullPath()
     {
         return $this->fullPath;
     }
