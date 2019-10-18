@@ -41,9 +41,9 @@ abstract class AbstractPolicy implements Policy
      * @param Model $actor
      * @param Model $model
      * @param string $ability
-     * @return bool
+     * @return bool|null
      */
-    abstract public function canPermission(Model $actor, Model $model, $ability): bool;
+    abstract public function canPermission(Model $actor, Model $model, $ability);
 
     /**
      * @param Model $actor
@@ -78,7 +78,9 @@ abstract class AbstractPolicy implements Policy
             return call_user_func_array([$this, $event->ability.'Permission'], [$event->actor, $event->model]);
         }
 
-        return call_user_func_array([$this, 'canPermission'], [$event->actor, $event->model, $event->ability]);
+        if (method_exists($this, 'canPermission')) {
+            return call_user_func_array([$this, 'canPermission'], [$event->actor, $event->model, $event->ability]);
+        }
     }
 
     /**

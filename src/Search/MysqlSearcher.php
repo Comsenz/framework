@@ -244,9 +244,9 @@ class MysqlSearcher implements Searcher
      */
     public function getSingle($reset = false): Model
     {
-        if ($reset || !($this->searchResults instanceof Collection)) {
+        if ($reset || !($this->searchResults instanceof Model)) {
 
-            $this->searchResults = $this->searchSource->getQuery()->first();
+            $this->searchResults = $this->searchSource->getQuery()->firstOrFail();
 
         }
 

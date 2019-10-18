@@ -20,12 +20,13 @@ abstract class AbstractRepository
      *
      * @param Builder $query
      * @param Model $actor
+     * @param string $ability
      * @return Builder
      */
-    protected function scopeVisibleTo(Builder $query, Model $actor = null)
+    protected function scopeVisibleTo(Builder $query, Model $actor = null, $ability = 'find')
     {
         if ($actor !== null) {
-            $query->whereVisibleTo($actor);
+            $query->whereVisibleTo($actor, $ability);
         }
         return $query;
     }
