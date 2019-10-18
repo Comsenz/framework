@@ -5,7 +5,6 @@ namespace Discuz\Filesystem;
 
 use Illuminate\Filesystem\FilesystemServiceProvider as ServiceProvider;
 use League\Flysystem\Filesystem;
-use Qcloud\Cos\Client;
 
 class FilesystemServiceProvider extends ServiceProvider
 {

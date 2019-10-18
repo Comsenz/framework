@@ -31,7 +31,8 @@
         "guzzlehttp/guzzle": "^6.3.3",
         "qcloud/cos-sdk-v5": "^2.0",
         "league/flysystem": "^1.0.55",
-        "symfony/console": "^4.3"
+        "symfony/console": "^4.3",
+        "league/oauth2-server": "^8.0"
     },
     "autoload": {
         "files": [

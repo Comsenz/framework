@@ -2,7 +2,6 @@
 
 namespace Discuz\Foundation;
 
-use Discuz\Api\ExceptionHandler\ValidationExceptionHandler;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Factory;
 use Illuminate\Validation\ValidationException;

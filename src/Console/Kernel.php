@@ -2,221 +2,98 @@
 
 namespace Discuz\Console;
 
-use Closure;
-use Exception;
-use Throwable;
-use ReflectionClass;
+use Discuz\Api\ApiServiceProvider;
+use Discuz\Auth\AuthServiceProvider;
+use Discuz\Database\DatabaseServiceProvider;
+use Discuz\Filesystem\FilesystemServiceProvider;
+use Discuz\Http\HttpServiceProvider;
+use Discuz\Web\WebServiceProvider;
+use Illuminate\Bus\BusServiceProvider;
+use Illuminate\Cache\CacheServiceProvider;
+use Illuminate\Config\Repository as ConfigRepository;
+use Illuminate\Encryption\EncryptionServiceProvider;
+use Illuminate\Hashing\HashServiceProvider;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Console\Command;
-use Symfony\Component\Finder\Finder;
-use Illuminate\Contracts\Events\Dispatcher;
-use Discuz\Console\Application as Disco;
-use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Translation\TranslationServiceProvider;
+use Illuminate\Validation\ValidationServiceProvider;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Discuz\Foundation\Application;
 use Illuminate\Contracts\Console\Kernel as KernelContract;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
+use ReflectionClass;
+use Symfony\Component\Console\Application as ConsoleApplication;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Finder\Finder;
 
 class Kernel implements KernelContract
 {
-    /**
-     * The application implementation.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
     protected $app;
 
-    /**
-     * The event dispatcher implementation.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    protected $events;
-
-    /**
-     * The Disco application instance.
-     *
-     * @var \Illuminate\Console\Application
-     */
-    protected $disco;
-
-    /**
-     * The Disco commands provided by the application.
-     *
-     * @var array
-     */
-    protected $commands = [];
-
-    /**
-     * Indicates if the Closure commands have been loaded.
-     *
-     * @var bool
-     */
-    protected $commandsLoaded = false;
-
-    /**
-     * Create a new console kernel instance.
-     *
-     * @param  \Discuz\Foundation\Application  $app
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
-     * @return void
-     */
-    public function __construct(Application $app, Dispatcher $events)
+    public function __construct(Application $app)
     {
-        if (! defined('DISCO_BINARY')) {
-            define('DISCO_BINARY', 'disco');
-        }
-
         $this->app = $app;
-        $this->events = $events;
+    }
+
+    public function run() {
+
+        $this->siteBoot();
+
+        $console = new ConsoleApplication($this->getName(), Application::VERSION);
+
+        $this->load($console);
+
+        exit($console->run());
+    }
+
+    protected function getName() {
+        return <<<EOF
+ _____   _                           _____   _                 
+(____ \ (_)                         (____ \ (_)                
+ _   \ \ _  ___  ____ _   _ _____    _   \ \ _  ___  ____ ___  
+| |   | | |/___)/ ___) | | (___  )  | |   | | |/___)/ ___) _ \ 
+| |__/ /| |___ ( (___| |_| |/ __/   | |__/ /| |___ ( (__| |_| |
+|_____/ |_(___/ \____)\____(_____)  |_____/ |_(___/ \____)___/ 
+EOF;
     }
 
     /**
-     * Run the console application.
+     * Handle an incoming console command.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface|null  $output
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface|null $output
      * @return int
      */
     public function handle($input, $output = null)
     {
-        try {
-            $this->bootstrap();
-
-            return $this->getDisco()->run($input, $output);
-        } catch (Exception $e) {
-            dd('Exception -> ' . $e->getMessage());
-            $this->reportException($e);
-
-            $this->renderException($output, $e);
-
-            return 1;
-        } catch (Throwable $e) {
-            dd('Throwable -> ' . $e->getMessage());
-            $e = new FatalThrowableError($e);
-
-            $this->reportException($e);
-
-            $this->renderException($output, $e);
-
-            return 1;
-        }
+        // TODO: Implement handle() method.
     }
 
     /**
-     * Terminate the application.
+     * Run an Artisan console command by name.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  int  $status
-     * @return void
-     */
-    public function terminate($input, $status)
-    {
-        $this->app->terminate();
-    }
-
-    /**
-     * Register the Closure based commands for the application.
-     *
-     * @return void
-     */
-    protected function commands()
-    {
-        //
-    }
-
-    /**
-     * Register a Closure based command with the application.
-     *
-     * @param  string  $signature
-     * @param  \Closure  $callback
-     * @return \Illuminate\Foundation\Console\ClosureCommand
-     */
-    public function command($signature, Closure $callback)
-    {
-        $command = new ClosureCommand($signature, $callback);
-
-        Artisan::starting(function ($artisan) use ($command) {
-            $artisan->add($command);
-        });
-
-        return $command;
-    }
-
-    /**
-     * Register all of the commands in the given directory.
-     *
-     * @param  array|string  $paths
-     * @return void
-     */
-    protected function load($paths)
-    {
-        $paths = array_unique(Arr::wrap($paths));
-
-        $paths = array_filter($paths, function ($path) {
-            return is_dir($path);
-        });
-
-        if (empty($paths)) {
-            return;
-        }
-
-        $namespace = $this->app->getNamespace();
-
-        foreach ((new Finder)->in($paths)->files() as $command) {
-            $command = $namespace.str_replace(
-                ['/', '.php'],
-                ['\\', ''],
-                Str::after($command->getPathname(), realpath(app_path()).DIRECTORY_SEPARATOR)
-            );
-
-            if (is_subclass_of($command, Command::class) &&
-                ! (new ReflectionClass($command))->isAbstract()) {
-                Disco::starting(function ($disco) use ($command) {
-                    $disco->resolve($command);
-                });
-            }
-        }
-    }
-
-    /**
-     * Register the given command with the console application.
-     *
-     * @param  \Symfony\Component\Console\Command\Command  $command
-     * @return void
-     */
-    public function registerCommand($command)
-    {
-        $this->getDisco()->add($command);
-    }
-
-    /**
-     * Run an Disco console command by name.
-     *
-     * @param  string  $command
-     * @param  array  $parameters
-     * @param  \Symfony\Component\Console\Output\OutputInterface|null  $outputBuffer
+     * @param string $command
+     * @param array $parameters
+     * @param \Symfony\Component\Console\Output\OutputInterface|null $outputBuffer
      * @return int
-     *
-     * @throws \Symfony\Component\Console\Exception\CommandNotFoundException
      */
     public function call($command, array $parameters = [], $outputBuffer = null)
     {
-        $this->bootstrap();
-
-        return $this->getDisco()->call($command, $parameters, $outputBuffer);
+        // TODO: Implement call() method.
     }
 
     /**
-     * Queue the given console command.
+     * Queue an Artisan console command by name.
      *
-     * @param  string  $command
-     * @param  array   $parameters
+     * @param string $command
+     * @param array $parameters
      * @return \Illuminate\Foundation\Bus\PendingDispatch
      */
     public function queue($command, array $parameters = [])
     {
-        // return QueuedCommand::dispatch(func_get_args());
+        // TODO: Implement queue() method.
     }
 
     /**
@@ -226,9 +103,7 @@ class Kernel implements KernelContract
      */
     public function all()
     {
-        $this->bootstrap();
-
-        return $this->getDisco()->all();
+        // TODO: Implement all() method.
     }
 
     /**
@@ -238,73 +113,116 @@ class Kernel implements KernelContract
      */
     public function output()
     {
-        $this->bootstrap();
-
-        return $this->getDisco()->output();
+        // TODO: Implement output() method.
     }
 
     /**
-     * Bootstrap the application for disco commands.
+     * Terminate the application.
      *
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param int $status
      * @return void
      */
-    public function bootstrap()
+    public function terminate($input, $status)
     {
-        $this->app->loadDeferredProviders();
+        // TODO: Implement terminate() method.
+    }
 
-        if (! $this->commandsLoaded) {
-            $this->commands();
 
-            $this->commandsLoaded = true;
+    /**
+     * @param ConsoleApplication $console
+     * @throws \ReflectionException
+     */
+    protected function load(ConsoleApplication $console)
+    {
+        $paths = app_path('Console/Commands');
+        $paths = array_unique(Arr::wrap($paths));
+        $paths = array_filter($paths, function ($path) {
+            return is_dir($path);
+        });
+        if (empty($paths)) {
+            return;
+        }
+        $namespace = $this->app->getNamespace();
+        foreach ((new Finder)->in($paths)->files() as $command) {
+            $command = $namespace.str_replace(
+                    ['/', '.php'],
+                    ['\\', ''],
+                    Str::after($command->getPathname(), realpath(app_path()).DIRECTORY_SEPARATOR)
+                );
+            if (is_subclass_of($command, Command::class) &&
+                ! (new ReflectionClass($command))->isAbstract()) {
+                $console->add($this->app->make($command));
+            }
         }
     }
 
-    /**
-     * Get the Disco application instance.
-     *
-     * @return \Discuz\Console\Application|\Illuminate\Console\Application
-     */
-    protected function getDisco()
-    {
-        if (is_null($this->disco)) {
-            return $this->disco = (new Disco($this->app, $this->events, $this->app->version()))
-                                ->resolveCommands($this->commands);
-        }
+    protected function siteBoot() {
 
-        return $this->disco;
+        $this->app->instance('env', 'production');
+        $this->app->instance('discuz.config', $this->loadConfig());
+        $this->app->instance('config', $this->getIlluminateConfig());
+
+        $this->registerBaseEnv();
+        $this->registerLogger();
+
+        $this->app->register(HttpServiceProvider::class);
+        $this->app->register(DatabaseServiceProvider::class);
+        $this->app->register(FilesystemServiceProvider::class);
+        $this->app->register(EncryptionServiceProvider::class);
+        $this->app->register(CacheServiceProvider::class);
+        $this->app->register(ApiServiceProvider::class);
+        $this->app->register(WebServiceProvider::class);
+        $this->app->register(BusServiceProvider::class);
+        $this->app->register(ValidationServiceProvider::class);
+        $this->app->register(HashServiceProvider::class);
+        $this->app->register(TranslationServiceProvider::class);
+        $this->app->register(AuthServiceProvider::class);
+
+        $this->app->registerConfiguredProviders();
+
+        $this->app->boot();
     }
 
-    /**
-     * Set the Disco application instance.
-     *
-     * @param  \Illuminate\Console\Application  $disco
-     * @return void
-     */
-    public function setDisco($disco)
-    {
-        $this->disco = $disco;
+    private function loadConfig() {
+        return include $this->app->basePath('config/config.php');
     }
 
-    /**
-     * Report the exception to the exception handler.
-     *
-     * @param  \Exception  $e
-     * @return void
-     */
-    protected function reportException(Exception $e)
-    {
-        $this->app[ExceptionHandler::class]->report($e);
+    private function getIlluminateConfig() {
+        $config = new ConfigRepository(array_merge([
+                'view' => [
+                    'paths' => [
+                        resource_path('views'),
+                    ],
+                    'compiled' => realpath(storage_path('views')),
+                ]
+            ], [
+                    'cache' => $this->app->config('cache'),
+                    'filesystems' => $this->app->config('filesystems'),
+                    'app' => [
+                        'key' => $this->app->config('key'),
+                        'cipher' => $this->app->config('cipher'),
+                        'locale' => $this->app->config('locale'),
+                        'fallback_locale' => $this->app->config('fallback_locale'),
+                    ]
+                ]
+            )
+        );
+
+        return $config;
     }
 
-    /**
-     * Render the given exception.
-     *
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
-     * @param  \Exception  $e
-     * @return void
-     */
-    protected function renderException($output, Exception $e)
+    private function registerLogger()
     {
-        $this->app[ExceptionHandler::class]->renderForConsole($output, $e);
+        $logPath = storage_path('logs/discuss.log');
+        $handler = new RotatingFileHandler($logPath, Logger::INFO);
+        $handler->setFormatter(new LineFormatter(null, null, true, true));
+
+        $this->app->instance('log', new Logger($this->app->environment(), [$handler]));
+        $this->app->alias('log', LoggerInterface::class);
+    }
+
+    protected function registerBaseEnv() {
+        date_default_timezone_set($this->app->config('timezone', 'UTC'));
     }
 }
