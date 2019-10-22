@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Discuz\Foundation;
 
+use App\Models\User;
 use Discuz\Contracts\Policy\Policy;
 use Discuz\Api\Events\GetPermission;
 use Discuz\Api\Events\ScopeModelVisibility;
@@ -38,19 +39,19 @@ abstract class AbstractPolicy implements Policy
     }
 
     /**
-     * @param Model $actor
+     * @param User $actor
      * @param Model $model
      * @param string $ability
      * @return bool|null
      */
-    abstract public function canPermission(Model $actor, Model $model, $ability);
+    abstract public function canPermission(User $actor, Model $model, $ability);
 
     /**
-     * @param Model $actor
+     * @param User $actor
      * @param Builder $query
      * @return void
      */
-    public function findVisibility(Model $actor, Builder $query)
+    public function findVisibility(User $actor, Builder $query)
     {
 
     }
@@ -73,6 +74,8 @@ abstract class AbstractPolicy implements Policy
         if (! $event->model instanceof $this->model) {
             return;
         }
+
+        dd(123);
 
         if (method_exists($this, $event->ability.'Permission')) {
             return call_user_func_array([$this, $event->ability.'Permission'], [$event->actor, $event->model]);

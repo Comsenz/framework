@@ -15,12 +15,12 @@ class UserPolicy extends AbstractPolicy
 
 
     /**
-     * @param Model $actor
+     * @param User $actor
      * @param Model $model
      * @param string $ability
      * @return bool
      */
-    public function canPermission(Model $actor, Model $model, $ability): bool
+    public function canPermission(User $actor, Model $model, $ability): bool
     {
         if ($actor->hasPermission('user.'.$ability)) {
             return true;
