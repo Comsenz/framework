@@ -3,7 +3,6 @@
 
 namespace Discuz\Foundation\Suppor\Providers;
 
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -22,23 +21,24 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $subscribe = [];
 
+
     /**
-     * Register the application's event listeners.
-     *
-     * @return void
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function boot()
     {
         $events = $this->getEvents();
 
+        $dispatch = $this->app->make('events');
+
         foreach ($events as $event => $listeners) {
             foreach (array_unique($listeners) as $listener) {
-                Event::listen($event, $listener);
+                $dispatch->listen($event, $listener);
             }
         }
 
         foreach ($this->subscribe as $subscriber) {
-            Event::subscribe($subscriber);
+            $dispatch->subscribe($subscriber);
         }
     }
 
