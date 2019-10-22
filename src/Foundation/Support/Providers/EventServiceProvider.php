@@ -59,7 +59,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function getEvents()
     {
-        $this->listens();
+        return $this->listens();
     }
 
 
