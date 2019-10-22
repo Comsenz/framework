@@ -5,6 +5,7 @@ namespace Discuz\Console;
 use Discuz\Api\ApiServiceProvider;
 use Discuz\Auth\AuthServiceProvider;
 use Discuz\Database\DatabaseServiceProvider;
+use Discuz\Database\MigrationServiceProvider;
 use Discuz\Filesystem\FilesystemServiceProvider;
 use Discuz\Http\HttpServiceProvider;
 use Discuz\Web\WebServiceProvider;
@@ -32,6 +33,8 @@ class Kernel implements KernelContract
 {
     protected $app;
 
+    protected $disco;
+
     public function __construct(Application $app)
     {
         $this->app = $app;
@@ -41,7 +44,7 @@ class Kernel implements KernelContract
 
         $this->siteBoot();
 
-        $console = new ConsoleApplication($this->getName(), Application::VERSION);
+        $console = $this->getDisco();
 
         $this->load($console);
 
@@ -128,6 +131,10 @@ EOF;
         // TODO: Implement terminate() method.
     }
 
+    public function getDisco(): ConsoleApplication {
+        return $this->disco ?? $this->disco = new ConsoleApplication($this->getName(), Application::VERSION);
+    }
+
 
     /**
      * @param ConsoleApplication $console
@@ -168,6 +175,7 @@ EOF;
 
         $this->app->register(HttpServiceProvider::class);
         $this->app->register(DatabaseServiceProvider::class);
+        $this->app->register(MigrationServiceProvider::class);
         $this->app->register(FilesystemServiceProvider::class);
         $this->app->register(EncryptionServiceProvider::class);
         $this->app->register(CacheServiceProvider::class);

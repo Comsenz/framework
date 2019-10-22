@@ -33,15 +33,15 @@ class ApiServiceProvider extends ServiceProvider
             return $pipe;
         });
 
-        $this->app->singleton(ErrorHandler::class, function($app) {
+        $this->app->singleton(ErrorHandler::class, function(Application $app) {
             $errorHandler = new ErrorHandler;
             $errorHandler->registerHandler(new RouteNotFoundExceptionHandler());
             $errorHandler->registerHandler(new ValidationExceptionHandler());
             $errorHandler->registerHandler(new PermissionDeniedExceptionHandler());
 
-            $this->app->make('events')->dispatch(new ApiExceptionRegisterHandler($errorHandler));
+            $app->make('events')->dispatch(new ApiExceptionRegisterHandler($errorHandler));
 
-            $errorHandler->registerHandler(new FallbackExceptionHandler($this->app->config('debug')));
+            $errorHandler->registerHandler(new FallbackExceptionHandler($app->config('debug')));
             return $errorHandler;
         });
     }
