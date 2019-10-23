@@ -28,8 +28,6 @@ abstract class AbstractSearch implements Search
 
     private $finalIncludes = [];
 
-    protected $offset = 0;
-
     private $finalOffset = 0;
 
     protected $defaultLimit = 10;
@@ -116,14 +114,13 @@ abstract class AbstractSearch implements Search
 
     /**
      *
-     * @param int|null $perPage
      * @return int
      * @throws InvalidParameterException
      */
-    public function getOffset($perPage = null)
+    public function getOffset()
     {
         if (empty($this->finalOffset)){
-            $this->finalOffset = $this->parameter->getOffset($this->offset);
+            $this->finalOffset = $this->parameter->getOffset($this->getLimit());
         }
         return $this->finalOffset;
     }
