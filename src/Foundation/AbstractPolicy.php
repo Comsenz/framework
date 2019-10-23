@@ -98,4 +98,13 @@ abstract class AbstractPolicy implements Policy
             }
         }
     }
+
+    public function getAbility($ability = '')
+    {
+        $modelName = lcfirst(basename(str_replace('\\', '/', $this->model)));
+        if (strpos($ability, $modelName) === 0){
+            return $ability;
+        }
+        return $modelName.'.'.$ability;
+    }
 }
