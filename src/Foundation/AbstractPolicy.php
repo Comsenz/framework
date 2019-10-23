@@ -75,8 +75,6 @@ abstract class AbstractPolicy implements Policy
             return;
         }
 
-        dd(123);
-
         if (method_exists($this, $event->ability.'Permission')) {
             return call_user_func_array([$this, $event->ability.'Permission'], [$event->actor, $event->model]);
         }
