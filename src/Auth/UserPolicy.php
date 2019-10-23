@@ -22,7 +22,7 @@ class UserPolicy extends AbstractPolicy
      */
     public function canPermission(User $actor, Model $model, $ability): bool
     {
-        if ($actor->hasPermission('user.'.$ability)) {
+        if ($actor->hasPermission($this->getAbility($ability))) {
             return true;
         }
     }
