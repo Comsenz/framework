@@ -4,6 +4,7 @@
 namespace Discuz\Cache;
 
 use Illuminate\Cache\FileStore;
+use Illuminate\Cache\RedisStore;
 use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Cache\Factory as FactoryContracts;
 use Illuminate\Contracts\Cache\Store;
@@ -16,6 +17,19 @@ class CacheManager extends Manager implements FactoryContracts
 {
 
     protected $stores = [];
+
+
+    /**
+     * @param array $config
+     * @return Repository
+     */
+    protected function createRedisDriver(array $config)
+    {
+        $connection = $config['connection'] ?? 'default';
+
+        return $this->repository(new RedisStore($this->container['redis'], $this->getPrefix($config), $connection));
+    }
+
 
     public function createFileDriver($config) {
         return $this->repository(new FileStore($this->container['files'], $config['path']));

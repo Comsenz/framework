@@ -4,6 +4,7 @@ namespace Discuz\Http;
 
 use Discuz\Api\ApiServiceProvider;
 use Discuz\Auth\AuthServiceProvider;
+use Discuz\Cache\CacheServiceProvider;
 use Discuz\Censor\CensorServiceProvider;
 use Discuz\Database\DatabaseServiceProvider;
 use Discuz\Filesystem\FilesystemServiceProvider;
@@ -12,10 +13,10 @@ use Discuz\Foundation\Application;
 use Discuz\Http\Middleware\RequestHandler;
 use Discuz\Web\WebServiceProvider;
 use Illuminate\Bus\BusServiceProvider;
-use Illuminate\Cache\CacheServiceProvider;
 use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Encryption\EncryptionServiceProvider;
 use Illuminate\Hashing\HashServiceProvider;
+use Illuminate\Redis\RedisServiceProvider;
 use Illuminate\Translation\TranslationServiceProvider;
 use Illuminate\Validation\ValidationServiceProvider;
 use Monolog\Formatter\LineFormatter;
@@ -79,6 +80,7 @@ class Server
         $this->app->register(FilesystemServiceProvider::class);
         $this->app->register(EncryptionServiceProvider::class);
         $this->app->register(CacheServiceProvider::class);
+        $this->app->register(RedisServiceProvider::class);
         $this->app->register(ApiServiceProvider::class);
         $this->app->register(WebServiceProvider::class);
         $this->app->register(BusServiceProvider::class);
@@ -100,6 +102,9 @@ class Server
 
     private function getIlluminateConfig() {
         $config = new ConfigRepository(array_merge([
+                'database' => [
+                    'redis' => $this->app->config('redis')
+                ],
                 'view' => [
                         'paths' => [
                             resource_path('views'),
