@@ -10,7 +10,7 @@
 namespace Discuz\Censor;
 
 use App\Models\StopWord;
-use Discuz\Contracts\Setting\SettingRepository;
+use App\Settings\SettingsRepository;
 
 class Censor
 {
@@ -26,7 +26,7 @@ class Censor
 
     private $isTurnOff;
 
-    public function __construct(SettingRepository $setting)
+    public function __construct(SettingsRepository $setting)
     {
         // 加载设置
         // dump($setting->all());
