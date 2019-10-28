@@ -56,15 +56,9 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
      * @return Relationship
      * @throws BindingResolutionException
      */
-    public function hasOne($model, $serializer, $relation)
+    public function hasOne($model, $serializer, $relation = null)
     {
-        if ($model->$relation) {
-            $serializer = $this->resolveSerializer($serializer, $model, $model->$relation);
-
-            $element = new Resource($model->$relation, $serializer);
-
-            return new Relationship($element);
-        }
+        return $this->buildRelationship($model, $serializer, $relation);
     }
 
     /**
@@ -76,12 +70,33 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
      * @return Relationship
      * @throws BindingResolutionException
      */
-    public function hasMany($model, $serializer, $relation)
+    public function hasMany($model, $serializer, $relation = null)
     {
+        return $this->buildRelationship($model, $serializer, $relation, true);
+    }
+
+    /**
+     * @param mixed $model
+     * @param string|Closure|SerializerInterface $serializer
+     * @param string|null $relation
+     * @param bool $many
+     * @return Relationship
+     * @throws BindingResolutionException
+     */
+    protected function buildRelationship($model, $serializer, $relation = null, $many = false)
+    {
+        if (is_null($relation)) {
+            list(, , $caller) = debug_backtrace(false, 3);
+
+            $relation = $caller['function'];
+        }
+
         if ($model->$relation) {
             $serializer = $this->resolveSerializer($serializer, $model, $model->$relation);
 
-            $element = new Collection($model->$relation, $serializer);
+            $type = $many ? Collection::class : Resource::class;
+
+            $element = new $type($model->$relation, $serializer);
 
             return new Relationship($element);
         }

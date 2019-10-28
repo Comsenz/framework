@@ -40,6 +40,13 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
      */
     public $serializer;
 
+    /**
+     * The relationships that are included by default.
+     *
+     * @var array
+     */
+    public $include = [];
+
     public function __construct(Application $app, BusDispatcher $bus, Searcher $searcher)
     {
         $this->app = $app;
@@ -49,24 +56,22 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
         $this->searcher = $searcher;
     }
 
-
     /**
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
-     * @throws \Tobscure\JsonApi\Exception\InvalidParameterException
+     * {@inheritdoc}
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        // TODO: Implement handle() method.
         $document = new Document();
+
         $data = $this->data($request, $document);
 
         $serializer = $this->app->make($this->serializer);
 
         $element = $this->createElement($data, $serializer)
-            ->with($this->searcher->getIncludes());
+            ->with($this->getIncludes());
 
         $document->setData($element);
+
         return new JsonApiResponse($document);
     }
 
@@ -80,5 +85,10 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     abstract public function data(ServerRequestInterface $request, Document $document);
 
     abstract public function createElement($data, $serializer);
+
+    public function getIncludes()
+    {
+        return $this->include ?: $this->searcher->getIncludes();
+    }
 
 }
