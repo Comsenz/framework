@@ -400,7 +400,7 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
 
         $response = $this->listObjects($directory, $recursive);
 
-        foreach ((array) $response->get('Contents') as $content) {
+        foreach ((array) $response['Contents'] as $content) {
             $list[] = $this->normalizeFileInfo($content);
         }
 
@@ -468,8 +468,8 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
             'Key' => $path,
         ]);
 
-        foreach ($meta->get('Grants') as $grant) {
-            if ('READ' === $grant['Permission'] && false !== strpos($grant['Grantee']['URI'] ?? '', 'global/AllUsers')) {
+        foreach ($meta['Grants'] as $grant) {
+            if ('READ' === $grant['Grant']['Permission'] && false !== strpos($grant['Grantee']['URI'] ?? '', 'global/AllUsers')) {
                 return ['visibility' => AdapterInterface::VISIBILITY_PUBLIC];
             }
         }

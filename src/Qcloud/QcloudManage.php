@@ -9,7 +9,6 @@ use Discuz\Qcloud\Services\CmsService;
 use Discuz\Qcloud\Services\SmsService;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Encryption\Encrypter;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Manager;
 use InvalidArgumentException;
 
