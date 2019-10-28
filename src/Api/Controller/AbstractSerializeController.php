@@ -54,6 +54,20 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
      */
     public $optionalInclude = [];
 
+    /**
+     * The maximum number of records that can be requested.
+     *
+     * @var int
+     */
+    public $maxLimit = 50;
+
+    /**
+     * The number of records included by default.
+     *
+     * @var int
+     */
+    public $limit = 20;
+
     public function __construct(Application $app, BusDispatcher $bus, Searcher $searcher)
     {
         $this->app = $app;
@@ -112,6 +126,25 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
         $available = array_merge($this->include, $this->optionalInclude);
 
         return $this->buildParameters($request)->getInclude($available) ?: $this->include;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return int
+     * @throws InvalidParameterException
+     */
+    protected function extractOffset(ServerRequestInterface $request)
+    {
+        return $this->buildParameters($request)->getOffset($this->extractLimit($request)) ?: 0;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return int
+     */
+    protected function extractLimit(ServerRequestInterface $request)
+    {
+        return $this->buildParameters($request)->getLimit($this->maxLimit) ?: $this->limit;
     }
 
     /**
