@@ -78,12 +78,11 @@ abstract class AbstractSearch implements Search
     /**
      *
      * @return array
-     * @throws InvalidParameterException
      */
     public function getIncludes()
     {
         if (empty($this->finalIncludes)){
-            $this->finalIncludes = $this->parameter->getInclude($this->includes)?:[];
+            $this->finalIncludes = $this->includes ?: [];
         }
         return $this->finalIncludes;
     }

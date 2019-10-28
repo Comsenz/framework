@@ -1,19 +1,19 @@
 <?php
 
-
 namespace Discuz\Api\Controller;
-
 
 use Discuz\Api\JsonApiResponse;
 use Discuz\Contracts\Search\Searcher;
 use Discuz\Foundation\Application;
 use Illuminate\Contracts\Bus\Dispatcher as BusDispatcher;
-use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Tobscure\JsonApi\Document;
+use Tobscure\JsonApi\ElementInterface;
+use Tobscure\JsonApi\Exception\InvalidParameterException;
 use Tobscure\JsonApi\Parameters;
+use Tobscure\JsonApi\SerializerInterface;
 
 abstract class AbstractSerializeController implements RequestHandlerInterface
 {
@@ -22,14 +22,14 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     /**
      * 命令集调用工具类.
      *
-     * @var Dispatcher
+     * @var BusDispatcher
      */
     protected $bus;
 
     /**
      * 搜索驱动类.
      *
-     * @var Dispatcher
+     * @var Searcher
      */
     protected $searcher;
 
@@ -47,6 +47,13 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
      */
     public $include = [];
 
+    /**
+     * The relationships that are available to be included.
+     *
+     * @var array
+     */
+    public $optionalInclude = [];
+
     public function __construct(Application $app, BusDispatcher $bus, Searcher $searcher)
     {
         $this->app = $app;
@@ -58,17 +65,19 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
 
     /**
      * {@inheritdoc}
+     * @throws InvalidParameterException
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $document = new Document();
 
+        $include = $this->extractInclude($request);
+
         $data = $this->data($request, $document);
 
         $serializer = $this->app->make($this->serializer);
 
-        $element = $this->createElement($data, $serializer)
-            ->with($this->getIncludes());
+        $element = $this->createElement($data, $serializer)->with($include);
 
         $document->setData($element);
 
@@ -84,11 +93,33 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
      */
     abstract public function data(ServerRequestInterface $request, Document $document);
 
+    /**
+     * Create a PHP JSON-API Element for output in the document.
+     *
+     * @param mixed $data
+     * @param SerializerInterface $serializer
+     * @return ElementInterface
+     */
     abstract public function createElement($data, $serializer);
 
-    public function getIncludes()
+    /**
+     * @param ServerRequestInterface $request
+     * @return array
+     * @throws InvalidParameterException
+     */
+    protected function extractInclude(ServerRequestInterface $request)
     {
-        return $this->include ?: $this->searcher->getIncludes();
+        $available = array_merge($this->include, $this->optionalInclude);
+
+        return $this->buildParameters($request)->getInclude($available) ?: $this->include;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @return Parameters
+     */
+    protected function buildParameters(ServerRequestInterface $request)
+    {
+        return new Parameters($request->getQueryParams());
+    }
 }
