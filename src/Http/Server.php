@@ -8,6 +8,7 @@ use Discuz\Cache\CacheServiceProvider;
 use Discuz\Censor\CensorServiceProvider;
 use Discuz\Database\DatabaseServiceProvider;
 use Discuz\Filesystem\FilesystemServiceProvider;
+use Discuz\Qcloud\QcloudServiceProvider;
 use Discuz\Search\SearchServiceProvider;
 use Discuz\Foundation\Application;
 use Discuz\Http\Middleware\RequestHandler;
@@ -90,6 +91,7 @@ class Server
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(CensorServiceProvider::class);
         $this->app->register(SearchServiceProvider::class);
+        $this->app->register(QcloudServiceProvider::class);
 
         $this->app->registerConfiguredProviders();
 
