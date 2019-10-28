@@ -6,6 +6,7 @@ use Discuz\Contracts\Qcloud\Factory;
 use Discuz\Contracts\Setting\SettingsRepository;
 use Discuz\Qcloud\Services\BillingService;
 use Discuz\Qcloud\Services\CmsService;
+use Discuz\Qcloud\Services\SmsService;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Support\Arr;
@@ -31,12 +32,18 @@ class QcloudManage extends Manager implements Factory
 
     public function createBillingDriver()
     {
-        return $this->buildProvider(BillingService::class, $this->qcloudConfig);
+        return $this->buildService(BillingService::class, $this->qcloudConfig);
     }
 
     public function createCmsDriver()
     {
-        return $this->buildProvider(CmsService::class, $this->qcloudConfig);
+        return $this->buildService(CmsService::class, $this->qcloudConfig);
+    }
+
+    public function createSmsDriver()
+    {
+        $config = $this->container->config('sms');
+        return $this->buildService(SmsService::class, $config);
     }
 
     /**
@@ -44,9 +51,9 @@ class QcloudManage extends Manager implements Factory
      * @param $config
      * @return mixed
      */
-    public function buildProvider($provider, $config)
+    public function buildService($provider, $config)
     {
-        return new $provider($config['secretId'], $config['secretKey']);
+        return new $provider($config);
     }
 
     /**

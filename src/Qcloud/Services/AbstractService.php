@@ -19,9 +19,9 @@ abstract class AbstractService
     protected $clientProfile;
     protected $client;
 
-    public function __construct($secretId, $secretKey, $token = null)
+    public function __construct($config)
     {
-        $this->cred = new Credential($secretId, $secretKey, $token = null);
+        $this->cred = new Credential($config['secretId'], $config['secretKey'], $config['token']);
 
 
         $this->httpProfile = new HttpProfile();
