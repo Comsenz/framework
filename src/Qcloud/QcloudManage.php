@@ -46,13 +46,13 @@ class QcloudManage extends Manager implements Factory
     }
 
     /**
-     * @param $provider
+     * @param $service
      * @param $config
      * @return mixed
      */
-    public function buildService($provider, $config)
+    public function buildService($service, $config)
     {
-        return new $provider($config);
+        return new $service($config);
     }
 
     /**

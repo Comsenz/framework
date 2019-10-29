@@ -5,6 +5,7 @@ namespace Discuz\Http\Middleware;
 
 use Discuz\Foundation\Application;
 use Discuz\Http\RouteCollection;
+use Discuz\Http\UrlGenerator;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -39,6 +40,8 @@ class RequestHandler implements MiddlewareInterface
         $requestPath = $request->getUri()->getPath();
 
         $routes = $this->app->make(RouteCollection::class);
+
+        UrlGenerator::setRequest($request);
 
         foreach ($this->middlewares as $pathPrefix => $middleware) {
 
