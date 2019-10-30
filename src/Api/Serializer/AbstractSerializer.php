@@ -2,10 +2,13 @@
 
 namespace Discuz\Api\Serializer;
 
+use App\Events\Serializing;
+use App\Models\User;
 use Closure;
 use DateTime;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use InvalidArgumentException;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Tobscure\JsonApi\AbstractSerializer as BaseAbstractSerializer;
 use Tobscure\JsonApi\Collection;
 use Tobscure\JsonApi\Relationship;
@@ -15,7 +18,43 @@ use Tobscure\JsonApi\SerializerInterface;
 abstract class AbstractSerializer extends BaseAbstractSerializer
 {
     /**
+     * @var Request
+     */
+    protected $request;
+
+    /**
+     * @var User
+     */
+    protected $actor;
+
+    /**
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
+        $this->actor = $request->getAttribute('actor');
+    }
+
+    /**
+     * @return User
+     */
+    public function getActor()
+    {
+        return $this->actor;
+    }
+
+    /**
      * {@inheritdoc}
+     * @throws BindingResolutionException
      */
     public function getAttributes($model, array $fields = null)
     {
@@ -24,6 +63,10 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
         }
 
         $attributes = $this->getDefaultAttributes($model);
+
+        app()->make('events')->dispatch(
+            new Serializing($this, $model, $attributes)
+        );
 
         return $attributes;
     }
@@ -117,13 +160,27 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
         }
 
         if (is_string($serializer)) {
-            $serializer = app()->make($serializer);
+            $serializer = $this->resolveSerializerClass($serializer);
         }
 
         if (! ($serializer instanceof SerializerInterface)) {
             throw new InvalidArgumentException('Serializer must be an instance of '
                 .SerializerInterface::class);
         }
+
+        return $serializer;
+    }
+
+    /**
+     * @param string $class
+     * @return object
+     * @throws BindingResolutionException
+     */
+    protected function resolveSerializerClass($class)
+    {
+        $serializer = app()->make($class);
+
+        // $serializer->setRequest($this->request);
 
         return $serializer;
     }
