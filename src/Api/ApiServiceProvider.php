@@ -3,6 +3,7 @@
 
 namespace Discuz\Api;
 
+use Discuz\Api\ExceptionHandler\NotAuthenticatedExceptionHandler;
 use Discuz\Api\ExceptionHandler\PermissionDeniedExceptionHandler;
 use Discuz\Api\ExceptionHandler\RouteNotFoundExceptionHandler;
 use Discuz\Api\ExceptionHandler\ServiceResponseExceptionHandler;
@@ -39,6 +40,7 @@ class ApiServiceProvider extends ServiceProvider
             $errorHandler = new ErrorHandler;
             $errorHandler->registerHandler(new RouteNotFoundExceptionHandler());
             $errorHandler->registerHandler(new ValidationExceptionHandler());
+            $errorHandler->registerHandler(new NotAuthenticatedExceptionHandler());
             $errorHandler->registerHandler(new PermissionDeniedExceptionHandler());
             $errorHandler->registerHandler(new TencentCloudSDKExceptionHandler());
             $errorHandler->registerHandler(new ServiceResponseExceptionHandler());

@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Discuz\Database;
 
+use App\Models\User;
 use Discuz\Api\Events\ScopeModelVisibility;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -22,7 +23,7 @@ trait ScopeVisibilityTrait
      * @param User $actor
      * @param string $ability
      */
-    public function scopeWhereVisibleTo(Builder $query, $actor, $ability = 'find')
+    public function scopeWhereVisibleTo(Builder $query, User $actor, $ability = 'find')
     {
         static::$dispatcher->dispatch(
             new ScopeModelVisibility($actor, $query, $ability)

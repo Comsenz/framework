@@ -1,17 +1,15 @@
 <?php
 
-
 namespace Discuz\Auth;
 
-
 use App\Models\User;
+use Discuz\Auth\Exception\NotAuthenticatedException;
 use Discuz\Auth\Exception\PermissionDeniedException;
 
 trait AssertPermissionTrait
 {
-
     /**
-     * @param $condition
+     * @param bool $condition
      * @throws PermissionDeniedException
      */
     protected function assertPermission($condition)
@@ -23,19 +21,34 @@ trait AssertPermissionTrait
 
     /**
      * @param User $actor
-     * @param $ability
-     * @param array $arguments
+     * @throws NotAuthenticatedException
+     */
+    protected function assertRegistered(User $actor)
+    {
+        if ($actor->isGuest()) {
+            throw new NotAuthenticatedException;
+        }
+    }
+
+    /**
+     * @param User $actor
+     * @param string $ability
+     * @param mixed $arguments
      * @throws PermissionDeniedException
      */
-    protected function assertCan(User $actor, $ability, $arguments = []) {
-        $this->assertPermission($actor->can($ability, $arguments));
+    protected function assertCan(User $actor, $ability, $arguments = [])
+    {
+        $this->assertPermission(
+            $actor->can($ability, $arguments)
+        );
     }
 
     /**
      * @param User $actor
      * @throws PermissionDeniedException
      */
-    protected function assertAdmin(User $actor) {
+    protected function assertAdmin(User $actor)
+    {
         $this->assertCan($actor, 'administrate');
     }
 }
