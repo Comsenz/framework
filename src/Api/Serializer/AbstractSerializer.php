@@ -2,10 +2,10 @@
 
 namespace Discuz\Api\Serializer;
 
-use App\Events\Serializing;
 use App\Models\User;
 use Closure;
 use DateTime;
+use Discuz\Api\Events\Serializing;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface as Request;
