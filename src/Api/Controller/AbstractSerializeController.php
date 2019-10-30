@@ -3,9 +3,6 @@
 namespace Discuz\Api\Controller;
 
 use Discuz\Api\JsonApiResponse;
-use Discuz\Contracts\Search\Searcher;
-use Discuz\Foundation\Application;
-use Illuminate\Contracts\Bus\Dispatcher as BusDispatcher;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -18,20 +15,6 @@ use Tobscure\JsonApi\SerializerInterface;
 abstract class AbstractSerializeController implements RequestHandlerInterface
 {
     protected $app;
-
-    /**
-     * 命令集调用工具类.
-     *
-     * @var BusDispatcher
-     */
-    protected $bus;
-
-    /**
-     * 搜索驱动类.
-     *
-     * @var Searcher
-     */
-    protected $searcher;
 
     /**
      * The name of the serializer class to output results with.
@@ -68,15 +51,6 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
      */
     public $limit = 20;
 
-    public function __construct(Application $app, BusDispatcher $bus, Searcher $searcher)
-    {
-        $this->app = $app;
-
-        $this->bus = $bus;
-
-        $this->searcher = $searcher;
-    }
-
     /**
      * {@inheritdoc}
      * @throws InvalidParameterException
@@ -89,7 +63,7 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
 
         $data = $this->data($request, $document);
 
-        $serializer = $this->app->make($this->serializer);
+        $serializer = app()->make($this->serializer);
         $serializer->setRequest($request);
 
         $element = $this->createElement($data, $serializer)->with($include);
@@ -146,6 +120,15 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     protected function extractLimit(ServerRequestInterface $request)
     {
         return $this->buildParameters($request)->getLimit($this->maxLimit) ?: $this->limit;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return array
+     */
+    protected function extractFilter(ServerRequestInterface $request)
+    {
+        return $this->buildParameters($request)->getFilter() ?: [];
     }
 
     /**
