@@ -1,25 +1,21 @@
 <?php
 
-
 namespace Discuz\Api\Controller;
 
-use Discuz\Foundation\Application;
-use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Tobscure\JsonApi\Resource;
+use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response\EmptyResponse;
 
-abstract class AbstractDeleteController extends AbstractResourceController
+abstract class AbstractDeleteController implements RequestHandlerInterface
 {
-
     /**
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
+     * {@inheritdoc}
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $this->delete($request);
+
         return new EmptyResponse(204);
     }
 
@@ -28,5 +24,5 @@ abstract class AbstractDeleteController extends AbstractResourceController
      *
      * @param ServerRequestInterface $request
      */
-    abstract public function delete(ServerRequestInterface $request);
+    abstract protected function delete(ServerRequestInterface $request);
 }
