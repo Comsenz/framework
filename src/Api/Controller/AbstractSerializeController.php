@@ -52,12 +52,25 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     public $limit = 20;
 
     /**
+     * The fields that are available to be sorted by.
+     *
+     * @var array
+     */
+    public $sortFields = [];
+
+    /**
+     * The default sort field and order to user.
+     *
+     * @var array|null
+     */
+    public $sort;
+
+    /**
      * {@inheritdoc}
-     * @throws InvalidParameterException
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $document = new Document();
+        $document = new Document;
 
         $include = $this->extractInclude($request);
 
@@ -80,7 +93,7 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
      * @param Document $document
      * @return mixed
      */
-    abstract public function data(ServerRequestInterface $request, Document $document);
+    abstract protected function data(ServerRequestInterface $request, Document $document);
 
     /**
      * Create a PHP JSON-API Element for output in the document.
@@ -89,7 +102,7 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
      * @param SerializerInterface $serializer
      * @return ElementInterface
      */
-    abstract public function createElement($data, $serializer);
+    abstract protected function createElement($data, SerializerInterface $serializer);
 
     /**
      * @param ServerRequestInterface $request
@@ -101,6 +114,25 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
         $available = array_merge($this->include, $this->optionalInclude);
 
         return $this->buildParameters($request)->getInclude($available) ?: $this->include;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return array
+     */
+    protected function extractFields(ServerRequestInterface $request)
+    {
+        return $this->buildParameters($request)->getFields();
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return array|null
+     * @throws InvalidParameterException
+     */
+    protected function extractSort(ServerRequestInterface $request)
+    {
+        return $this->buildParameters($request)->getSort($this->sortFields) ?: $this->sort;
     }
 
     /**
