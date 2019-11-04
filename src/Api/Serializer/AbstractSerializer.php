@@ -6,7 +6,6 @@ use App\Models\User;
 use Closure;
 use DateTime;
 use Discuz\Api\Events\Serializing;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Tobscure\JsonApi\AbstractSerializer as BaseAbstractSerializer;
@@ -54,7 +53,6 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
 
     /**
      * {@inheritdoc}
-     * @throws BindingResolutionException
      */
     public function getAttributes($model, array $fields = null)
     {
@@ -77,7 +75,7 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
      * @param object|array $model
      * @return array
      */
-    abstract public function getDefaultAttributes($model);
+    abstract protected function getDefaultAttributes($model);
 
     /**
      * @param DateTime|null $date
@@ -95,9 +93,8 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
      *
      * @param mixed $model
      * @param string|Closure|SerializerInterface $serializer
-     * @param string $relation
+     * @param string|Closure|null $relation
      * @return Relationship
-     * @throws BindingResolutionException
      */
     public function hasOne($model, $serializer, $relation = null)
     {
@@ -109,9 +106,8 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
      *
      * @param mixed $model
      * @param string|Closure|SerializerInterface $serializer
-     * @param string $relation
+     * @param string|null $relation
      * @return Relationship
-     * @throws BindingResolutionException
      */
     public function hasMany($model, $serializer, $relation = null)
     {
@@ -124,7 +120,6 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
      * @param string|null $relation
      * @param bool $many
      * @return Relationship
-     * @throws BindingResolutionException
      */
     protected function buildRelationship($model, $serializer, $relation = null, $many = false)
     {
@@ -151,7 +146,6 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
      * @param mixed $data
      * @return SerializerInterface
      * @throws InvalidArgumentException
-     * @throws BindingResolutionException
      */
     protected function resolveSerializer($serializer, $model, $data)
     {
@@ -174,13 +168,12 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
     /**
      * @param string $class
      * @return object
-     * @throws BindingResolutionException
      */
     protected function resolveSerializerClass($class)
     {
         $serializer = app()->make($class);
 
-        // $serializer->setRequest($this->request);
+        $serializer->setRequest($this->request);
 
         return $serializer;
     }
