@@ -5,7 +5,6 @@ namespace Discuz\Foundation;
 use Discuz\Api\ApiServiceProvider;
 use Discuz\Auth\AuthServiceProvider;
 use Discuz\Cache\CacheServiceProvider;
-use Discuz\Censor\CensorServiceProvider;
 use Discuz\Database\DatabaseServiceProvider;
 use Discuz\Filesystem\FilesystemServiceProvider;
 use Discuz\Http\HttpServiceProvider;
@@ -55,7 +54,6 @@ class SiteApp
         $this->app->register(HashServiceProvider::class);
         $this->app->register(TranslationServiceProvider::class);
         $this->app->register(AuthServiceProvider::class);
-        $this->app->register(CensorServiceProvider::class);
         $this->app->register(SearchServiceProvider::class);
         $this->app->register(QcloudServiceProvider::class);
 

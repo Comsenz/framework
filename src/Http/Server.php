@@ -2,29 +2,8 @@
 
 namespace Discuz\Http;
 
-use Discuz\Api\ApiServiceProvider;
-use Discuz\Auth\AuthServiceProvider;
-use Discuz\Cache\CacheServiceProvider;
-use Discuz\Censor\CensorServiceProvider;
-use Discuz\Database\DatabaseServiceProvider;
-use Discuz\Filesystem\FilesystemServiceProvider;
 use Discuz\Foundation\SiteApp;
-use Discuz\Qcloud\QcloudServiceProvider;
-use Discuz\Search\SearchServiceProvider;
-use Discuz\Foundation\Application;
 use Discuz\Http\Middleware\RequestHandler;
-use Discuz\Web\WebServiceProvider;
-use Illuminate\Bus\BusServiceProvider;
-use Illuminate\Config\Repository as ConfigRepository;
-use Illuminate\Encryption\EncryptionServiceProvider;
-use Illuminate\Hashing\HashServiceProvider;
-use Illuminate\Redis\RedisServiceProvider;
-use Illuminate\Translation\TranslationServiceProvider;
-use Illuminate\Validation\ValidationServiceProvider;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\RotatingFileHandler;
-use Monolog\Logger;
-use Psr\Log\LoggerInterface;
 use Throwable;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
