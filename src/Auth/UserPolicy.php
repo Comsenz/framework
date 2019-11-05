@@ -1,28 +1,25 @@
 <?php
 
-
 namespace Discuz\Auth;
-
 
 use App\Models\User;
 use Discuz\Foundation\AbstractPolicy;
-use Illuminate\Database\Eloquent\Model;
 
 class UserPolicy extends AbstractPolicy
 {
-
+    /**
+     * {@inheritdoc}
+     */
     protected $model = User::class;
-
 
     /**
      * @param User $actor
-     * @param Model $model
      * @param string $ability
-     * @return bool
+     * @return bool|null
      */
-    public function canPermission(User $actor, Model $model, $ability): bool
+    public function can(User $actor, $ability)
     {
-        if ($actor->hasPermission($this->getAbility($ability))) {
+        if ($actor->hasPermission('user.' . $ability)) {
             return true;
         }
     }

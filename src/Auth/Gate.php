@@ -175,7 +175,6 @@ class Gate implements GateContract
      */
     public function check($ability, $arguments = [])
     {
-
         if (! $user = $this->resolveUser()) {
             return false;
         }
@@ -202,6 +201,7 @@ class Gate implements GateContract
     protected function callBeforeCallbacks($user, $ability, array $arguments)
     {
         $arguments = array_merge([$user, $ability], $arguments);
+
         foreach ($this->beforeCallbacks as $before) {
             if (! is_null($result = call_user_func_array($before, $arguments))) {
                 return $result;
