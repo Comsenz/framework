@@ -15,9 +15,6 @@ class RouteCollection
      */
     protected $reverse = [];
 
-    protected $middleware;
-    protected $middlewares = [];
-
     /**
      * @var DataGenerator
      */
@@ -80,10 +77,6 @@ class RouteCollection
         }
 
         $this->reverse[$name] = $routeDatas;
-        if($this->middleware) {
-            $this->middlewares[$method.'|'.$path] = $this->middleware;
-        }
-        $this->middleware = null;
         return $this;
     }
     public function getRouteData()
@@ -104,10 +97,5 @@ class RouteCollection
             return '/'.ltrim(implode('', $parts), '/');
         }
         throw new \RuntimeException("Route $name not found");
-    }
-
-    public function getMiddlewares($method, $path) {
-        return isset($this->middlewares[$method.'|'.$path]) ? $this->middlewares[$method.'|'.$path] : [];
-
     }
 }

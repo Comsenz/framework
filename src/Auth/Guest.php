@@ -18,7 +18,7 @@ class Guest extends User
     public function getGroupsAttribute()
     {
         if (! isset($this->attributes['groups'])) {
-            $this->attributes['groups'] = $this->relations['groups'] = Group::where('id', Group::GUEST_ID)->get();
+            $this->attributes['groups'] = $this->relations['groups'] = Group::find(Group::GUEST_ID);
         }
 
         return $this->attributes['groups'];

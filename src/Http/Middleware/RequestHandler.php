@@ -39,8 +39,6 @@ class RequestHandler implements MiddlewareInterface
         $request = $this->getNormalizedPath($request);
         $requestPath = $request->getUri()->getPath();
 
-        $routes = $this->app->make(RouteCollection::class);
-
         UrlGenerator::setRequest($request);
 
         foreach ($this->middlewares as $pathPrefix => $middleware) {
@@ -48,14 +46,6 @@ class RequestHandler implements MiddlewareInterface
             if (strpos($requestPath, $pathPrefix) === 0) {
 
                 $requestHandler = $this->app->make($middleware);
-
-                $pathMiddlewares = $routes->getMiddlewares($request->getMethod(), $requestPath);
-
-                foreach($pathMiddlewares as $pathMiddleware) {
-                    $requestHandler->pipe($this->app->make($pathMiddleware));
-                }
-
-                $requestHandler->pipe($this->app->make(DispatchRoute::class));
 
                 if ($requestHandler instanceof MiddlewareInterface) {
                     return $requestHandler->process($request, $handler);

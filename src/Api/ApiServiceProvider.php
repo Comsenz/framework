@@ -14,6 +14,8 @@ use Discuz\Api\Middleware\HandlerErrors;
 use Discuz\Api\Events\ApiExceptionRegisterHandler;
 use Discuz\Foundation\Application;
 use Discuz\Http\Middleware\AuthenticateWithHeader;
+use Discuz\Http\Middleware\DispatchRoute;
+use Discuz\Http\Middleware\EnableCrossRequest;
 use Discuz\Http\Middleware\ParseJsonBody;
 use Discuz\Http\RouteCollection;
 use Illuminate\Support\ServiceProvider;
@@ -33,6 +35,7 @@ class ApiServiceProvider extends ServiceProvider
             $pipe->pipe($app->make(HandlerErrors::class));
             $pipe->pipe($app->make(ParseJsonBody::class));
             $pipe->pipe($app->make(AuthenticateWithHeader::class));
+            $pipe->pipe($app->make(EnableCrossRequest::class));
             return $pipe;
         });
 
@@ -49,6 +52,11 @@ class ApiServiceProvider extends ServiceProvider
 
             $errorHandler->registerHandler(new FallbackExceptionHandler($app->config('debug')));
             return $errorHandler;
+        });
+
+        //保证路由中间件最后执行
+        $this->app->afterResolving('discuz.api.middleware', function(MiddlewarePipe $pipe) {
+            $pipe->pipe($this->app->make(DispatchRoute::class));
         });
     }
 
