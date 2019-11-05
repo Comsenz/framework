@@ -26,7 +26,6 @@ class CacheManager extends Manager implements FactoryContracts
     protected function createRedisDriver(array $config)
     {
         $connection = $config['connection'] ?? 'default';
-
         return $this->repository(new RedisStore($this->container['redis'], $this->getPrefix($config), $connection));
     }
 
@@ -88,7 +87,12 @@ class CacheManager extends Manager implements FactoryContracts
      */
     public function getDefaultDriver()
     {
-        return Arr::get($this->container->config('cache'), 'default');
+        $defaultDriver = $this->redisIsConnected() ? 'redis' : Arr::get($this->container->config('cache'), 'default');
+        return $defaultDriver;
+    }
+
+    protected function redisIsConnected() {
+        return $this->container['redis.connection']->client()->isConnected();
     }
 
     /**
@@ -120,5 +124,16 @@ class CacheManager extends Manager implements FactoryContracts
         }
 
         return $repository;
+    }
+
+    /**
+     * Get the cache prefix.
+     *
+     * @param  array  $config
+     * @return string
+     */
+    protected function getPrefix(array $config)
+    {
+        return $config['prefix'] ?? $this->container['config']['cache.prefix'];
     }
 }
