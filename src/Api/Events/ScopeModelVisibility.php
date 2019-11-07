@@ -10,20 +10,20 @@ declare(strict_types=1);
 
 namespace Discuz\Api\Events;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
 class ScopeModelVisibility
 {
     /**
-     * @var Model
-     */
-    public $actor;
-
-    /**
      * @var Builder
      */
     public $query;
+
+    /**
+     * @var User
+     */
+    public $actor;
 
     /**
      * @var string
@@ -31,20 +31,14 @@ class ScopeModelVisibility
     public $ability;
 
     /**
-     * @var mixed
-     */
-    public $model;
-
-    /**
-     * @param Model $actor
      * @param Builder $query
+     * @param User $actor
      * @param string $ability
      */
-    public function __construct(Model $actor, Builder $query, $ability)
+    public function __construct(Builder $query, User $actor, $ability)
     {
-        $this->actor = $actor;
         $this->query = $query;
+        $this->actor = $actor;
         $this->ability = $ability;
-        $this->model = $query->getModel();
     }
 }

@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Discuz\Foundation;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
 abstract class AbstractRepository
@@ -19,15 +19,15 @@ abstract class AbstractRepository
      * Scope a query to only include records that are visible to a user.
      *
      * @param Builder $query
-     * @param Model $actor
-     * @param string $ability
+     * @param User $actor
      * @return Builder
      */
-    protected function scopeVisibleTo(Builder $query, Model $actor = null, $ability = 'find')
+    protected function scopeVisibleTo(Builder $query, User $actor = null)
     {
         if ($actor !== null) {
-            $query->whereVisibleTo($actor, $ability);
+            $query->whereVisibleTo($actor);
         }
+
         return $query;
     }
 }
