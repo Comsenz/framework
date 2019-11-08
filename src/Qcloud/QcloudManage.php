@@ -8,6 +8,7 @@ use Discuz\Qcloud\Services\BillingService;
 use Discuz\Qcloud\Services\CheckVersionService;
 use Discuz\Qcloud\Services\CmsService;
 use Discuz\Qcloud\Services\SmsService;
+use Discuz\Qcloud\Services\YunsouService;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Support\Manager;
@@ -55,6 +56,9 @@ class QcloudManage extends Manager implements Factory
         return $this->buildService(CheckVersionService::class, $config);
     }
 
+    public function createYunsouDriver() {
+        return $this->buildService(YunsouService::class, $this->qcloudConfig);
+    }
     /**
      * @param $service
      * @param $config
