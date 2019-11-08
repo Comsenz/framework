@@ -5,6 +5,7 @@ namespace Discuz\Qcloud;
 use Discuz\Contracts\Qcloud\Factory;
 use Discuz\Contracts\Setting\SettingsRepository;
 use Discuz\Qcloud\Services\BillingService;
+use Discuz\Qcloud\Services\CheckVersionService;
 use Discuz\Qcloud\Services\CmsService;
 use Discuz\Qcloud\Services\SmsService;
 use Illuminate\Contracts\Container\Container;
@@ -43,6 +44,15 @@ class QcloudManage extends Manager implements Factory
     {
         $config = $this->container->config('sms');
         return $this->buildService(SmsService::class, $config);
+    }
+
+    public function createCheckVersionDriver()
+    {
+        $config = [
+            'base_uri' => 'http://2020.comsenz-service.com/api/',
+            'timeout'  =>  2
+        ];
+        return $this->buildService(CheckVersionService::class, $config);
     }
 
     /**

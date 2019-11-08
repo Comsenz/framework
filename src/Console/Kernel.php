@@ -2,27 +2,10 @@
 
 namespace Discuz\Console;
 
-use Discuz\Api\ApiServiceProvider;
-use Discuz\Auth\AuthServiceProvider;
-use Discuz\Database\DatabaseServiceProvider;
 use Discuz\Database\MigrationServiceProvider;
-use Discuz\Filesystem\FilesystemServiceProvider;
 use Discuz\Foundation\SiteApp;
-use Discuz\Http\HttpServiceProvider;
-use Discuz\Web\WebServiceProvider;
-use Illuminate\Bus\BusServiceProvider;
-use Illuminate\Cache\CacheServiceProvider;
-use Illuminate\Config\Repository as ConfigRepository;
-use Illuminate\Encryption\EncryptionServiceProvider;
-use Illuminate\Hashing\HashServiceProvider;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Translation\TranslationServiceProvider;
-use Illuminate\Validation\ValidationServiceProvider;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\RotatingFileHandler;
-use Monolog\Logger;
-use Psr\Log\LoggerInterface;
 use Discuz\Foundation\Application;
 use Illuminate\Contracts\Console\Kernel as KernelContract;
 use ReflectionClass;
@@ -32,15 +15,12 @@ use Symfony\Component\Finder\Finder;
 
 class Kernel extends SiteApp implements KernelContract
 {
-    protected $app;
-
     protected $disco;
 
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-    }
-
+    /**
+     * @throws \ReflectionException
+     * @throws \Exception
+     */
     public function listen() {
 
         $this->siteBoot();
@@ -61,6 +41,11 @@ class Kernel extends SiteApp implements KernelContract
 | |__/ /| |___ ( (___| |_| |/ __/   | |__/ /| |___ ( (__| |_| |
 |_____/ |_(___/ \____)\____(_____)  |_____/ |_(___/ \____)___/ 
 EOF;
+    }
+
+    protected function registerServiceProvider()
+    {
+        $this->app->register(MigrationServiceProvider::class);
     }
 
     /**
@@ -163,10 +148,5 @@ EOF;
                 $console->add($this->app->make($command));
             }
         }
-    }
-
-    protected function registerServiceProvider()
-    {
-        $this->app->register(MigrationServiceProvider::class);
     }
 }

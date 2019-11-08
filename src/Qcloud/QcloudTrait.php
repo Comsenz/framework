@@ -20,6 +20,14 @@ trait QcloudTrait
         return $this->getQcloud()->service('cms')->textModeration($content);
     }
 
+    public function describeAccountBalance() {
+        return $this->getQcloud()->service('billing')->DescribeAccountBalance();
+    }
+
+    public function checkVersion($params = []) {
+        return $this->getQcloud()->service('checkversion')->checkVersion($params);
+    }
+
     private function getQcloud() {
         return $this->qcloud ?? $this->qcloud = app('qcloud');
     }
