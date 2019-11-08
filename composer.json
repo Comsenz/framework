@@ -20,6 +20,7 @@
         "illuminate/encryption": "^6.0",
         "illuminate/hashing": "^6.0",
         "illuminate/redis": "^6.0",
+        "illuminate/notifications": "^6.0",
         "monolog/monolog": "^2.0",
         "zendframework/zend-stratigility": "^3.2",
         "zendframework/zend-diactoros": "^2.1.3",
