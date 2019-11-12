@@ -9,6 +9,7 @@ use Discuz\Database\DatabaseServiceProvider;
 use Discuz\Filesystem\FilesystemServiceProvider;
 use Discuz\Http\HttpServiceProvider;
 use Discuz\Qcloud\QcloudServiceProvider;
+use Discuz\Queue\QueueServiceProvider;
 use Discuz\Search\SearchServiceProvider;
 use Discuz\Web\WebServiceProvider;
 use Illuminate\Bus\BusServiceProvider;
@@ -56,6 +57,7 @@ class SiteApp
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(SearchServiceProvider::class);
         $this->app->register(QcloudServiceProvider::class);
+        $this->app->register(QueueServiceProvider::class);
 
         $this->registerServiceProvider();
 
@@ -74,17 +76,18 @@ class SiteApp
 
     private function getIlluminateConfig() {
         $config = new ConfigRepository(array_merge([
-                'database' => [
-                    'redis' => $this->app->config('redis')
-                ],
-                'view' => [
-                    'paths' => [
-                        resource_path('views'),
+                    'database' => [
+                        'redis' => $this->app->config('redis')
                     ],
-                    'compiled' => realpath(storage_path('views')),
-                ]
-            ], [
+                    'view' => [
+                        'paths' => [
+                            resource_path('views'),
+                        ],
+                        'compiled' => realpath(storage_path('views')),
+                    ]
+                ], [
                     'cache' => $this->app->config('cache'),
+                    'queue' => $this->app->config('queue'),
                     'filesystems' => $this->app->config('filesystems'),
                     'app' => [
                         'key' => $this->app->config('key'),

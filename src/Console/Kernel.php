@@ -2,9 +2,12 @@
 
 namespace Discuz\Console;
 
+use Discuz\Console\Event\Configuring;
 use Discuz\Database\MigrationServiceProvider;
 use Discuz\Foundation\SiteApp;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Env;
 use Illuminate\Support\Str;
 use Discuz\Foundation\Application;
 use Illuminate\Contracts\Console\Kernel as KernelContract;
@@ -17,6 +20,29 @@ class Kernel extends SiteApp implements KernelContract
 {
     protected $disco;
 
+    public function __construct(Application $app)
+    {
+        parent::__construct($app);
+
+        $this->app->booted(function () {
+            $this->defineConsoleSchedule();
+        });
+    }
+
+    /**
+     * Define the application's command schedule.
+     *
+     * @return void
+     */
+    protected function defineConsoleSchedule()
+    {
+        $this->app->singleton(Schedule::class, function ($app) {
+            return tap(new Schedule($this->scheduleTimezone()), function (Schedule $schedule) {
+                $this->schedule($schedule->useCache($this->scheduleCache()));
+            });
+        });
+    }
+
     /**
      * @throws \ReflectionException
      * @throws \Exception
@@ -26,6 +52,8 @@ class Kernel extends SiteApp implements KernelContract
         $this->siteBoot();
 
         $console = $this->getDisco();
+
+        $this->app['events']->dispatch(new Configuring($console, $this->app));
 
         $this->load($console);
 
@@ -148,5 +176,25 @@ EOF;
                 $console->add($this->app->make($command));
             }
         }
+    }
+
+    /**
+     * Get the timezone that should be used by default for scheduled events.
+     *
+     * @return \DateTimeZone|string|null
+     */
+    protected function scheduleTimezone()
+    {
+        return $this->app->config('timezone');
+    }
+
+    /**
+     * Get the name of the cache store that should manage scheduling mutexes.
+     *
+     * @return string
+     */
+    protected function scheduleCache()
+    {
+        return Env::get('SCHEDULE_CACHE_DRIVER');
     }
 }

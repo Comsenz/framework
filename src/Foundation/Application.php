@@ -449,6 +449,20 @@ class Application extends Container implements ContainerContract
         $this->bootingCallbacks[] = $callback;
     }
 
+    /**
+     * Register a new "booted" listener.
+     *
+     * @param  callable  $callback
+     * @return void
+     */
+    public function booted($callback)
+    {
+        $this->bootedCallbacks[] = $callback;
+        if ($this->isBooted()) {
+            $this->fireAppCallbacks([$callback]);
+        }
+    }
+
     public function boot() {
         if ($this->isBooted()) {
             return;
@@ -514,12 +528,12 @@ class Application extends Container implements ContainerContract
                      'filesystem.disk'      => [\Illuminate\Contracts\Filesystem\Filesystem::class],
                      'filesystem.cloud'     => [\Illuminate\Contracts\Filesystem\Cloud::class],
                      'hash'                 => [\Illuminate\Hashing\HashManager::class],
-//                     'hash.driver'          => [\Illuminate\Contracts\Hashing\Hasher::class],
-//                       'log'                  => [\Illuminate\Log\LogManager::class, \Psr\Log\LoggerInterface::class],
+                     'hash.driver'          => [\Illuminate\Contracts\Hashing\Hasher::class],
+                       'log'                  => [\Illuminate\Log\LogManager::class, \Psr\Log\LoggerInterface::class],
 //                     'mailer'               => [\Illuminate\Mail\Mailer::class, \Illuminate\Contracts\Mail\Mailer::class, \Illuminate\Contracts\Mail\MailQueue::class],
-//                     'queue'                => [\Illuminate\Queue\QueueManager::class, \Illuminate\Contracts\Queue\Factory::class, \Illuminate\Contracts\Queue\Monitor::class],
-//                     'queue.connection'     => [\Illuminate\Contracts\Queue\Queue::class],
-//                     'queue.failer'         => [\Illuminate\Queue\Failed\FailedJobProviderInterface::class],
+                     'queue'                => [\Illuminate\Queue\QueueManager::class, \Illuminate\Contracts\Queue\Factory::class, \Illuminate\Contracts\Queue\Monitor::class],
+                     'queue.connection'     => [\Illuminate\Contracts\Queue\Queue::class],
+                     'queue.failer'         => [\Illuminate\Queue\Failed\FailedJobProviderInterface::class],
                      'redis'                => [\Illuminate\Redis\RedisManager::class, \Illuminate\Contracts\Redis\Factory::class],
                      'session'              => [\Illuminate\Session\SessionManager::class],
                      'session.store'        => [\Illuminate\Session\Store::class, \Illuminate\Contracts\Session\Session::class],
@@ -609,6 +623,11 @@ class Application extends Container implements ContainerContract
         foreach($providers as $provider) {
             $this->register($provider);
         }
+    }
+
+    public function isDownForMaintenance()
+    {
+        return false;
     }
 
 }
