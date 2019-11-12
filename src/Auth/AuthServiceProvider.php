@@ -1,20 +1,18 @@
 <?php
 
-
 namespace Discuz\Auth;
-
 
 use App\Models\User;
 use Discuz\Api\Events\GetPermission;
-use Discuz\Auth\UserPolicy;
-use Discuz\Auth\Gate;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Carbon\Laravel\ServiceProvider;
 use RuntimeException;
 
 class AuthServiceProvider extends ServiceProvider
 {
-
+    /**
+     * {@inheritdoc}
+     */
     public function register()
     {
         $this->app->singleton(GateContract::class, function ($app) {
@@ -24,8 +22,11 @@ class AuthServiceProvider extends ServiceProvider
         });
     }
 
-    public function boot() {
-
+    /**
+     * {@inheritdoc}
+     */
+    public function boot()
+    {
         $gate = $this->app->make(GateContract::class);
         $events = $this->app->make('events');
 
@@ -44,9 +45,9 @@ class AuthServiceProvider extends ServiceProvider
 
             return false;
         });
+
+        User::setHasher($this->app->make('hash'));
         User::setGate($gate);
-
-
 
         $events->subscribe(UserPolicy::class);
     }
