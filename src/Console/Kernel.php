@@ -74,6 +74,7 @@ EOF;
     protected function registerServiceProvider()
     {
         $this->app->register(MigrationServiceProvider::class);
+        $this->app->register(ConsoleServiceProvider::class);
     }
 
     /**
