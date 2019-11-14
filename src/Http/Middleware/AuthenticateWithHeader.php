@@ -16,9 +16,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class AuthenticateWithHeader implements MiddlewareInterface
 {
-
-    const TOKEN_PREFIX = 'Token ';
-
     protected $app;
 
     public function __construct(Application $app)
