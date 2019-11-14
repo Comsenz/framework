@@ -54,11 +54,6 @@ class RouteCollection
         return $this->addRoute('DELETE', $path, $name, $handler);
     }
 
-    public function middleware() {
-        $this->middleware = func_get_args();
-        return $this;
-    }
-
     public function group($prefix, callable $callback)
     {
         $previousGroupPrefix = $this->currentGroupPrefix;
@@ -66,7 +61,6 @@ class RouteCollection
         $callback($this);
         $this->currentGroupPrefix = $previousGroupPrefix;
     }
-
 
     public function addRoute($method, $path, $name, $handler)
     {

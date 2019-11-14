@@ -29,6 +29,12 @@ class AutoResisterApiExceptionRegisterHandler
         }
     }
 
+    /**
+     * @param $files
+     * @param $basePath
+     * @return array
+     * @throws \ReflectionException
+     */
     protected function discoverExceptions($files, $basePath) {
 
         $exceptions = [];

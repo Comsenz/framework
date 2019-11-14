@@ -5,7 +5,10 @@ namespace Discuz\Http\Middleware;
 
 
 use App\Models\User;
+use App\Passport\Repositories\AccessTokenRepository;
 use Discuz\Auth\Guest;
+use Discuz\Foundation\Application;
+use League\OAuth2\Server\ResourceServer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -16,52 +19,47 @@ class AuthenticateWithHeader implements MiddlewareInterface
 
     const TOKEN_PREFIX = 'Token ';
 
+    protected $app;
+
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+    }
+
+
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
-     * @return Response
+     * @return ResponseInterface
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-//        $headerLine = $request->getHeaderLine('authorization');
+        $headerLine = $request->getHeaderLine('authorization');
 
-//        dd($headerLine);
-//        $parts = explode(';', $headerLine);
+        $request = $request->withAttribute('actor', new Guest());
 
-//        if (isset($parts[0]) && starts_with($parts[0], self::TOKEN_PREFIX)) {
-//            $id = substr($parts[0], strlen(self::TOKEN_PREFIX));
-//
-//            if ($key = ApiKey::where('key', $id)->first()) {
-//                $key->touch();
-//
-//                $userId = $parts[1] ?? '';
-//                $actor = $key->user ?? $this->getUser($userId);
-//
-//                $request = $request->withAttribute('apiKey', $key);
-//                $request = $request->withAttribute('bypassFloodgate', true);
-//                $request = $request->withAttribute('bypassCsrfToken', true);
-//            } elseif ($token = AccessToken::find($id)) {
-//                $token->touch();
-//
-//                $actor = $token->user;
-//            }
-//
-//            if (isset($actor)) {
-//                $request = $request->withAttribute('actor', $actor);
-//                $request = $request->withoutAttribute('session');
-//            }
-//        }
+        if ($headerLine) {
+            $accessTokenRepository = new AccessTokenRepository();
 
-        // toedo 获取Token位置，根据Token解析用户并查询到当前用户
+            $publickey = $this->app->basePath('config/public.key');
 
-        $actor = $this->getActor();
+            $server = new ResourceServer($accessTokenRepository, $publickey);
 
-        $request = $request->withAttribute('actor', $actor);
+            $request = $server->validateAuthenticatedRequest($request);
+
+            // toedo 获取Token位置，根据Token解析用户并查询到当前用户
+            $actor = $this->getActor($request);
+
+            if($actor->exists) {
+                $request = $request->withoutAttribute('oauth_access_token_id')->withoutAttribute('oauth_client_id')->withoutAttribute('oauth_user_id')->withoutAttribute('oauth_scopes')->withAttribute('actor', $actor);
+            }
+        }
 
         return $handler->handle($request);
     }
 
-    private function getActor() {
-        return new Guest();
+    private function getActor(ServerRequestInterface $request) {
+        return User::find($request->getAttribute('oauth_user_id'));
     }
 }
