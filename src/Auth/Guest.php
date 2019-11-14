@@ -1,19 +1,23 @@
 <?php
 
-
 namespace Discuz\Auth;
-
 
 use App\Models\Group;
 use App\Models\User;
 
 class Guest extends User
 {
+    /**
+     * Override the ID of this user, as a guest does not have an ID.
+     *
+     * @var int
+     */
     public $id = 0;
 
     /**
-     * belongsToMany 游客获取多对多关系时候会自动变成当前类名，group_guest，游客处理多对多关系时手动处理，以免报表不存在错误。
-     * @return mixed
+     * Get the guest's group, containing only the 'guests' group model.
+     *
+     * @return Group
      */
     public function getGroupsAttribute()
     {
@@ -24,7 +28,11 @@ class Guest extends User
         return $this->attributes['groups'];
     }
 
-    public function isGuest() {
+    /**
+     * {@inheritdoc}
+     */
+    public function isGuest()
+    {
         return true;
     }
 }
