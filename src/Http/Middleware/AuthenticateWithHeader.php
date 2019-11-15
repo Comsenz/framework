@@ -48,7 +48,7 @@ class AuthenticateWithHeader implements MiddlewareInterface
             // toedo 获取Token位置，根据Token解析用户并查询到当前用户
             $actor = $this->getActor($request);
 
-            if($actor->exists) {
+            if(!is_null($actor) && $actor->exists) {
                 $request = $request->withoutAttribute('oauth_access_token_id')->withoutAttribute('oauth_client_id')->withoutAttribute('oauth_user_id')->withoutAttribute('oauth_scopes')->withAttribute('actor', $actor);
             }
         }
