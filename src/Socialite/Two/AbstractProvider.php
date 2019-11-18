@@ -323,13 +323,13 @@ abstract class AbstractProvider implements ProviderContract
         $this->httpClient = $client;
         return $this;
     }
+
+
     /**
-     * Set the request instance.
-     *
-     * @param  \Illuminate\Http\Request  $request
+     * @param ServerRequestInterface $request
      * @return $this
      */
-    public function setRequest(Request $request)
+    public function setRequest(ServerRequestInterface $request)
     {
         $this->request = $request;
         return $this;
