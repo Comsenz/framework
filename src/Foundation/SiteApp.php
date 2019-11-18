@@ -11,6 +11,7 @@ use Discuz\Http\HttpServiceProvider;
 use Discuz\Qcloud\QcloudServiceProvider;
 use Discuz\Queue\QueueServiceProvider;
 use Discuz\Search\SearchServiceProvider;
+use Discuz\Socialite\SocialiteServiceProvider;
 use Discuz\Web\WebServiceProvider;
 use Illuminate\Bus\BusServiceProvider;
 use Illuminate\Config\Repository as ConfigRepository;
@@ -58,6 +59,7 @@ class SiteApp
         $this->app->register(SearchServiceProvider::class);
         $this->app->register(QcloudServiceProvider::class);
         $this->app->register(QueueServiceProvider::class);
+        $this->app->register(SocialiteServiceProvider::class);
 
         $this->registerServiceProvider();
 
