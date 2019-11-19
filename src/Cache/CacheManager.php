@@ -87,12 +87,7 @@ class CacheManager extends Manager implements FactoryContracts
      */
     public function getDefaultDriver()
     {
-        $defaultDriver = $this->redisIsConnected() ? 'redis' : Arr::get($this->container->config('cache'), 'default');
-        return $defaultDriver;
-    }
-
-    protected function redisIsConnected() {
-        return $this->container['redis.connection']->client()->isConnected();
+        return Arr::get($this->container->config('cache'), 'default');
     }
 
     /**
