@@ -56,6 +56,6 @@
     },
     "scripts": {
         "fix":"vendor/bin/php-cs-fixer fix",
-        "commit": "sh github/shell/.php-cs-fixer.sh"
+        "commit": "sh .github/workflows/.php-cs-fixer.sh"
     }
 }
