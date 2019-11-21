@@ -50,5 +50,12 @@
     },
     "config": {
         "sort-packages": true
+    },
+    "require-dev" : {
+        "friendsofphp/php-cs-fixer": "^2.16"
+    },
+    "scripts": {
+        "fix":"vendor/bin/php-cs-fixer fix",
+        "commit": "sh github/workflows/.php-cs-fixer.sh"
     }
 }

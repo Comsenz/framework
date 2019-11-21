@@ -1,0 +1,21 @@
+name: Fix Code
+
+on:
+  schedule:
+    - cron: '* * * * *'
+
+jobs:
+  fixcode:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+      env:
+       TOKEN: ${{ secrets.TOKEN }}
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --no-suggest
+    - name: Run Fix Code
+      run: composer run-script fix
+    - name: Push Code
+      run: composer run-scriopt commit
