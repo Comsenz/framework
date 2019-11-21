@@ -10,7 +10,8 @@ jobs:
     steps:
     - uses: actions/checkout@v1
       env:
-       TOKEN: ${{ secrets.TOKEN }}
+        ACTOR: ${{ secrets.ACTOR }}
+        PWD: ${{ secrets.PWD }}
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
     - name: Run Fix Code
