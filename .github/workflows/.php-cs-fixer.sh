@@ -5,6 +5,9 @@ if [ -z "$PWD" ]; then
     exit 1
 fi
 
+git config user.name "discuz-bot"
+git config user.email "171550539@qq.com"
+
 git add src/* -f
 git commit -m "php-cs-fixer output for commit $GITHUB_SHA [Skip ci]"
 
