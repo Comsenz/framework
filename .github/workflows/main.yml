@@ -16,4 +16,4 @@ jobs:
     - name: Run Fix Code
       run: composer run-script fix
     - name: Push Code
-      run: composer run-scriopt commit
+      run: composer run-script commit
