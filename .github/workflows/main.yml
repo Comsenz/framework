@@ -1,8 +1,6 @@
 name: Fix Code
 
-on:
-  schedule:
-    - cron: '* * * * *'
+on: [push]
 
 jobs:
   fixcode:
