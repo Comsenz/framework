@@ -1,8 +1,13 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
 
 namespace Discuz\Qcloud\Services;
-
 
 use TencentCloud\Common\Credential;
 use TencentCloud\Common\Profile\ClientProfile;
@@ -10,7 +15,6 @@ use TencentCloud\Common\Profile\HttpProfile;
 
 abstract class AbstractService
 {
-
     const ENDPOINT = '';
     const REGION = '';
 
@@ -22,7 +26,6 @@ abstract class AbstractService
     public function __construct($config)
     {
         $this->cred = new Credential($config['secretId'], $config['secretKey'], $config['token']);
-
 
         $this->httpProfile = new HttpProfile();
         $this->setEndpoint();

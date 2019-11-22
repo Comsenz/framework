@@ -1,5 +1,11 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
 
 namespace Discuz\Foundation\Suppor\Providers;
 
@@ -20,7 +26,6 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $subscribe = [];
-
 
     /**
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
@@ -61,7 +66,6 @@ class EventServiceProvider extends ServiceProvider
     {
         return $this->listens();
     }
-
 
     /**
      * Determine if events and listeners should be automatically discovered.

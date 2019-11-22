@@ -1,8 +1,13 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
 
 namespace Discuz\Http\Middleware;
-
 
 use Franzl\Middleware\Whoops\WhoopsRunner;
 use Psr\Http\Message\ResponseInterface;
@@ -13,7 +18,6 @@ use Throwable;
 
 class HandleErrorsWithWhoops implements MiddlewareInterface
 {
-
     /**
      * Process an incoming server request.
      *

@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
-/**
- *      Discuz & Tencent Cloud
- *      This is NOT a freeware, use is subject to license terms
+/*
  *
- *      Id: AbstractUploadTool.php 28830 2019-10-08 16:39 chenkeke $
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
  */
 
 namespace Discuz\Foundation;
@@ -52,7 +53,7 @@ abstract class AbstractUploadTool implements UploadTool
     /**
      * @var type
      */
-    protected $fileSize = 5*1024*1024;
+    protected $fileSize = 5 * 1024 * 1024;
 
     /**
      * @var type
@@ -78,15 +79,15 @@ abstract class AbstractUploadTool implements UploadTool
 
         $extension = pathinfo($this->file->getClientFilename(), PATHINFO_EXTENSION);
 
-        $this->uploadPath = $uploadPath?:$this->uploadPath;
+        $this->uploadPath = $uploadPath ?: $this->uploadPath;
 
-        $this->uploadName = $uploadName?:Str::random().'.'.$extension;
+        $this->uploadName = $uploadName ?: Str::random() . '.' . $extension;
 
-        $this->options = is_string($options)
+        $this->options = \is_string($options)
             ? ['visibility' => $options]
-            : $options?:$this->options;
+            : $options ?: $this->options;
 
-        $this->fullPath = trim($this->uploadPath.'/'.$this->uploadName, '/');
+        $this->fullPath = trim($this->uploadPath . '/' . $this->uploadName, '/');
 
         return $this;
     }
@@ -96,23 +97,22 @@ abstract class AbstractUploadTool implements UploadTool
      */
     public function save(array $type = [], int $size = 0)
     {
-
         $this->verifyFileType();
 
         $this->verifyFileSize();
 
-        if ($this->error){
+        if ($this->error) {
             throw new UploadVerifyException();
         }
 
         $stream = $this->file->getStream();
 
-        if ($this->file->getSize() > 10*1024*1024) {
+        if ($this->file->getSize() > 10 * 1024 * 1024) {
             $resource = $stream->detach();
 
             $result = $this->driver->putStream($this->fullPath, $resource, $this->options);
 
-            if (is_resource($resource)) {
+            if (\is_resource($resource)) {
                 fclose($resource);
             }
         } else {
@@ -122,13 +122,13 @@ abstract class AbstractUploadTool implements UploadTool
         }
 
         return $result ? new UploadedFile(
-                    $this->driver->path($this->fullPath),
-                    $this->file->getClientFilename(),
-                    $this->file->getClientMediaType(),
-                    $this->file->getSize(),
-                    $this->file->getError(),
-                    true
-                ) : false;
+            $this->driver->path($this->fullPath),
+            $this->file->getClientFilename(),
+            $this->file->getClientMediaType(),
+            $this->file->getSize(),
+            $this->file->getError(),
+            true
+        ) : false;
     }
 
     /**
@@ -138,7 +138,7 @@ abstract class AbstractUploadTool implements UploadTool
     {
         $this->error = 0;
 
-        $type = $type?:$this->fileType;
+        $type = $type ?: $this->fileType;
 
         return $this;
     }
@@ -150,7 +150,7 @@ abstract class AbstractUploadTool implements UploadTool
     {
         $this->error = 0;
 
-        $size = $size?:$this->fileSize;
+        $size = $size ?: $this->fileSize;
 
         return $this;
     }

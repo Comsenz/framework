@@ -1,5 +1,11 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
 
 namespace Discuz\Database;
 
@@ -7,7 +13,6 @@ use Illuminate\Database\Migrations\MigrationCreator as BaseMigrationCreator;
 
 class MigrationCreator extends BaseMigrationCreator
 {
-
     /**
      * Get the path to the stubs.
      *
@@ -15,6 +20,6 @@ class MigrationCreator extends BaseMigrationCreator
      */
     public function stubPath()
     {
-        return __DIR__.'/stubs';
+        return __DIR__ . '/stubs';
     }
 }

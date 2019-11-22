@@ -1,8 +1,13 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
 
 namespace Discuz\Database;
-
 
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\ConnectionInterface;
@@ -58,4 +63,3 @@ class DatabaseServiceProvider extends ServiceProvider
         Model::setEventDispatcher($this->app->make('events'));
     }
 }
-

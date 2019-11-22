@@ -1,5 +1,12 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
+
 namespace Discuz\Auth;
 
 use App\Models\User;
@@ -13,9 +20,9 @@ class UserPolicy extends AbstractPolicy
     protected $model = User::class;
 
     /**
-     * @param User $actor
      * @param string $ability
-     * @return bool|null
+     *
+     * @return null|bool
      */
     public function can(User $actor, $ability)
     {

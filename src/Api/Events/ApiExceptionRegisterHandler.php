@@ -1,8 +1,13 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
 
 namespace Discuz\Api\Events;
-
 
 use Tobscure\JsonApi\ErrorHandler;
 
@@ -14,5 +19,4 @@ class ApiExceptionRegisterHandler
     {
         $this->apiErrorHandler = $errorHandler;
     }
-
 }

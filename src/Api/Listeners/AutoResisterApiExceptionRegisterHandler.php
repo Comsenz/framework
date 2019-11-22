@@ -1,5 +1,11 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
 
 namespace Discuz\Api\Listeners;
 
@@ -20,11 +26,11 @@ class AutoResisterApiExceptionRegisterHandler
         $this->app = $app;
     }
 
-    public function handle(ApiExceptionRegisterHandler $event) {
-
+    public function handle(ApiExceptionRegisterHandler $event)
+    {
         $exceptions = $this->discoverExceptions((new Finder())->files()->in($this->discoverApiExceptionsWithin()), $this->app->basePath());
 
-        foreach($exceptions as $exception) {
+        foreach ($exceptions as $exception) {
             $event->apiErrorHandler->registerHandler($exception->newInstance());
         }
     }
@@ -32,45 +38,49 @@ class AutoResisterApiExceptionRegisterHandler
     /**
      * @param $files
      * @param $basePath
-     * @return array
+     *
      * @throws \ReflectionException
+     *
+     * @return array
      */
-    protected function discoverExceptions($files, $basePath) {
-
+    protected function discoverExceptions($files, $basePath)
+    {
         $exceptions = [];
-        foreach($files as $file) {
+        foreach ($files as $file) {
             $class = new ReflectionClass($this->classFromFile($file, $basePath));
-            if(!in_array(ExceptionHandlerInterface::class, $class->getInterfaceNames())) {
+            if (!\in_array(ExceptionHandlerInterface::class, $class->getInterfaceNames(), true)) {
                 continue;
             }
             $exceptions[] = $class;
         }
+
         return $exceptions;
     }
 
     /**
      * Extract the class name from the given file path.
      *
-     * @param  \SplFileInfo  $file
-     * @param  string  $basePath
+     * @param string $basePath
+     *
      * @return string
      */
     protected function classFromFile(SplFileInfo $file, $basePath)
     {
-        $class = trim(Str::replaceFirst($basePath, '', $file->getRealPath()), DIRECTORY_SEPARATOR);
+        $class = trim(Str::replaceFirst($basePath, '', $file->getRealPath()), \DIRECTORY_SEPARATOR);
 
         return str_replace(
-            [DIRECTORY_SEPARATOR, ucfirst(basename(app()->path())).'\\'],
+            [\DIRECTORY_SEPARATOR, ucfirst(basename(app()->path())) . '\\'],
             ['\\', app()->getNamespace()],
             ucfirst(Str::replaceLast('.php', '', $class))
         );
     }
 
-    protected function discoverApiExceptionsWithin() {
+    protected function discoverApiExceptionsWithin()
+    {
         $dir = $this->app->path('Api/Exceptions');
 
-        return collect($dir)->reject(function($directory) {
-            return ! is_dir($directory);
+        return collect($dir)->reject(function ($directory) {
+            return !is_dir($directory);
         })->toArray();
     }
 }

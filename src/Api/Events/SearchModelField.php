@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
-/**
- *      Discuz & Tencent Cloud
- *      This is NOT a freeware, use is subject to license terms
+/*
  *
- *      Id: SearchModelField.php 28830 2019-10-16 11:38 chenkeke $
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
  */
 
 namespace Discuz\Api\Events;
@@ -31,7 +32,7 @@ class SearchModelField
     public $field;
 
     /**
-     * @var String
+     * @var string
      */
     public $content;
 
@@ -41,12 +42,10 @@ class SearchModelField
     public $model;
 
     /**
-     * @param Model $actor
-     * @param Builder $query
-     * @param String $field
-     * @param String $content
+     * @param string $field
+     * @param string $content
      */
-    public function __construct(Model $actor, Builder $query, $field, $content = "")
+    public function __construct(Model $actor, Builder $query, $field, $content = '')
     {
         $this->actor = $actor;
         $this->query = $query;

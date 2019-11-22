@@ -1,10 +1,14 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
 
 namespace Discuz\Http\Middleware;
 
-
-use Discuz\Foundation\Application;
 use Illuminate\View\Factory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -44,12 +48,11 @@ class HandleErrorsWithView implements MiddlewareInterface
 
     protected function showExceptions(Throwable $error)
     {
-
         $code = $error->getCode();
 
-        $name = 'errors.'.$code;
+        $name = 'errors.' . $code;
 
-        if(!$this->view->exists($name)) {
+        if (!$this->view->exists($name)) {
             $name = 'errors.500';
             $code = 500;
             $this->log->error($error);
@@ -58,7 +61,5 @@ class HandleErrorsWithView implements MiddlewareInterface
         $view = $this->view->make($name);
 
         return new HtmlResponse($view->render(), $code);
-
-
     }
 }

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
+
 namespace Discuz\Qcloud;
 
 use Discuz\Contracts\Qcloud\Factory;
@@ -16,7 +23,6 @@ use InvalidArgumentException;
 
 class QcloudManage extends Manager implements Factory
 {
-
     protected $qcloudConfig;
 
     public function __construct(Container $container)
@@ -26,7 +32,7 @@ class QcloudManage extends Manager implements Factory
         $settings = $container->make(SettingsRepository::class);
         $encrypter = $container->make(Encrypter::class);
 
-        $this->qcloudConfig = collect($settings->tag('qcloud'))->map(function($value) use ($encrypter) {
+        $this->qcloudConfig = collect($settings->tag('qcloud'))->map(function ($value) use ($encrypter) {
             return $value ? $encrypter->decrypt($value) : null;
         });
     }
@@ -44,6 +50,7 @@ class QcloudManage extends Manager implements Factory
     public function createSmsDriver()
     {
         $config = $this->container->config('sms');
+
         return $this->buildService(SmsService::class, $config);
     }
 
@@ -51,17 +58,21 @@ class QcloudManage extends Manager implements Factory
     {
         $config = [
             'base_uri' => 'http://2020.comsenz-service.com/api/',
-            'timeout'  =>  2
+            'timeout' => 2,
         ];
+
         return $this->buildService(CheckVersionService::class, $config);
     }
 
-    public function createYunsouDriver() {
+    public function createYunsouDriver()
+    {
         return $this->buildService(YunsouService::class, $this->qcloudConfig);
     }
+
     /**
      * @param $service
      * @param $config
+     *
      * @return mixed
      */
     public function buildService($service, $config)

@@ -1,18 +1,13 @@
 <?php
 
 /*
- * This file is part of Fine.
  *
- * (c) Leiyu <yleimm@gmail.com>
- * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- * 
- * Id: MethodNotAllowedException.php 2018/11/28 18:09
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
  */
 
 namespace Discuz\Http\Exception;
-
 
 use Exception;
 

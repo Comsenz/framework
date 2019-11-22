@@ -1,5 +1,11 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
 
 namespace Discuz\Api\ExceptionHandler;
 
@@ -26,7 +32,7 @@ class PermissionDeniedExceptionHandler implements ExceptionHandlerInterface
         $status = 401;
         $error = [
             'status' => (string) $status,
-            'code' => 'permission_denied'
+            'code' => 'permission_denied',
         ];
 
         return new ResponseBag($status, [$error]);

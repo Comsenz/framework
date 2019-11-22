@@ -1,5 +1,12 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
+
 namespace Discuz\Foundation;
 
 use Discuz\Api\ApiServiceProvider;
@@ -34,8 +41,8 @@ class SiteApp
         $this->app = $app;
     }
 
-    public function siteBoot() {
-
+    public function siteBoot()
+    {
         $this->app->instance('env', 'production');
         $this->app->instance('discuz.config', $this->loadConfig());
         $this->app->instance('config', $this->getIlluminateConfig());
@@ -70,38 +77,48 @@ class SiteApp
         return $this->app;
     }
 
-    protected function registerServiceProvider() {}
+    protected function registerServiceProvider()
+    {
+    }
 
-    private function loadConfig() {
+    protected function registerBaseEnv()
+    {
+        date_default_timezone_set($this->app->config('timezone', 'UTC'));
+    }
+
+    private function loadConfig()
+    {
         return include $this->app->basePath('config/config.php');
     }
 
-    private function getIlluminateConfig() {
-        $config = new ConfigRepository(array_merge([
-                    'database' => [
-                        'redis' => $this->app->config('redis')
+    private function getIlluminateConfig()
+    {
+        return new ConfigRepository(
+            array_merge(
+            [
+                'database' => [
+                    'redis' => $this->app->config('redis'),
+                ],
+                'view' => [
+                    'paths' => [
+                        resource_path('views'),
                     ],
-                    'view' => [
-                        'paths' => [
-                            resource_path('views'),
-                        ],
-                        'compiled' => realpath(storage_path('views')),
-                    ]
-                ], [
-                    'cache' => $this->app->config('cache'),
-                    'queue' => $this->app->config('queue'),
-                    'filesystems' => $this->app->config('filesystems'),
-                    'app' => [
-                        'key' => $this->app->config('key'),
-                        'cipher' => $this->app->config('cipher'),
-                        'locale' => $this->app->config('locale'),
-                        'fallback_locale' => $this->app->config('fallback_locale'),
-                    ]
-                ]
-            )
+                    'compiled' => realpath(storage_path('views')),
+                ],
+            ],
+            [
+                'cache' => $this->app->config('cache'),
+                'queue' => $this->app->config('queue'),
+                'filesystems' => $this->app->config('filesystems'),
+                'app' => [
+                    'key' => $this->app->config('key'),
+                    'cipher' => $this->app->config('cipher'),
+                    'locale' => $this->app->config('locale'),
+                    'fallback_locale' => $this->app->config('fallback_locale'),
+                ],
+            ]
+        )
         );
-
-        return $config;
     }
 
     private function registerLogger()
@@ -112,9 +129,5 @@ class SiteApp
 
         $this->app->instance('log', new Logger($this->app->environment(), [$handler]));
         $this->app->alias('log', LoggerInterface::class);
-    }
-
-    protected function registerBaseEnv() {
-        date_default_timezone_set($this->app->config('timezone', 'UTC'));
     }
 }

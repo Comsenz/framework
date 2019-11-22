@@ -1,5 +1,12 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
+
 namespace Discuz\Console\Event;
 
 use Discuz\Foundation\Application;
@@ -8,7 +15,6 @@ use Symfony\Component\Console\Application as ConsoleApplication;
 
 class Configuring
 {
-
     protected $console;
     protected $app;
 
@@ -20,7 +26,7 @@ class Configuring
 
     public function addCommand($command)
     {
-        if (is_string($command)) {
+        if (\is_string($command)) {
             $command = $this->app->make($command);
         }
 

@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
-/**
- *      Discuz & Tencent Cloud
- *      This is NOT a freeware, use is subject to license terms
+/*
  *
- *      Id: AbstractSearch.php 28830 2019-10-16 11:23 chenkeke $
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
  */
 
 namespace Discuz\Search;
@@ -26,25 +27,25 @@ abstract class AbstractSearch implements Search
 
     protected $includes = [];
 
-    private $finalIncludes = [];
-
-    private $finalOffset = 0;
-
     protected $defaultLimit = 10;
 
     protected $maxLimit = 50;
-
-    private $finalLimit = 0;
 
     protected $sort = [];
 
     protected $defaultSort = [];
 
-    private $finalSort = [];
-
     protected $fields = [];
 
     protected $defaultFields = [];
+
+    private $finalIncludes = [];
+
+    private $finalOffset = 0;
+
+    private $finalLimit = 0;
+
+    private $finalSort = [];
 
     private $finalFields = [];
 
@@ -58,7 +59,6 @@ abstract class AbstractSearch implements Search
     }
 
     /**
-     *
      * @return model
      */
     public function getActor()
@@ -67,7 +67,6 @@ abstract class AbstractSearch implements Search
     }
 
     /**
-     *
      * @return model
      */
     public function getQuery()
@@ -76,76 +75,76 @@ abstract class AbstractSearch implements Search
     }
 
     /**
-     *
      * @return array
      */
     public function getIncludes()
     {
-        if (empty($this->finalIncludes)){
+        if (empty($this->finalIncludes)) {
             $this->finalIncludes = $this->includes ?: [];
         }
+
         return $this->finalIncludes;
     }
 
     /**
-     *
      * @return array
      */
     public function getFields()
     {
-        if (empty($this->finalFields)){
-            $this->finalFields = $this->parameter->getFields()?:$this->defaultFields;
+        if (empty($this->finalFields)) {
+            $this->finalFields = $this->parameter->getFields() ?: $this->defaultFields;
         }
+
         return $this->finalFields;
     }
 
     /**
-     *
      * @return mixed
      */
     public function getFilter()
     {
-        if (empty($this->filter)){
-            $this->filter = $this->parameter->getFilter()?:[];
+        if (empty($this->filter)) {
+            $this->filter = $this->parameter->getFilter() ?: [];
         }
+
         return $this->filter;
     }
 
     /**
+     * @throws InvalidParameterException
      *
      * @return int
-     * @throws InvalidParameterException
      */
     public function getOffset()
     {
-        if (empty($this->finalOffset)){
+        if (empty($this->finalOffset)) {
             $this->finalOffset = $this->parameter->getOffset($this->getLimit());
         }
+
         return $this->finalOffset;
     }
 
     /**
-     *
      * @return int
      */
     public function getLimit()
     {
-        if (empty($this->finalLimit)){
-            $this->finalLimit = $this->parameter->getLimit($this->maxLimit)?:$this->defaultLimit;
+        if (empty($this->finalLimit)) {
+            $this->finalLimit = $this->parameter->getLimit($this->maxLimit) ?: $this->defaultLimit;
         }
+
         return $this->finalLimit;
     }
 
     /**
-     *
      * @throws InvalidParameterException
      */
     public function getSort()
     {
-        if (empty($this->finalSort)){
-            $this->finalSort = $this->parameter->getSort($this->sort)?:$this->defaultSort;
+        if (empty($this->finalSort)) {
+            $this->finalSort = $this->parameter->getSort($this->sort) ?: $this->defaultSort;
         }
+
         return $this->finalSort;
     }
-
 }

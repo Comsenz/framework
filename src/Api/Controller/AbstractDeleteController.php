@@ -1,5 +1,12 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
+
 namespace Discuz\Api\Controller;
 
 use Psr\Http\Message\ResponseInterface;
@@ -21,8 +28,6 @@ abstract class AbstractDeleteController implements RequestHandlerInterface
 
     /**
      * Delete the resource.
-     *
-     * @param ServerRequestInterface $request
      */
     abstract protected function delete(ServerRequestInterface $request);
 }

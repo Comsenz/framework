@@ -1,5 +1,12 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
+
 namespace Discuz\Foundation\Bus;
 
 class PendingChain
@@ -21,9 +28,8 @@ class PendingChain
     /**
      * Create a new PendingChain instance.
      *
-     * @param  string  $class
-     * @param  array  $chain
-     * @return void
+     * @param string $class
+     * @param array  $chain
      */
     public function __construct($class, $chain)
     {
@@ -39,7 +45,7 @@ class PendingChain
     public function dispatch()
     {
         return (new PendingDispatch(
-            new $this->class(...func_get_args())
+            new $this->class(...\func_get_args())
         ))->chain($this->chain);
     }
 }

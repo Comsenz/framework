@@ -1,5 +1,12 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
+
 namespace Discuz\Api\Controller;
 
 use Discuz\Api\JsonApiResponse;
@@ -14,8 +21,6 @@ use Tobscure\JsonApi\SerializerInterface;
 
 abstract class AbstractSerializeController implements RequestHandlerInterface
 {
-    protected $app;
-
     /**
      * The name of the serializer class to output results with.
      *
@@ -61,16 +66,17 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     /**
      * The default sort field and order to user.
      *
-     * @var array|null
+     * @var null|array
      */
     public $sort;
+    protected $app;
 
     /**
      * {@inheritdoc}
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $document = new Document;
+        $document = new Document();
 
         $data = $this->data($request, $document);
 
@@ -78,7 +84,8 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
         $serializer->setRequest($request);
 
         $element = $this->createElement($data, $serializer)
-            ->with($this->extractInclude($request));
+            ->with($this->extractInclude($request))
+        ;
 
         $document->setData($element);
 
@@ -88,8 +95,6 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     /**
      * Get the data to be serialized and assigned to the response document.
      *
-     * @param ServerRequestInterface $request
-     * @param Document $document
      * @return mixed
      */
     abstract protected function data(ServerRequestInterface $request, Document $document);
@@ -98,15 +103,15 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
      * Create a PHP JSON-API Element for output in the document.
      *
      * @param mixed $data
-     * @param SerializerInterface $serializer
+     *
      * @return ElementInterface
      */
     abstract protected function createElement($data, SerializerInterface $serializer);
 
     /**
-     * @param ServerRequestInterface $request
-     * @return array
      * @throws InvalidParameterException
+     *
+     * @return array
      */
     protected function extractInclude(ServerRequestInterface $request)
     {
@@ -116,7 +121,6 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
      * @return array
      */
     protected function extractFields(ServerRequestInterface $request)
@@ -125,9 +129,9 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @return array|null
      * @throws InvalidParameterException
+     *
+     * @return null|array
      */
     protected function extractSort(ServerRequestInterface $request)
     {
@@ -135,9 +139,9 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @return int
      * @throws InvalidParameterException
+     *
+     * @return int
      */
     protected function extractOffset(ServerRequestInterface $request)
     {
@@ -145,7 +149,6 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
      * @return int
      */
     protected function extractLimit(ServerRequestInterface $request)
@@ -154,7 +157,6 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
      * @return array
      */
     protected function extractFilter(ServerRequestInterface $request)
@@ -163,7 +165,6 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
      * @return Parameters
      */
     protected function buildParameters(ServerRequestInterface $request)

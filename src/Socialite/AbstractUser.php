@@ -1,11 +1,16 @@
 <?php
 
+/*
+ *
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ *
+ */
 
 namespace Discuz\Socialite;
 
-use Discuz\Contracts\Socialite\User;
-
 use ArrayAccess;
+use Discuz\Contracts\Socialite\User;
 
 abstract class AbstractUser implements ArrayAccess, User
 {
@@ -45,6 +50,7 @@ abstract class AbstractUser implements ArrayAccess, User
      * @var array
      */
     public $user;
+
     /**
      * Get the unique identifier for the user.
      *
@@ -54,6 +60,7 @@ abstract class AbstractUser implements ArrayAccess, User
     {
         return $this->id;
     }
+
     /**
      * Get the nickname / username for the user.
      *
@@ -63,6 +70,7 @@ abstract class AbstractUser implements ArrayAccess, User
     {
         return $this->nickname;
     }
+
     /**
      * Get the full name of the user.
      *
@@ -72,6 +80,7 @@ abstract class AbstractUser implements ArrayAccess, User
     {
         return $this->name;
     }
+
     /**
      * Get the e-mail address of the user.
      *
@@ -81,6 +90,7 @@ abstract class AbstractUser implements ArrayAccess, User
     {
         return $this->email;
     }
+
     /**
      * Get the avatar / image URL for the user.
      *
@@ -90,6 +100,7 @@ abstract class AbstractUser implements ArrayAccess, User
     {
         return $this->avatar;
     }
+
     /**
      * Get the raw user array.
      *
@@ -99,21 +110,22 @@ abstract class AbstractUser implements ArrayAccess, User
     {
         return $this->user;
     }
+
     /**
      * Set the raw user array from the provider.
      *
-     * @param  array  $user
      * @return $this
      */
     public function setRaw(array $user)
     {
         $this->user = $user;
+
         return $this;
     }
+
     /**
      * Map the given array onto the user's properties.
      *
-     * @param  array  $attributes
      * @return $this
      */
     public function map(array $attributes)
@@ -121,44 +133,49 @@ abstract class AbstractUser implements ArrayAccess, User
         foreach ($attributes as $key => $value) {
             $this->{$key} = $value;
         }
+
         return $this;
     }
+
     /**
      * Determine if the given raw user attribute exists.
      *
-     * @param  string  $offset
+     * @param string $offset
+     *
      * @return bool
      */
     public function offsetExists($offset)
     {
-        return array_key_exists($offset, $this->user);
+        return \array_key_exists($offset, $this->user);
     }
+
     /**
      * Get the given key from the raw user.
      *
-     * @param  string  $offset
+     * @param string $offset
+     *
      * @return mixed
      */
     public function offsetGet($offset)
     {
         return $this->user[$offset];
     }
+
     /**
      * Set the given attribute on the raw user array.
      *
-     * @param  string  $offset
-     * @param  mixed  $value
-     * @return void
+     * @param string $offset
+     * @param mixed  $value
      */
     public function offsetSet($offset, $value)
     {
         $this->user[$offset] = $value;
     }
+
     /**
      * Unset the given value from the raw user array.
      *
-     * @param  string  $offset
-     * @return void
+     * @param string $offset
      */
     public function offsetUnset($offset)
     {
