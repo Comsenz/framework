@@ -9,12 +9,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - uses: Comsenz/fixcode-action@master
       env:
         ACTOR: ${{ secrets.ACTOR }}
         TOKEN: ${{ secrets.TOKEN }}
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest
-    - name: Run Fix Code
-      run: composer run-script fix
-    - name: Push Code
-      run: composer run-script commit
