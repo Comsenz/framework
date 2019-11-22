@@ -95,29 +95,29 @@ class SiteApp
     {
         return new ConfigRepository(
             array_merge(
-            [
-                'database' => [
-                    'redis' => $this->app->config('redis'),
-                ],
-                'view' => [
-                    'paths' => [
-                        resource_path('views'),
+                [
+                    'database' => [
+                        'redis' => $this->app->config('redis'),
                     ],
-                    'compiled' => realpath(storage_path('views')),
+                    'view' => [
+                        'paths' => [
+                            resource_path('views'),
+                        ],
+                        'compiled' => realpath(storage_path('views')),
+                    ],
                 ],
-            ],
-            [
-                'cache' => $this->app->config('cache'),
-                'queue' => $this->app->config('queue'),
-                'filesystems' => $this->app->config('filesystems'),
-                'app' => [
-                    'key' => $this->app->config('key'),
-                    'cipher' => $this->app->config('cipher'),
-                    'locale' => $this->app->config('locale'),
-                    'fallback_locale' => $this->app->config('fallback_locale'),
-                ],
-            ]
-        )
+                [
+                    'cache' => $this->app->config('cache'),
+                    'queue' => $this->app->config('queue'),
+                    'filesystems' => $this->app->config('filesystems'),
+                    'app' => [
+                        'key' => $this->app->config('key'),
+                        'cipher' => $this->app->config('cipher'),
+                        'locale' => $this->app->config('locale'),
+                        'fallback_locale' => $this->app->config('fallback_locale'),
+                    ],
+                ]
+            )
         );
     }
 
