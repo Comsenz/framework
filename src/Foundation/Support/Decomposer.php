@@ -1,8 +1,11 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Foundation\Support;
-
 
 use Discuz\Foundation\Application;
 use Illuminate\Support\Arr;
@@ -10,8 +13,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Decomposer
 {
-
     protected $app;
+
     protected $request;
 
     public function __construct(Application $app, ServerRequestInterface $request)
@@ -29,6 +32,7 @@ class Decomposer
         $json = file_get_contents(base_path('composer.json'));
         return json_decode($json, true);
     }
+
     /**
      * Get Installed packages & their Dependencies
      *
@@ -69,6 +73,7 @@ class Decomposer
         }
         return $size;
     }
+
     /**
      * Format the app's size in correct units
      *
@@ -128,10 +133,11 @@ class Decomposer
         ];
     }
 
-    protected function tables_size(\PDO $pdo) {
+    protected function tables_size(\PDO $pdo)
+    {
         static $dbsize = 0;
         $query = $pdo->query("SHOW TABLE STATUS LIKE '".$this->app->make('db')->getTablePrefix()."%'");
-        while($table = $query->fetch()) {
+        while ($table = $query->fetch()) {
             $dbsize += $table['Data_length'] + $table['Index_length'];
         }
         return $dbsize;

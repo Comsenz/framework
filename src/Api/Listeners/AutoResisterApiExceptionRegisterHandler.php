@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Api\Listeners;
 
@@ -20,11 +24,11 @@ class AutoResisterApiExceptionRegisterHandler
         $this->app = $app;
     }
 
-    public function handle(ApiExceptionRegisterHandler $event) {
-
+    public function handle(ApiExceptionRegisterHandler $event)
+    {
         $exceptions = $this->discoverExceptions((new Finder())->files()->in($this->discoverApiExceptionsWithin()), $this->app->basePath());
 
-        foreach($exceptions as $exception) {
+        foreach ($exceptions as $exception) {
             $event->apiErrorHandler->registerHandler($exception->newInstance());
         }
     }
@@ -35,12 +39,12 @@ class AutoResisterApiExceptionRegisterHandler
      * @return array
      * @throws \ReflectionException
      */
-    protected function discoverExceptions($files, $basePath) {
-
+    protected function discoverExceptions($files, $basePath)
+    {
         $exceptions = [];
-        foreach($files as $file) {
+        foreach ($files as $file) {
             $class = new ReflectionClass($this->classFromFile($file, $basePath));
-            if(!in_array(ExceptionHandlerInterface::class, $class->getInterfaceNames())) {
+            if (!in_array(ExceptionHandlerInterface::class, $class->getInterfaceNames())) {
                 continue;
             }
             $exceptions[] = $class;
@@ -66,10 +70,11 @@ class AutoResisterApiExceptionRegisterHandler
         );
     }
 
-    protected function discoverApiExceptionsWithin() {
+    protected function discoverApiExceptionsWithin()
+    {
         $dir = $this->app->path('Api/Exceptions');
 
-        return collect($dir)->reject(function($directory) {
+        return collect($dir)->reject(function ($directory) {
             return ! is_dir($directory);
         })->toArray();
     }

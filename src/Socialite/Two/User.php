@@ -1,8 +1,11 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Socialite\Two;
-
 
 use Discuz\Socialite\AbstractUser;
 
@@ -14,18 +17,21 @@ class User extends AbstractUser
      * @var string
      */
     public $token;
+
     /**
      * The refresh token that can be exchanged for a new access token.
      *
      * @var string
      */
     public $refreshToken;
+
     /**
      * The number of seconds the access token is valid for.
      *
      * @var int
      */
     public $expiresIn;
+
     /**
      * Set the token on the user.
      *
@@ -37,6 +43,7 @@ class User extends AbstractUser
         $this->token = $token;
         return $this;
     }
+
     /**
      * Set the refresh token required to obtain a new access token.
      *
@@ -48,6 +55,7 @@ class User extends AbstractUser
         $this->refreshToken = $refreshToken;
         return $this;
     }
+
     /**
      * Set the number of seconds the access token is valid for.
      *

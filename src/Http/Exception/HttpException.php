@@ -1,25 +1,19 @@
 <?php
 
-/*
- * This file is part of Fine.
- *
- * (c) Leiyu <yleimm@gmail.com>
- * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- * 
- * Id: HttpException.php 2018/11/30 13:32
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
  */
 
 namespace Discuz\Http\Exception;
 
-
 class HttpException extends \RuntimeException
 {
     private $statusCode;
+
     private $headers;
 
-    public function __construct($statusCode, $message = '', \Exception $previous = null, array $headers = array(), $code = 0)
+    public function __construct($statusCode, $message = '', \Exception $previous = null, array $headers = [], $code = 0)
     {
         $this->statusCode = $statusCode;
         $this->headers = $headers;

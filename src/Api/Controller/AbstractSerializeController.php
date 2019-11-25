@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
+
 namespace Discuz\Api\Controller;
 
 use Discuz\Api\JsonApiResponse;
@@ -14,8 +19,6 @@ use Tobscure\JsonApi\SerializerInterface;
 
 abstract class AbstractSerializeController implements RequestHandlerInterface
 {
-    protected $app;
-
     /**
      * The name of the serializer class to output results with.
      *

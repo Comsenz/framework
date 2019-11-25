@@ -1,8 +1,11 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Http\Middleware;
-
 
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
@@ -12,11 +15,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class EnableCrossRequest implements MiddlewareInterface
 {
-
     const ALLOW_ORIGIN = [
         'http://editor.swagger.io',
     ];
-
 
     /**
      * @param ServerRequestInterface $request

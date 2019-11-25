@@ -1,18 +1,18 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Web\Controller;
 
-
-use Discuz\Api\JsonApiResponse;
 use Discuz\Foundation\Application;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\View\Factory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Tobscure\JsonApi\Document;
-use Tobscure\JsonApi\Parameters;
 use Zend\Diactoros\Response\HtmlResponse;
 
 abstract class AbstractWebController implements RequestHandlerInterface
@@ -42,5 +42,4 @@ abstract class AbstractWebController implements RequestHandlerInterface
     }
 
     abstract public function render(ServerRequestInterface $request, Factory $view);
-
 }

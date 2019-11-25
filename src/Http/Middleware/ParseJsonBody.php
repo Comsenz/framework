@@ -1,8 +1,11 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Http\Middleware;
-
 
 use Illuminate\Support\Str;
 use Psr\Http\Message\ResponseInterface;
@@ -12,8 +15,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class ParseJsonBody implements MiddlewareInterface
 {
-
-
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
+
 namespace Discuz\Foundation;
 
 use Illuminate\Container\Container;
@@ -18,66 +23,77 @@ class Application extends Container implements ContainerContract
      * @var string
      */
     protected $basePath;
+
     /**
      * Indicates if the application has been bootstrapped before.
      *
      * @var bool
      */
     protected $hasBeenBootstrapped = false;
+
     /**
      * Indicates if the application has "booted".
      *
      * @var bool
      */
     protected $booted = false;
+
     /**
      * The array of booting callbacks.
      *
      * @var callable[]
      */
     protected $bootingCallbacks = [];
+
     /**
      * The array of booted callbacks.
      *
      * @var callable[]
      */
     protected $bootedCallbacks = [];
+
     /**
      * The array of terminating callbacks.
      *
      * @var callable[]
      */
     protected $terminatingCallbacks = [];
+
     /**
      * All of the registered service providers.
      *
      * @var \Illuminate\Support\ServiceProvider[]
      */
     protected $serviceProviders = [];
+
     /**
      * The names of the loaded service providers.
      *
      * @var array
      */
     protected $loadedProviders = [];
+
     /**
      * The deferred services and their providers.
      *
      * @var array
      */
     protected $deferredServices = [];
+
     /**
      * The custom application path defined by the developer.
      *
      * @var string
      */
     protected $appPath;
+
     /**
      * The custom database path defined by the developer.
      *
      * @var string
      */
     protected $databasePath;
+
     /**
      * The custom storage path defined by the developer.
      *
@@ -94,7 +110,6 @@ class Application extends Container implements ContainerContract
 
     public function __construct($basePath = null)
     {
-
         if ($basePath) {
             $this->setBasePath($basePath);
         }
@@ -104,7 +119,8 @@ class Application extends Container implements ContainerContract
         $this->registerCoreContainerAliases();
     }
 
-    public function version() {
+    public function version()
+    {
         return static::VERSION;
     }
 
@@ -118,7 +134,6 @@ class Application extends Container implements ContainerContract
         static::setInstance($this);
         $this->instance('app', $this);
         $this->instance(Container::class, $this);
-
     }
 
     /**
@@ -175,7 +190,6 @@ class Application extends Container implements ContainerContract
         $appPath = $this->appPath ?: $this->basePath.DIRECTORY_SEPARATOR.'app';
         return $appPath.($path ? DIRECTORY_SEPARATOR.$path : $path);
     }
-
 
     /**
      * Get the base path of the Laravel installation.
@@ -238,6 +252,7 @@ class Application extends Container implements ContainerContract
     {
         return false;
     }
+
     /**
      * Get the path to the configuration cache file.
      *
@@ -385,7 +400,6 @@ class Application extends Container implements ContainerContract
         }
     }
 
-
     /**
      * Register a deferred provider and service.
      *
@@ -408,7 +422,6 @@ class Application extends Container implements ContainerContract
             });
         }
     }
-
 
     /**
      * Resolve the given type from the container.
@@ -463,7 +476,8 @@ class Application extends Container implements ContainerContract
         }
     }
 
-    public function boot() {
+    public function boot()
+    {
         if ($this->isBooted()) {
             return;
         }
@@ -477,7 +491,6 @@ class Application extends Container implements ContainerContract
         $this->booted = true;
         $this->fireAppCallbacks($this->bootedCallbacks);
     }
-
 
     /**
      * Call the booting callbacks for the application.
@@ -566,7 +579,6 @@ class Application extends Container implements ContainerContract
         $this->globalResolvingCallbacks = [];
     }
 
-
     /**
      * @param string $key
      * @param mixed $default
@@ -618,9 +630,10 @@ class Application extends Container implements ContainerContract
         return $this->config('locale');
     }
 
-    public function registerConfiguredProviders() {
+    public function registerConfiguredProviders()
+    {
         $providers = $this->config('providers');
-        foreach($providers as $provider) {
+        foreach ($providers as $provider) {
             $this->register($provider);
         }
     }
@@ -629,5 +642,4 @@ class Application extends Container implements ContainerContract
     {
         return false;
     }
-
 }

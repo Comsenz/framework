@@ -1,8 +1,11 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Socialite;
-
 
 use Discuz\Contracts\Socialite\Factory;
 use Discuz\Socialite\Two\GithubProvider;
@@ -14,7 +17,6 @@ use InvalidArgumentException;
 
 class SocialiteManage extends Manager implements Factory
 {
-
     protected $request;
 
     /**
@@ -27,6 +29,7 @@ class SocialiteManage extends Manager implements Factory
     {
         return $this->driver($driver);
     }
+
     /**
      * Create an instance of the specified driver.
      *
@@ -40,7 +43,8 @@ class SocialiteManage extends Manager implements Factory
             'redirect' => 'http://dev.discuss.com/github',
         ];
         return $this->buildProvider(
-            GithubProvider::class, $config
+            GithubProvider::class,
+            $config
         );
     }
 
@@ -52,7 +56,8 @@ class SocialiteManage extends Manager implements Factory
             'redirect' => 'http://dev.discuss.com/api/oauth/weixin',
         ];
         return $this->buildProvider(
-            WeixinProvider::class, $config
+            WeixinProvider::class,
+            $config
         );
     }
 
@@ -66,8 +71,10 @@ class SocialiteManage extends Manager implements Factory
     public function buildProvider($provider, $config)
     {
         return new $provider(
-            $this->request, $config['client_id'],
-            $config['client_secret'], $this->formatRedirectUrl($config),
+            $this->request,
+            $config['client_id'],
+            $config['client_secret'],
+            $this->formatRedirectUrl($config),
             Arr::get($config, 'guzzle', [])
         );
     }
@@ -86,6 +93,7 @@ class SocialiteManage extends Manager implements Factory
             'callback_uri' => $this->formatRedirectUrl($config),
         ], $config);
     }
+
     /**
      * Format the callback URL, resolving a relative URI if needed.
      *
@@ -99,6 +107,7 @@ class SocialiteManage extends Manager implements Factory
             ? $this->container['url']->to($redirect)
             : $redirect;
     }
+
     /**
      * Get the default driver name.
      *

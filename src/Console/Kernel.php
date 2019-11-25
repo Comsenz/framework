@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
+
 namespace Discuz\Console;
 
 use Discuz\Console\Event\Configuring;
@@ -47,8 +52,8 @@ class Kernel extends SiteApp implements KernelContract
      * @throws \ReflectionException
      * @throws \Exception
      */
-    public function listen() {
-
+    public function listen()
+    {
         $this->siteBoot();
 
         $console = $this->getDisco();
@@ -60,7 +65,8 @@ class Kernel extends SiteApp implements KernelContract
         exit($console->run());
     }
 
-    protected function getName() {
+    protected function getName()
+    {
         return <<<EOF
  _____   _                           _____   _                 
 (____ \ (_)                         (____ \ (_)                
@@ -146,10 +152,10 @@ EOF;
         // TODO: Implement terminate() method.
     }
 
-    public function getDisco(): ConsoleApplication {
+    public function getDisco(): ConsoleApplication
+    {
         return $this->disco ?? $this->disco = new ConsoleApplication($this->getName(), Application::VERSION);
     }
-
 
     /**
      * @param ConsoleApplication $console
@@ -168,9 +174,9 @@ EOF;
         $namespace = $this->app->getNamespace();
         foreach ((new Finder)->in($paths)->files() as $command) {
             $command = $namespace.str_replace(
-                    ['/', '.php'],
-                    ['\\', ''],
-                    Str::after($command->getPathname(), realpath(app_path()).DIRECTORY_SEPARATOR)
+                ['/', '.php'],
+                ['\\', ''],
+                Str::after($command->getPathname(), realpath(app_path()).DIRECTORY_SEPARATOR)
                 );
             if (is_subclass_of($command, Command::class) &&
                 ! (new ReflectionClass($command))->isAbstract()) {

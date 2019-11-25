@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
+
 namespace Discuz\Console\Event;
 
 use Discuz\Foundation\Application;
@@ -8,8 +13,8 @@ use Symfony\Component\Console\Application as ConsoleApplication;
 
 class Configuring
 {
-
     protected $console;
+
     protected $app;
 
     public function __construct(ConsoleApplication $console, Application $app)

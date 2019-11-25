@@ -1,8 +1,11 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Api\ExceptionHandler;
-
 
 use Exception;
 use Qcloud\Cos\Exception\ServiceResponseException;
@@ -11,7 +14,6 @@ use Tobscure\JsonApi\Exception\Handler\ResponseBag;
 
 class ServiceResponseExceptionHandler implements ExceptionHandlerInterface
 {
-
     /**
      * If the exception handler is able to format a response for the provided exception,
      * then the implementation should return true.

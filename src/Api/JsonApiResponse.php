@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
+
 namespace Discuz\Api;
 
 use Zend\Diactoros\Response\JsonResponse;
@@ -11,5 +16,4 @@ class JsonApiResponse extends JsonResponse
         $headers['content-type'] = 'application/vnd.api+json';
         parent::__construct($data, $status, $headers, $encodingOptions);
     }
-
 }

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
+
 namespace Discuz\Http;
 
 use Discuz\Foundation\SiteApp;
@@ -15,7 +20,6 @@ use Zend\Stratigility\MiddlewarePipe;
 
 class Server extends SiteApp
 {
-
     public function listen()
     {
         $this->siteBoot();
@@ -40,5 +44,4 @@ class Server extends SiteApp
 
         $runner->run();
     }
-
 }

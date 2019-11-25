@@ -1,18 +1,23 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Http;
 
 use Discuz\Foundation\Application;
 use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContracts;
-use Illuminate\Support\Arr;
 
 class UrlGenerator implements UrlGeneratorContracts
 {
-
     protected $app;
+
     protected $routes;
+
     protected $cachedScheme;
+
     protected static $request;
 
     public function __construct(Application $app, RouteCollection $routes)
@@ -119,12 +124,13 @@ class UrlGenerator implements UrlGeneratorContracts
         // TODO: Implement setRootControllerNamespace() method.
     }
 
-    protected function formatHost() {
+    protected function formatHost()
+    {
         return self::$request->getUri()->getHost();
     }
 
-    protected function formatScheme() {
-
+    protected function formatScheme()
+    {
         if (is_null($this->cachedScheme)) {
             $this->cachedScheme = self::$request->getUri()->getScheme().'://';
         }
@@ -132,15 +138,18 @@ class UrlGenerator implements UrlGeneratorContracts
         return $this->cachedScheme;
     }
 
-    protected function formatPath() {
+    protected function formatPath()
+    {
         return self::$request->getUri()->getPath();
     }
 
-    protected function formatQuery() {
+    protected function formatQuery()
+    {
         return self::$request->getUri()->getQuery();
     }
 
-    public static function setRequest($request) {
+    public static function setRequest($request)
+    {
         self::$request = $request;
     }
 }

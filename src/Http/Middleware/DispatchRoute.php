@@ -1,5 +1,9 @@
 <?php
-declare(strict_types = 1);
+
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Http\Middleware;
 
@@ -12,15 +16,14 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use FastRoute\Dispatcher;
-use function Zend\Stratigility\path;
 
 class DispatchRoute implements MiddlewareInterface
 {
-
     /**
      * @var RouteCollection
      */
     protected $routes;
+
     /**
      * @var Dispatcher
      */
@@ -63,6 +66,7 @@ class DispatchRoute implements MiddlewareInterface
                 return $this->factory->toController($handler)($request, $parameters);
         }
     }
+
     protected function getDispatcher()
     {
         if (! isset($this->dispatcher)) {

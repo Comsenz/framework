@@ -1,8 +1,11 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Qcloud\Services;
-
 
 use TencentCloud\Yunsou\V20180504\Models\DataManipulationRequest;
 use TencentCloud\Yunsou\V20180504\Models\DataSearchRequest;
@@ -10,7 +13,6 @@ use TencentCloud\Yunsou\V20180504\YunsouClient;
 
 class YunsouService extends AbstractService
 {
-
     protected function getClient()
     {
         return new YunsouClient($this->cred, '', $this->clientProfile);
@@ -21,13 +23,15 @@ class YunsouService extends AbstractService
         return 'yunsou.tencentcloudapi.com';
     }
 
-    public function index($params) {
+    public function index($params)
+    {
         $req = new DataManipulationRequest();
         $req->fromJsonString(json_encode($params));
         return $this->getClient()->DataManipulation($req)->serialize();
     }
 
-    public function search($params) {
+    public function search($params)
+    {
         $req = new DataSearchRequest();
         $req->fromJsonString(json_encode($params));
         return $this->getClient()->DataSearch($req)->serialize();

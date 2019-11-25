@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Api;
 
@@ -25,12 +29,9 @@ use Tobscure\JsonApi\ErrorHandler;
 
 class ApiServiceProvider extends ServiceProvider
 {
-
     public function register()
     {
-
-        $this->app->singleton('discuz.api.middleware', function(Application $app) {
-
+        $this->app->singleton('discuz.api.middleware', function (Application $app) {
             $pipe = new MiddlewarePipe();
             $pipe->pipe($app->make(HandlerErrors::class));
             $pipe->pipe($app->make(ParseJsonBody::class));
@@ -39,7 +40,7 @@ class ApiServiceProvider extends ServiceProvider
             return $pipe;
         });
 
-        $this->app->singleton(ErrorHandler::class, function(Application $app) {
+        $this->app->singleton(ErrorHandler::class, function (Application $app) {
             $errorHandler = new ErrorHandler;
             $errorHandler->registerHandler(new RouteNotFoundExceptionHandler());
             $errorHandler->registerHandler(new ValidationExceptionHandler());
@@ -55,13 +56,13 @@ class ApiServiceProvider extends ServiceProvider
         });
 
         //保证路由中间件最后执行
-        $this->app->afterResolving('discuz.api.middleware', function(MiddlewarePipe $pipe) {
+        $this->app->afterResolving('discuz.api.middleware', function (MiddlewarePipe $pipe) {
             $pipe->pipe($this->app->make(DispatchRoute::class));
         });
     }
 
-    public function boot() {
-
+    public function boot()
+    {
         $this->populateRoutes($this->app->make(RouteCollection::class));
 
         $this->app->make('events')->listen(ApiExceptionRegisterHandler::class, AutoResisterApiExceptionRegisterHandler::class);
@@ -69,9 +70,8 @@ class ApiServiceProvider extends ServiceProvider
 
     protected function populateRoutes(RouteCollection $route)
     {
-        $route->group('/api', function(RouteCollection $route) {
+        $route->group('/api', function (RouteCollection $route) {
             require $this->app->basePath('routes/api.php');
         });
     }
-
 }

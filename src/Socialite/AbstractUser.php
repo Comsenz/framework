@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Socialite;
 
@@ -15,36 +19,42 @@ abstract class AbstractUser implements ArrayAccess, User
      * @var mixed
      */
     public $id;
+
     /**
      * The user's nickname / username.
      *
      * @var string
      */
     public $nickname;
+
     /**
      * The user's full name.
      *
      * @var string
      */
     public $name;
+
     /**
      * The user's e-mail address.
      *
      * @var string
      */
     public $email;
+
     /**
      * The user's avatar image URL.
      *
      * @var string
      */
     public $avatar;
+
     /**
      * The user's raw attributes.
      *
      * @var array
      */
     public $user;
+
     /**
      * Get the unique identifier for the user.
      *
@@ -54,6 +64,7 @@ abstract class AbstractUser implements ArrayAccess, User
     {
         return $this->id;
     }
+
     /**
      * Get the nickname / username for the user.
      *
@@ -63,6 +74,7 @@ abstract class AbstractUser implements ArrayAccess, User
     {
         return $this->nickname;
     }
+
     /**
      * Get the full name of the user.
      *
@@ -72,6 +84,7 @@ abstract class AbstractUser implements ArrayAccess, User
     {
         return $this->name;
     }
+
     /**
      * Get the e-mail address of the user.
      *
@@ -81,6 +94,7 @@ abstract class AbstractUser implements ArrayAccess, User
     {
         return $this->email;
     }
+
     /**
      * Get the avatar / image URL for the user.
      *
@@ -90,6 +104,7 @@ abstract class AbstractUser implements ArrayAccess, User
     {
         return $this->avatar;
     }
+
     /**
      * Get the raw user array.
      *
@@ -99,6 +114,7 @@ abstract class AbstractUser implements ArrayAccess, User
     {
         return $this->user;
     }
+
     /**
      * Set the raw user array from the provider.
      *
@@ -110,6 +126,7 @@ abstract class AbstractUser implements ArrayAccess, User
         $this->user = $user;
         return $this;
     }
+
     /**
      * Map the given array onto the user's properties.
      *
@@ -123,6 +140,7 @@ abstract class AbstractUser implements ArrayAccess, User
         }
         return $this;
     }
+
     /**
      * Determine if the given raw user attribute exists.
      *
@@ -133,6 +151,7 @@ abstract class AbstractUser implements ArrayAccess, User
     {
         return array_key_exists($offset, $this->user);
     }
+
     /**
      * Get the given key from the raw user.
      *
@@ -143,6 +162,7 @@ abstract class AbstractUser implements ArrayAccess, User
     {
         return $this->user[$offset];
     }
+
     /**
      * Set the given attribute on the raw user array.
      *
@@ -154,6 +174,7 @@ abstract class AbstractUser implements ArrayAccess, User
     {
         $this->user[$offset] = $value;
     }
+
     /**
      * Unset the given value from the raw user array.
      *

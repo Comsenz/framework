@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 use Illuminate\Container\Container;
 
@@ -94,4 +98,3 @@ if (! function_exists('config')) {
         return app('config')->get($key, $default);
     }
 }
-

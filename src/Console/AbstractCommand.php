@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Console;
 
@@ -11,7 +15,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AbstractCommand extends Command
 {
-
     /**
      * @var InputInterface
      */
@@ -113,16 +116,15 @@ abstract class AbstractCommand extends Command
         return $this->runCommand($command, $arguments, $this->output);
     }
 
-
     protected function runCommand($command, array $arguments, OutputInterface $output)
     {
         $arguments['command'] = $command;
 
         return $this->resolveCommand($command)->run(
-            $this->createInputFromArguments($arguments), $output
+            $this->createInputFromArguments($arguments),
+            $output
         );
     }
-
 
     protected function resolveCommand($command)
     {
@@ -142,7 +144,6 @@ abstract class AbstractCommand extends Command
 
         return $command;
     }
-
 
     protected function createInputFromArguments(array $arguments)
     {

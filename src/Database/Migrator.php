@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Database;
 
@@ -60,7 +64,6 @@ class Migrator
      */
     protected $paths = [];
 
-
     protected $output;
 
     /**
@@ -72,11 +75,12 @@ class Migrator
      * @param  \Illuminate\Contracts\Events\Dispatcher|null  $dispatcher
      * @return void
      */
-    public function __construct(MigrationRepositoryInterface $repository,
-                                Resolver $resolver,
-                                Filesystem $files,
-                                Dispatcher $dispatcher = null)
-    {
+    public function __construct(
+        MigrationRepositoryInterface $repository,
+        Resolver $resolver,
+        Filesystem $files,
+        Dispatcher $dispatcher = null
+    ) {
         $this->files = $files;
         $this->events = $dispatcher;
         $this->resolver = $resolver;
@@ -98,7 +102,8 @@ class Migrator
         $files = $this->getMigrationFiles($paths);
 
         $this->requireFiles($migrations = $this->pendingMigrations(
-            $files, $this->repository->getRan()
+            $files,
+            $this->repository->getRan()
         ));
 
         // Once we have all these migrations that are outstanding we are ready to run
@@ -273,7 +278,8 @@ class Migrator
             $rolledBack[] = $file;
 
             $this->runDown(
-                $file, $migration,
+                $file,
+                $migration,
                 $options['pretend'] ?? false
             );
         }
@@ -324,7 +330,9 @@ class Migrator
         })->all();
 
         return $this->rollbackMigrations(
-            $migrations, $paths, compact('pretend')
+            $migrations,
+            $paths,
+            compact('pretend')
         );
     }
 
@@ -592,7 +600,6 @@ class Migrator
     {
         return $this->files;
     }
-
 
     public function setOutput(OutputInterface $output)
     {

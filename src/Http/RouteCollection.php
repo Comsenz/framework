@@ -1,12 +1,14 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Http;
 
-use Discuz\Api\Events\ConfigureMiddleware;
 use FastRoute\DataGenerator;
 use FastRoute\RouteParser;
-use Illuminate\Support\Arr;
 
 class RouteCollection
 {
@@ -19,6 +21,7 @@ class RouteCollection
      * @var DataGenerator
      */
     protected $dataGenerator;
+
     /**
      * @var RouteParser
      */
@@ -33,22 +36,27 @@ class RouteCollection
 
         $this->currentGroupPrefix = '';
     }
+
     public function get($path, $name, $handler)
     {
         return $this->addRoute('GET', $path, $name, $handler);
     }
+
     public function post($path, $name, $handler)
     {
         return $this->addRoute('POST', $path, $name, $handler);
     }
+
     public function put($path, $name, $handler)
     {
         return $this->addRoute('PUT', $path, $name, $handler);
     }
+
     public function patch($path, $name, $handler)
     {
         return $this->addRoute('PATCH', $path, $name, $handler);
     }
+
     public function delete($path, $name, $handler)
     {
         return $this->addRoute('DELETE', $path, $name, $handler);
@@ -73,16 +81,19 @@ class RouteCollection
         $this->reverse[$name] = $routeDatas;
         return $this;
     }
+
     public function getRouteData()
     {
         return $this->dataGenerator->getData();
     }
+
     protected function fixPathPart(&$part, $key, array $parameters)
     {
         if (is_array($part) && array_key_exists($part[0], $parameters)) {
             $part = $parameters[$part[0]];
         }
     }
+
     public function getPath($name, array $parameters = [])
     {
         if (isset($this->reverse[$name])) {

@@ -1,11 +1,9 @@
 <?php
-declare(strict_types=1);
+
 
 /**
- *      Discuz & Tencent Cloud
- *      This is NOT a freeware, use is subject to license terms
- *
- *      Id: ScopeModelVisibility.php 28830 2019-10-10 15:45 chenkeke $
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
  */
 
 namespace Discuz\Api\Events;

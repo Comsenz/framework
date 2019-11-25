@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Database;
 
@@ -9,10 +13,10 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 
 class Migration extends BaseMigration
 {
-
     protected $schema;
 
-    public function schema() : Builder {
+    public function schema() : Builder
+    {
         return $this->boot($this->getSchema());
     }
 
@@ -28,7 +32,8 @@ class Migration extends BaseMigration
         return app('db')->connection($connection)->table($table);
     }
 
-    public function getSchema() {
+    public function getSchema()
+    {
         return $this->schema ?? $this->schema = app('db')->connection()->getSchemaBuilder();
     }
 
@@ -39,7 +44,8 @@ class Migration extends BaseMigration
      * @param Builder $schema
      * @return Builder
      */
-    protected function boot(Builder $schema) {
+    protected function boot(Builder $schema)
+    {
         return $schema;
     }
 }

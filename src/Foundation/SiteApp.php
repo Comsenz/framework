@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
+
 namespace Discuz\Foundation;
 
 use Discuz\Api\ApiServiceProvider;
@@ -34,8 +39,8 @@ class SiteApp
         $this->app = $app;
     }
 
-    public function siteBoot() {
-
+    public function siteBoot()
+    {
         $this->app->instance('env', 'production');
         $this->app->instance('discuz.config', $this->loadConfig());
         $this->app->instance('config', $this->getIlluminateConfig());
@@ -70,14 +75,20 @@ class SiteApp
         return $this->app;
     }
 
-    protected function registerServiceProvider() {}
+    protected function registerServiceProvider()
+    {
+    }
 
-    private function loadConfig() {
+    private function loadConfig()
+    {
         return include $this->app->basePath('config/config.php');
     }
 
-    private function getIlluminateConfig() {
-        $config = new ConfigRepository(array_merge([
+    private function getIlluminateConfig()
+    {
+        $config = new ConfigRepository(
+            array_merge(
+            [
                     'database' => [
                         'redis' => $this->app->config('redis')
                     ],
@@ -87,7 +98,8 @@ class SiteApp
                         ],
                         'compiled' => realpath(storage_path('views')),
                     ]
-                ], [
+                ],
+            [
                     'cache' => $this->app->config('cache'),
                     'queue' => $this->app->config('queue'),
                     'filesystems' => $this->app->config('filesystems'),
@@ -114,7 +126,8 @@ class SiteApp
         $this->app->alias('log', LoggerInterface::class);
     }
 
-    protected function registerBaseEnv() {
+    protected function registerBaseEnv()
+    {
         date_default_timezone_set($this->app->config('timezone', 'UTC'));
     }
 }

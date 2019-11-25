@@ -1,8 +1,11 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Filesystem;
-
 
 use Exception;
 use GuzzleHttp\Client as HttpClient;
@@ -78,8 +81,11 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
      */
     public function getSourcePath($path)
     {
-        return sprintf('%s.cos.%s.myqcloud.com/%s',
-            $this->getBucket(), $this->getRegion(), $path
+        return sprintf(
+            '%s.cos.%s.myqcloud.com/%s',
+            $this->getBucket(),
+            $this->getRegion(),
+            $path
         );
     }
 
@@ -99,7 +105,10 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
         ];
 
         return $this->getClient()->getObjectUrl(
-            $this->getBucket(), $path, null, $options
+            $this->getBucket(),
+            $path,
+            null,
+            $options
         );
     }
 
@@ -117,7 +126,10 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
         $expiration = date('c', !\is_numeric($expiration) ? \strtotime($expiration) : \intval($expiration));
 
         $objectUrl = $this->getClient()->getObjectUrl(
-            $this->getBucket(), $path, $expiration, $options
+            $this->getBucket(),
+            $path,
+            $expiration,
+            $options
         );
 
         $url = parse_url($objectUrl);

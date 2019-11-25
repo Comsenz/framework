@@ -1,8 +1,11 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Api\Middleware;
-
 
 use Discuz\Api\ErrorHandler;
 use Psr\Http\Message\ResponseInterface;
@@ -22,10 +25,10 @@ class HandlerErrors implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-       try {
-           return $handler->handle($request);
-       } catch (Throwable $e) {
-           return $this->errorHandler->handler($e);
-       }
+        try {
+            return $handler->handle($request);
+        } catch (Throwable $e) {
+            return $this->errorHandler->handler($e);
+        }
     }
 }

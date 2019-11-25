@@ -1,8 +1,11 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Socialite\Two;
-
 
 use Discuz\Contracts\Socialite\Provider as ProviderInterface;
 use Discuz\Socialite\Exception\SocialiteException;
@@ -15,7 +18,6 @@ class WeixinProvider extends AbstractProvider implements ProviderInterface
     protected $openId;
 
     protected $scopes = ['snsapi_userinfo'];
-
 
     protected function getCodeFields($state = null)
     {
@@ -72,7 +74,6 @@ class WeixinProvider extends AbstractProvider implements ProviderInterface
         return $user;
     }
 
-
     /**
      * @param array $user
      * @return User|mixed
@@ -80,7 +81,7 @@ class WeixinProvider extends AbstractProvider implements ProviderInterface
      */
     protected function mapUserToObject(array $user)
     {
-        if($user && isset($user['errcode'])) {
+        if ($user && isset($user['errcode'])) {
             throw new SocialiteException($user['errmsg'], $user['errcode']);
         }
 
@@ -107,7 +108,6 @@ class WeixinProvider extends AbstractProvider implements ProviderInterface
         ];
     }
 
-
     /**
      * @param string $code
      * @return array|mixed
@@ -118,7 +118,7 @@ class WeixinProvider extends AbstractProvider implements ProviderInterface
             'query' => $this->getTokenFields($code),
         ]);
         $this->credentialsResponseBody = json_decode($response->getBody(), true);
-        if (isset($this->credentialsResponseBody['openid'])){
+        if (isset($this->credentialsResponseBody['openid'])) {
             $this->openId = $this->credentialsResponseBody['openid'];
         }
         return $this->credentialsResponseBody;

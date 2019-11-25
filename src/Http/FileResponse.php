@@ -1,14 +1,18 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Http;
-
 
 use Illuminate\Http\File;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Zend\Diactoros\Response;
 
-class FileResponse extends Response {
-
+class FileResponse extends Response
+{
     protected $file;
 
     public function __construct($file, int $status = 200, array $headers = [])
@@ -22,7 +26,8 @@ class FileResponse extends Response {
         parent::__construct($body, $status, $headers);
     }
 
-    protected function createBody() {
+    protected function createBody()
+    {
         return fopen($this->file->getRealPath(), 'rb');
     }
 

@@ -1,12 +1,10 @@
 <?php
-declare(strict_types=1);
 
 /**
- *      Discuz & Tencent Cloud
- *      This is NOT a freeware, use is subject to license terms
- *
- *      Id: AbstractSearchBuilder.php8830 2019-10-16 11:30 chenkeke $
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
  */
+
 namespace Discuz\Search;
 
 use Discuz\Contracts\Search\SearchBuilder;

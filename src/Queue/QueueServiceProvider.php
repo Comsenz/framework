@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
+
 namespace Discuz\Queue;
 
 use Discuz\Console\Event\Configuring;
@@ -18,7 +23,6 @@ use Discuz\Foundation\ExceptionHandler;
 
 class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-
     protected $commands = [
         Console\FlushFailedCommand::class,
         Console\ForgetFailedCommand::class,
@@ -36,8 +40,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     public function register()
     {
-
-        $this->app->singleton(ContractsExceptionHandler::class, function($app) {
+        $this->app->singleton(ContractsExceptionHandler::class, function ($app) {
             return new ExceptionHandler($app['log']);
         });
 
@@ -48,6 +51,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->registerFailedJobServices();
         $this->registerOpisSecurityKey();
     }
+
     /**
      * Register the queue manager.
      *
@@ -64,6 +68,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
             });
         });
     }
+
     /**
      * Register the default queue connection binding.
      *
@@ -75,6 +80,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
             return $app['queue']->connection();
         });
     }
+
     /**
      * Register the connectors on the queue manager.
      *
@@ -120,8 +126,9 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
             );
         });
 
-        $this->app->alias( 'queue.worker', Worker::class);
+        $this->app->alias('queue.worker', Worker::class);
     }
+
     /**
      * Register the queue listener.
      *
@@ -135,6 +142,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
 
         $this->app->alias(Listener::class, 'queue.listener');
     }
+
     /**
      * Register the failed job services.
      *

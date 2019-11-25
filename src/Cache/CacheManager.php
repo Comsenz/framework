@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Cache;
 
@@ -15,9 +19,7 @@ use InvalidArgumentException;
 
 class CacheManager extends Manager implements FactoryContracts
 {
-
     protected $stores = [];
-
 
     /**
      * @param array $config
@@ -29,8 +31,8 @@ class CacheManager extends Manager implements FactoryContracts
         return $this->repository(new RedisStore($this->container['redis'], $this->getPrefix($config), $connection));
     }
 
-
-    public function createFileDriver($config) {
+    public function createFileDriver($config)
+    {
         return $this->repository(new FileStore($this->container['files'], $config['path']));
     }
 

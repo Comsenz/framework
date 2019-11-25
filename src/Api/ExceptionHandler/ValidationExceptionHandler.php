@@ -1,17 +1,19 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Api\ExceptionHandler;
 
 use Exception;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Validation\Validator;
 use Tobscure\JsonApi\Exception\Handler\ExceptionHandlerInterface;
 use Tobscure\JsonApi\Exception\Handler\ResponseBag;
 
 class ValidationExceptionHandler implements ExceptionHandlerInterface
 {
-
     private function buildErrors(array $messages, $pointer)
     {
         return array_map(function ($path, $detail) use ($pointer) {

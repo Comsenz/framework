@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
+
 namespace Discuz\Qcloud\Services;
 
 use TencentCloud\Billing\V20180709\BillingClient;
@@ -9,7 +14,8 @@ class BillingService extends AbstractService
 {
     const ENDPOINT = 'billing.tencentcloudapi.com';
 
-    public function DescribeAccountBalance() {
+    public function DescribeAccountBalance()
+    {
         $req = new DescribeAccountBalanceRequest();
         return $this->client->DescribeAccountBalance($req)->serialize();
     }

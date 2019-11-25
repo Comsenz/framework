@@ -1,15 +1,17 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Cache;
-
 
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
 class CacheServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-
     public function register()
     {
         $this->app->singleton('cache', function ($app) {

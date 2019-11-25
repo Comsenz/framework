@@ -1,10 +1,13 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Http\Middleware;
 
 use Discuz\Foundation\Application;
-use Discuz\Http\RouteCollection;
 use Discuz\Http\UrlGenerator;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
@@ -13,7 +16,6 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
 use Zend\Diactoros\Response\EmptyResponse;
-use Zend\Diactoros\Response\HtmlResponse;
 
 class RequestHandler implements MiddlewareInterface
 {
@@ -28,7 +30,6 @@ class RequestHandler implements MiddlewareInterface
         krsort($this->middlewares);
     }
 
-
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
@@ -42,9 +43,7 @@ class RequestHandler implements MiddlewareInterface
         UrlGenerator::setRequest($request);
 
         foreach ($this->middlewares as $pathPrefix => $middleware) {
-
             if (strpos($requestPath, $pathPrefix) === 0) {
-
                 $requestHandler = $this->app->make($middleware);
 
                 if ($requestHandler instanceof MiddlewareInterface) {
@@ -67,7 +66,7 @@ class RequestHandler implements MiddlewareInterface
         $uri = $request->getUri();
 
         $baseUrl = Arr::get($request->getServerParams(), 'SCRIPT_NAME');
-        if('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === \DIRECTORY_SEPARATOR) {
             $baseUrl = str_replace('\\', '/', $baseUrl);
         }
 
@@ -76,7 +75,7 @@ class RequestHandler implements MiddlewareInterface
         $baseUrl = rtrim(substr($baseUrl, 0, strlen($baseUrl) - strlen($baseUri)), '/'.\DIRECTORY_SEPARATOR);
         $requestUri = $uri->getPath() ?: '/';
 
-        if('/' !== $baseUrl && \strlen($requestUri) >= \strlen($baseUrl)) {
+        if ('/' !== $baseUrl && \strlen($requestUri) >= \strlen($baseUrl)) {
             $request = $request->withUri($uri->withPath(substr($requestUri, strlen($baseUrl))));
         }
 

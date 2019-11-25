@@ -1,11 +1,8 @@
 <?php
-declare(strict_types=1);
 
 /**
- *      Discuz & Tencent Cloud
- *      This is NOT a freeware, use is subject to license terms
- *
- *      Id: AbstractUploadTool.php 28830 2019-10-08 16:39 chenkeke $
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
  */
 
 namespace Discuz\Foundation;
@@ -96,12 +93,11 @@ abstract class AbstractUploadTool implements UploadTool
      */
     public function save(array $type = [], int $size = 0)
     {
-
         $this->verifyFileType();
 
         $this->verifyFileSize();
 
-        if ($this->error){
+        if ($this->error) {
             throw new UploadVerifyException();
         }
 
@@ -122,12 +118,12 @@ abstract class AbstractUploadTool implements UploadTool
         }
 
         return $result ? new UploadedFile(
-                    $this->driver->path($this->fullPath),
-                    $this->file->getClientFilename(),
-                    $this->file->getClientMediaType(),
-                    $this->file->getSize(),
-                    $this->file->getError(),
-                    true
+            $this->driver->path($this->fullPath),
+            $this->file->getClientFilename(),
+            $this->file->getClientMediaType(),
+            $this->file->getSize(),
+            $this->file->getError(),
+            true
                 ) : false;
     }
 

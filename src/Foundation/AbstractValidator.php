@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
+
 namespace Discuz\Foundation;
 
 use Illuminate\Support\Arr;
@@ -8,7 +13,6 @@ use Illuminate\Validation\ValidationException;
 
 abstract class AbstractValidator
 {
-
     protected $validator;
 
     public function __construct(Factory $validator)
@@ -16,12 +20,12 @@ abstract class AbstractValidator
         $this->validator = $validator;
     }
 
-
     /**
      * @param array $attributes
      * @throws ValidationException
      */
-    public function valid(array $attributes) {
+    public function valid(array $attributes)
+    {
         $validator = $this->make($attributes);
 
         if ($validator->fails()) {
@@ -46,8 +50,8 @@ abstract class AbstractValidator
     /**
      * @return array
      */
-    protected function getMessages() {
+    protected function getMessages()
+    {
         return [];
     }
-
 }

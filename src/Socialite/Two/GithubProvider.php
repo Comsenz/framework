@@ -1,8 +1,11 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Socialite\Two;
-
 
 use Exception;
 use Illuminate\Support\Arr;
@@ -16,6 +19,7 @@ class GithubProvider extends AbstractProvider implements ProviderInterface
      * @var array
      */
     protected $scopes = ['user:email'];
+
     /**
      * {@inheritdoc}
      */
@@ -23,6 +27,7 @@ class GithubProvider extends AbstractProvider implements ProviderInterface
     {
         return $this->buildAuthUrlFromBase('https://github.com/login/oauth/authorize', $state);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -30,6 +35,7 @@ class GithubProvider extends AbstractProvider implements ProviderInterface
     {
         return 'https://github.com/login/oauth/access_token';
     }
+
     /**
      * {@inheritdoc}
      */
@@ -37,7 +43,8 @@ class GithubProvider extends AbstractProvider implements ProviderInterface
     {
         $userUrl = 'https://api.github.com/user?access_token='.$token;
         $response = $this->getHttpClient()->get(
-            $userUrl, $this->getRequestOptions()
+            $userUrl,
+            $this->getRequestOptions()
         );
         $user = json_decode($response->getBody(), true);
         if (in_array('user:email', $this->scopes)) {
@@ -45,6 +52,7 @@ class GithubProvider extends AbstractProvider implements ProviderInterface
         }
         return $user;
     }
+
     /**
      * Get the email for the given access token.
      *
@@ -56,7 +64,8 @@ class GithubProvider extends AbstractProvider implements ProviderInterface
         $emailsUrl = 'https://api.github.com/user/emails?access_token='.$token;
         try {
             $response = $this->getHttpClient()->get(
-                $emailsUrl, $this->getRequestOptions()
+                $emailsUrl,
+                $this->getRequestOptions()
             );
         } catch (Exception $e) {
             return;
@@ -67,6 +76,7 @@ class GithubProvider extends AbstractProvider implements ProviderInterface
             }
         }
     }
+
     /**
      * {@inheritdoc}
      */
@@ -80,6 +90,7 @@ class GithubProvider extends AbstractProvider implements ProviderInterface
             'avatar' => $user['avatar_url'],
         ]);
     }
+
     /**
      * Get the default options for an HTTP request.
      *

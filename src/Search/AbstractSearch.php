@@ -1,11 +1,8 @@
 <?php
-declare(strict_types=1);
 
 /**
- *      Discuz & Tencent Cloud
- *      This is NOT a freeware, use is subject to license terms
- *
- *      Id: AbstractSearch.php 28830 2019-10-16 11:23 chenkeke $
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
  */
 
 namespace Discuz\Search;
@@ -81,7 +78,7 @@ abstract class AbstractSearch implements Search
      */
     public function getIncludes()
     {
-        if (empty($this->finalIncludes)){
+        if (empty($this->finalIncludes)) {
             $this->finalIncludes = $this->includes ?: [];
         }
         return $this->finalIncludes;
@@ -93,7 +90,7 @@ abstract class AbstractSearch implements Search
      */
     public function getFields()
     {
-        if (empty($this->finalFields)){
+        if (empty($this->finalFields)) {
             $this->finalFields = $this->parameter->getFields()?:$this->defaultFields;
         }
         return $this->finalFields;
@@ -105,7 +102,7 @@ abstract class AbstractSearch implements Search
      */
     public function getFilter()
     {
-        if (empty($this->filter)){
+        if (empty($this->filter)) {
             $this->filter = $this->parameter->getFilter()?:[];
         }
         return $this->filter;
@@ -118,7 +115,7 @@ abstract class AbstractSearch implements Search
      */
     public function getOffset()
     {
-        if (empty($this->finalOffset)){
+        if (empty($this->finalOffset)) {
             $this->finalOffset = $this->parameter->getOffset($this->getLimit());
         }
         return $this->finalOffset;
@@ -130,7 +127,7 @@ abstract class AbstractSearch implements Search
      */
     public function getLimit()
     {
-        if (empty($this->finalLimit)){
+        if (empty($this->finalLimit)) {
             $this->finalLimit = $this->parameter->getLimit($this->maxLimit)?:$this->defaultLimit;
         }
         return $this->finalLimit;
@@ -142,10 +139,9 @@ abstract class AbstractSearch implements Search
      */
     public function getSort()
     {
-        if (empty($this->finalSort)){
+        if (empty($this->finalSort)) {
             $this->finalSort = $this->parameter->getSort($this->sort)?:$this->defaultSort;
         }
         return $this->finalSort;
     }
-
 }

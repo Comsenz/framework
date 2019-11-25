@@ -1,8 +1,11 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Database;
-
 
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Console\Migrations\FreshCommand;
@@ -17,6 +20,7 @@ use Illuminate\Database\Migrations\DatabaseMigrationRepository;
 use Illuminate\Database\Migrations\MigrationCreator;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
+
 class MigrationServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
@@ -34,6 +38,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
         'MigrateStatus' => 'command.migrate.status',
         'MigrateMake' => 'command.migrate.make',
     ];
+
     /**
      * Register the service provider.
      *
@@ -46,6 +51,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
         $this->registerCreator();
 //        $this->registerCommands($this->commands);
     }
+
     /**
      * Register the migration repository service.
      *
@@ -59,6 +65,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
 
         $this->app->alias('migration.repository', MigrationRepositoryInterface::class);
     }
+
     /**
      * Register the migrator service.
      *
@@ -74,6 +81,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
             return new Migrator($repository, $app['db'], $app['files'], $app['events']);
         });
     }
+
     /**
      * Register the migration creator.
      *
@@ -85,6 +93,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
             return new MigrationCreator($app['files']);
         });
     }
+
     /**
      * Register the given commands.
      *
@@ -98,6 +107,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
         }
         $this->commands(array_values($commands));
     }
+
     /**
      * Register the command.
      *
@@ -109,6 +119,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
             return new MigrateCommand($app['migrator']);
         });
     }
+
     /**
      * Register the command.
      *
@@ -120,6 +131,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
             return new FreshCommand;
         });
     }
+
     /**
      * Register the command.
      *
@@ -131,6 +143,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
             return new InstallCommand($app['migration.repository']);
         });
     }
+
     /**
      * Register the command.
      *
@@ -147,6 +160,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
             return new MigrateMakeCommand($creator, $composer);
         });
     }
+
     /**
      * Register the command.
      *
@@ -158,6 +172,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
             return new RefreshCommand;
         });
     }
+
     /**
      * Register the command.
      *
@@ -169,6 +184,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
             return new ResetCommand($app['migrator']);
         });
     }
+
     /**
      * Register the command.
      *
@@ -180,6 +196,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
             return new RollbackCommand($app['migrator']);
         });
     }
+
     /**
      * Register the command.
      *
@@ -191,6 +208,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
             return new StatusCommand($app['migrator']);
         });
     }
+
     /**
      * Get the services provided by the provider.
      *

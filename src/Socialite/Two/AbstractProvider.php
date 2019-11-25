@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Socialite\Two;
 
@@ -14,70 +18,80 @@ use Zend\Diactoros\Response\RedirectResponse;
 
 abstract class AbstractProvider implements ProviderContract
 {
-
     protected $credentialsResponseBody;
 
     protected $request;
+
     /**
      * The HTTP Client instance.
      *
      * @var \GuzzleHttp\Client
      */
     protected $httpClient;
+
     /**
      * The client ID.
      *
      * @var string
      */
     protected $clientId;
+
     /**
      * The client secret.
      *
      * @var string
      */
     protected $clientSecret;
+
     /**
      * The redirect URL.
      *
      * @var string
      */
     protected $redirectUrl;
+
     /**
      * The custom parameters to be sent with the request.
      *
      * @var array
      */
     protected $parameters = [];
+
     /**
      * The scopes being requested.
      *
      * @var array
      */
     protected $scopes = [];
+
     /**
      * The separating character for the requested scopes.
      *
      * @var string
      */
     protected $scopeSeparator = ',';
+
     /**
      * The type of the encoding in the query.
      *
      * @var int Can be either PHP_QUERY_RFC3986 or PHP_QUERY_RFC1738.
      */
     protected $encodingType = PHP_QUERY_RFC1738;
+
     /**
      * Indicates if the session state should be utilized.
      *
      * @var bool
      */
     protected $stateless = false;
+
     /**
      * The custom Guzzle configuration options.
      *
      * @var array
      */
     protected $guzzle = [];
+
     /**
      * Create a new provider instance.
      *
@@ -96,6 +110,7 @@ abstract class AbstractProvider implements ProviderContract
         $this->redirectUrl = $redirectUrl;
         $this->clientSecret = $clientSecret;
     }
+
     /**
      * Get the authentication URL for the provider.
      *
@@ -103,12 +118,14 @@ abstract class AbstractProvider implements ProviderContract
      * @return string
      */
     abstract protected function getAuthUrl($state);
+
     /**
      * Get the token URL for the provider.
      *
      * @return string
      */
     abstract protected function getTokenUrl();
+
     /**
      * Get the raw user for the given access token.
      *
@@ -124,6 +141,7 @@ abstract class AbstractProvider implements ProviderContract
      * @return mixed
      */
     abstract protected function mapUserToObject(array $user);
+
     /**
      * Redirect the user of the application to the provider's authentication screen.
      *
@@ -138,6 +156,7 @@ abstract class AbstractProvider implements ProviderContract
 
         return new RedirectResponse($this->getAuthUrl($state));
     }
+
     /**
      * Get the authentication URL for the provider.
      *
@@ -149,6 +168,7 @@ abstract class AbstractProvider implements ProviderContract
     {
         return $url.'?'.http_build_query($this->getCodeFields($state), '', '&', $this->encodingType);
     }
+
     /**
      * Get the GET parameters for the code request.
      *
@@ -168,6 +188,7 @@ abstract class AbstractProvider implements ProviderContract
         }
         return array_merge($fields, $this->parameters);
     }
+
     /**
      * Format the given scopes.
      *
@@ -179,6 +200,7 @@ abstract class AbstractProvider implements ProviderContract
     {
         return implode($scopeSeparator, $scopes);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -195,6 +217,7 @@ abstract class AbstractProvider implements ProviderContract
             ->setRefreshToken(Arr::get($response, 'refresh_token'))
             ->setExpiresIn(Arr::get($response, 'expires_in'));
     }
+
     /**
      * Get a Social User instance from a known access token.
      *
@@ -206,6 +229,7 @@ abstract class AbstractProvider implements ProviderContract
         $user = $this->mapUserToObject($this->getUserByToken($token));
         return $user->setToken($token);
     }
+
     /**
      * Determine if the current request / session has a mismatching "state".
      *
@@ -219,6 +243,7 @@ abstract class AbstractProvider implements ProviderContract
 //        $state = $this->request->session()->pull('state');
         return false;//! (strlen($state) > 0 && $this->request->input('state') === $state);
     }
+
     /**
      * Get the access token response for the given code.
      *
@@ -234,6 +259,7 @@ abstract class AbstractProvider implements ProviderContract
         ]);
         return json_decode($response->getBody(), true);
     }
+
     /**
      * Get the POST fields for the token request.
      *
@@ -249,6 +275,7 @@ abstract class AbstractProvider implements ProviderContract
             'redirect_uri' => $this->redirectUrl,
         ];
     }
+
     /**
      * Get the code from the request.
      *
@@ -258,6 +285,7 @@ abstract class AbstractProvider implements ProviderContract
     {
         return Arr::get($this->request->getQueryParams(), 'code');
     }
+
     /**
      * Merge the scopes of the requested access.
      *
@@ -269,6 +297,7 @@ abstract class AbstractProvider implements ProviderContract
         $this->scopes = array_unique(array_merge($this->scopes, (array) $scopes));
         return $this;
     }
+
     /**
      * Set the scopes of the requested access.
      *
@@ -280,6 +309,7 @@ abstract class AbstractProvider implements ProviderContract
         $this->scopes = array_unique((array) $scopes);
         return $this;
     }
+
     /**
      * Get the current scopes.
      *
@@ -289,6 +319,7 @@ abstract class AbstractProvider implements ProviderContract
     {
         return $this->scopes;
     }
+
     /**
      * Set the redirect URL.
      *
@@ -300,6 +331,7 @@ abstract class AbstractProvider implements ProviderContract
         $this->redirectUrl = $url;
         return $this;
     }
+
     /**
      * Get a instance of the Guzzle HTTP client.
      *
@@ -312,6 +344,7 @@ abstract class AbstractProvider implements ProviderContract
         }
         return $this->httpClient;
     }
+
     /**
      * Set the Guzzle HTTP client instance.
      *
@@ -324,7 +357,6 @@ abstract class AbstractProvider implements ProviderContract
         return $this;
     }
 
-
     /**
      * @param ServerRequestInterface $request
      * @return $this
@@ -334,6 +366,7 @@ abstract class AbstractProvider implements ProviderContract
         $this->request = $request;
         return $this;
     }
+
     /**
      * Determine if the provider is operating with state.
      *
@@ -343,6 +376,7 @@ abstract class AbstractProvider implements ProviderContract
     {
         return ! $this->stateless;
     }
+
     /**
      * Determine if the provider is operating as stateless.
      *
@@ -352,6 +386,7 @@ abstract class AbstractProvider implements ProviderContract
     {
         return $this->stateless;
     }
+
     /**
      * Indicates that the provider should operate as stateless.
      *
@@ -362,6 +397,7 @@ abstract class AbstractProvider implements ProviderContract
         $this->stateless = true;
         return $this;
     }
+
     /**
      * Get the string used for session state.
      *
@@ -371,6 +407,7 @@ abstract class AbstractProvider implements ProviderContract
     {
         return Str::random(40);
     }
+
     /**
      * Set the custom parameters of the request.
      *
