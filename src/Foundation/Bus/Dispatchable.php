@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Foundation\Bus;
@@ -20,7 +18,7 @@ trait Dispatchable
      */
     public static function dispatch()
     {
-        return new PendingDispatch(new static(...\func_get_args()));
+        return new PendingDispatch(new static(...func_get_args()));
     }
 
     /**
@@ -30,14 +28,13 @@ trait Dispatchable
      */
     public static function dispatchNow()
     {
-        return app(Dispatcher::class)->dispatchNow(new static(...\func_get_args()));
+        return app(Dispatcher::class)->dispatchNow(new static(...func_get_args()));
     }
 
     /**
      * Set the jobs that should run if this job is successful.
      *
      * @param array $chain
-     *
      * @return PendingChain
      */
     public static function withChain($chain)

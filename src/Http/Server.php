@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Http;
@@ -30,17 +28,17 @@ class Server extends SiteApp
 
         $pipe->pipe(new RequestHandler([
             '/api' => 'discuz.api.middleware',
-            '/' => 'discuz.web.middleware',
+            '/' => 'discuz.web.middleware'
         ], $this->app));
+
 
         $runner = new RequestHandlerRunner(
             $pipe,
-            new SapiEmitter(),
+            new SapiEmitter,
             [ServerRequestFactory::class, 'fromGlobals'],
             function (Throwable $e) {
-                $generator = new ErrorResponseGenerator();
-
-                return $generator($e, new ServerRequest(), new Response());
+                $generator = new ErrorResponseGenerator;
+                return $generator($e, new ServerRequest, new Response);
             }
         );
 

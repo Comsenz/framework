@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Qcloud\Services;
@@ -24,15 +22,13 @@ class CheckVersionService
 
     /**
      * @param string $body
-     *
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     *
      * @return mixed|\Psr\Http\Message\ResponseInterface
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function checkVersion($body = '')
     {
         return $this->getHttpClient()->request('POST', 'qcloud/version', [
-            'json' => $body,
+            'json' => $body
         ]);
     }
 

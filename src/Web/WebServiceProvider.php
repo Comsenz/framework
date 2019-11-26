@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Web;
@@ -28,7 +26,6 @@ class WebServiceProvider extends ServiceProvider
             } else {
                 $pipe->pipe($app->make(HandleErrorsWithView::class));
             }
-
             return $pipe;
         });
     }

@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Http\Middleware;
@@ -21,6 +19,7 @@ use Zend\Diactoros\Response\HtmlResponse;
 class HandleErrorsWithView implements MiddlewareInterface
 {
     protected $log;
+
     protected $view;
 
     public function __construct(LoggerInterface $log, Factory $view)
@@ -50,7 +49,7 @@ class HandleErrorsWithView implements MiddlewareInterface
     {
         $code = $error->getCode();
 
-        $name = 'errors.' . $code;
+        $name = 'errors.'.$code;
 
         if (!$this->view->exists($name)) {
             $name = 'errors.500';

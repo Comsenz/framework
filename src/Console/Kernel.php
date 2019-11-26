@@ -1,23 +1,21 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Console;
 
 use Discuz\Console\Event\Configuring;
 use Discuz\Database\MigrationServiceProvider;
-use Discuz\Foundation\Application;
 use Discuz\Foundation\SiteApp;
 use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Contracts\Console\Kernel as KernelContract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Env;
 use Illuminate\Support\Str;
+use Discuz\Foundation\Application;
+use Illuminate\Contracts\Console\Kernel as KernelContract;
 use ReflectionClass;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\Console\Command\Command;
@@ -33,6 +31,20 @@ class Kernel extends SiteApp implements KernelContract
 
         $this->app->booted(function () {
             $this->defineConsoleSchedule();
+        });
+    }
+
+    /**
+     * Define the application's command schedule.
+     *
+     * @return void
+     */
+    protected function defineConsoleSchedule()
+    {
+        $this->app->singleton(Schedule::class, function ($app) {
+            return tap(new Schedule($this->scheduleTimezone()), function (Schedule $schedule) {
+                $this->schedule($schedule->useCache($this->scheduleCache()));
+            });
         });
     }
 
@@ -53,12 +65,29 @@ class Kernel extends SiteApp implements KernelContract
         exit($console->run());
     }
 
+    protected function getName()
+    {
+        return <<<EOF
+ _____   _                           _____   _                 
+(____ \ (_)                         (____ \ (_)                
+ _   \ \ _  ___  ____ _   _ _____    _   \ \ _  ___  ____ ___  
+| |   | | |/___)/ ___) | | (___  )  | |   | | |/___)/ ___) _ \ 
+| |__/ /| |___ ( (___| |_| |/ __/   | |__/ /| |___ ( (__| |_| |
+|_____/ |_(___/ \____)\____(_____)  |_____/ |_(___/ \____)___/ 
+EOF;
+    }
+
+    protected function registerServiceProvider()
+    {
+        $this->app->register(MigrationServiceProvider::class);
+        $this->app->register(ConsoleServiceProvider::class);
+    }
+
     /**
      * Handle an incoming console command.
      *
-     * @param \Symfony\Component\Console\Input\InputInterface        $input
-     * @param null|\Symfony\Component\Console\Output\OutputInterface $output
-     *
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface|null $output
      * @return int
      */
     public function handle($input, $output = null)
@@ -69,9 +98,9 @@ class Kernel extends SiteApp implements KernelContract
     /**
      * Run an Artisan console command by name.
      *
-     * @param string                                                 $command
-     * @param null|\Symfony\Component\Console\Output\OutputInterface $outputBuffer
-     *
+     * @param string $command
+     * @param array $parameters
+     * @param \Symfony\Component\Console\Output\OutputInterface|null $outputBuffer
      * @return int
      */
     public function call($command, array $parameters = [], $outputBuffer = null)
@@ -83,7 +112,7 @@ class Kernel extends SiteApp implements KernelContract
      * Queue an Artisan console command by name.
      *
      * @param string $command
-     *
+     * @param array $parameters
      * @return \Illuminate\Foundation\Bus\PendingDispatch
      */
     public function queue($command, array $parameters = [])
@@ -115,7 +144,8 @@ class Kernel extends SiteApp implements KernelContract
      * Terminate the application.
      *
      * @param \Symfony\Component\Console\Input\InputInterface $input
-     * @param int                                             $status
+     * @param int $status
+     * @return void
      */
     public function terminate($input, $status)
     {
@@ -128,36 +158,7 @@ class Kernel extends SiteApp implements KernelContract
     }
 
     /**
-     * Define the application's command schedule.
-     */
-    protected function defineConsoleSchedule()
-    {
-        $this->app->singleton(Schedule::class, function ($app) {
-            return tap(new Schedule($this->scheduleTimezone()), function (Schedule $schedule) {
-                $this->schedule($schedule->useCache($this->scheduleCache()));
-            });
-        });
-    }
-
-    protected function getName()
-    {
-        return <<<'EOF'
- _____   _                           _____   _                 
-(____ \ (_)                         (____ \ (_)                
- _   \ \ _  ___  ____ _   _ _____    _   \ \ _  ___  ____ ___  
-| |   | | |/___)/ ___) | | (___  )  | |   | | |/___)/ ___) _ \ 
-| |__/ /| |___ ( (___| |_| |/ __/   | |__/ /| |___ ( (__| |_| |
-|_____/ |_(___/ \____)\____(_____)  |_____/ |_(___/ \____)___/ 
-EOF;
-    }
-
-    protected function registerServiceProvider()
-    {
-        $this->app->register(MigrationServiceProvider::class);
-        $this->app->register(ConsoleServiceProvider::class);
-    }
-
-    /**
+     * @param ConsoleApplication $console
      * @throws \ReflectionException
      */
     protected function load(ConsoleApplication $console)
@@ -171,14 +172,14 @@ EOF;
             return;
         }
         $namespace = $this->app->getNamespace();
-        foreach ((new Finder())->in($paths)->files() as $command) {
-            $command = $namespace . str_replace(
+        foreach ((new Finder)->in($paths)->files() as $command) {
+            $command = $namespace.str_replace(
                 ['/', '.php'],
                 ['\\', ''],
-                Str::after($command->getPathname(), realpath(app_path()) . \DIRECTORY_SEPARATOR)
-            );
+                Str::after($command->getPathname(), realpath(app_path()).DIRECTORY_SEPARATOR)
+                );
             if (is_subclass_of($command, Command::class) &&
-                !(new ReflectionClass($command))->isAbstract()) {
+                ! (new ReflectionClass($command))->isAbstract()) {
                 $console->add($this->app->make($command));
             }
         }
@@ -187,7 +188,7 @@ EOF;
     /**
      * Get the timezone that should be used by default for scheduled events.
      *
-     * @return null|\DateTimeZone|string
+     * @return \DateTimeZone|string|null
      */
     protected function scheduleTimezone()
     {

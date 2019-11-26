@@ -1,17 +1,15 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Socialite\Two;
 
-use Discuz\Contracts\Socialite\Provider as ProviderInterface;
 use Exception;
 use Illuminate\Support\Arr;
+use Discuz\Contracts\Socialite\Provider as ProviderInterface;
 
 class GithubProvider extends AbstractProvider implements ProviderInterface
 {
@@ -43,30 +41,27 @@ class GithubProvider extends AbstractProvider implements ProviderInterface
      */
     protected function getUserByToken($token)
     {
-        $userUrl = 'https://api.github.com/user?access_token=' . $token;
+        $userUrl = 'https://api.github.com/user?access_token='.$token;
         $response = $this->getHttpClient()->get(
             $userUrl,
             $this->getRequestOptions()
         );
         $user = json_decode($response->getBody(), true);
-        if (\in_array('user:email', $this->scopes, true)) {
+        if (in_array('user:email', $this->scopes)) {
             $user['email'] = $this->getEmailByToken($token);
         }
-
         return $user;
     }
 
     /**
      * Get the email for the given access token.
      *
-     * @param string $token
-     *
-     * @return null|string
+     * @param  string  $token
+     * @return string|null
      */
     protected function getEmailByToken($token)
     {
-        $emailsUrl = 'https://api.github.com/user/emails?access_token=' . $token;
-
+        $emailsUrl = 'https://api.github.com/user/emails?access_token='.$token;
         try {
             $response = $this->getHttpClient()->get(
                 $emailsUrl,
@@ -87,7 +82,7 @@ class GithubProvider extends AbstractProvider implements ProviderInterface
      */
     protected function mapUserToObject(array $user)
     {
-        return (new User())->setRaw($user)->map([
+        return (new User)->setRaw($user)->map([
             'id' => $user['id'],
             'nickname' => $user['login'],
             'name' => Arr::get($user, 'name'),

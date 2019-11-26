@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Api\Events;
@@ -48,9 +46,9 @@ class Serializing
     public $actor;
 
     /**
-     * @param AbstractSerializer $serializer the class doing the serializing
-     * @param array|object       $model      the model being serialized
-     * @param array              $attributes the serialized attributes of the resource
+     * @param AbstractSerializer $serializer The class doing the serializing.
+     * @param object|array $model The model being serialized.
+     * @param array $attributes The serialized attributes of the resource.
      */
     public function __construct(AbstractSerializer $serializer, $model, array &$attributes)
     {
@@ -62,7 +60,6 @@ class Serializing
 
     /**
      * @param string $serializer
-     *
      * @return bool
      */
     public function isSerializer($serializer)
@@ -71,7 +68,8 @@ class Serializing
     }
 
     /**
-     * @return null|string
+     * @param DateTime|null $date
+     * @return string|null
      */
     public function formatDate(DateTime $date = null)
     {

@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Http\Exception;
@@ -12,6 +10,7 @@ namespace Discuz\Http\Exception;
 class HttpException extends \RuntimeException
 {
     private $statusCode;
+
     private $headers;
 
     public function __construct($statusCode, $message = '', \Exception $previous = null, array $headers = [], $code = 0)

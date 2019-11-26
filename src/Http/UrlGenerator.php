@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Http;
@@ -15,8 +13,11 @@ use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContracts;
 class UrlGenerator implements UrlGeneratorContracts
 {
     protected $app;
+
     protected $routes;
+
     protected $cachedScheme;
+
     protected static $request;
 
     public function __construct(Application $app, RouteCollection $routes)
@@ -32,14 +33,13 @@ class UrlGenerator implements UrlGeneratorContracts
      */
     public function current()
     {
-        return  collect([$this->formatScheme() . $this->formatHost() . $this->formatPath(), $this->formatQuery()])->filter()->join('?');
+        return  collect([$this->formatScheme().$this->formatHost().$this->formatPath(), $this->formatQuery()])->filter()->join('?');
     }
 
     /**
      * Get the URL for the previous request.
      *
      * @param mixed $fallback
-     *
      * @return string
      */
     public function previous($fallback = false)
@@ -50,24 +50,22 @@ class UrlGenerator implements UrlGeneratorContracts
     /**
      * Generate an absolute URL to the given path.
      *
-     * @param string    $path
-     * @param mixed     $extra
-     * @param null|bool $secure
-     *
+     * @param string $path
+     * @param mixed $extra
+     * @param bool|null $secure
      * @return string
      */
     public function to($path, $extra = [], $secure = null)
     {
         // TODO: Implement to() method.
-        return $this->formatScheme() . $this->formatHost() . $path;
+        return $this->formatScheme().$this->formatHost().$path;
     }
 
     /**
      * Generate a secure, absolute URL to the given path.
      *
      * @param string $path
-     * @param array  $parameters
-     *
+     * @param array $parameters
      * @return string
      */
     public function secure($path, $parameters = [])
@@ -78,9 +76,8 @@ class UrlGenerator implements UrlGeneratorContracts
     /**
      * Generate the URL to an application asset.
      *
-     * @param string    $path
-     * @param null|bool $secure
-     *
+     * @param string $path
+     * @param bool|null $secure
      * @return string
      */
     public function asset($path, $secure = null)
@@ -92,25 +89,23 @@ class UrlGenerator implements UrlGeneratorContracts
      * Get the URL to a named route.
      *
      * @param string $name
-     * @param mixed  $parameters
-     * @param bool   $absolute
+     * @param mixed $parameters
+     * @param bool $absolute
+     * @return string
      *
      * @throws \InvalidArgumentException
-     *
-     * @return string
      */
     public function route($name, $parameters = [], $absolute = true)
     {
-        return $this->formatScheme() . $this->formatHost() . $this->routes->getPath($name, $parameters);
+        return $this->formatScheme().$this->formatHost().$this->routes->getPath($name, $parameters);
     }
 
     /**
      * Get the URL to a controller action.
      *
-     * @param array|string $action
-     * @param mixed        $parameters
-     * @param bool         $absolute
-     *
+     * @param string|array $action
+     * @param mixed $parameters
+     * @param bool $absolute
      * @return string
      */
     public function action($action, $parameters = [], $absolute = true)
@@ -122,17 +117,11 @@ class UrlGenerator implements UrlGeneratorContracts
      * Set the root controller namespace.
      *
      * @param string $rootNamespace
-     *
      * @return \Illuminate\Contracts\Routing\UrlGenerator
      */
     public function setRootControllerNamespace($rootNamespace)
     {
         // TODO: Implement setRootControllerNamespace() method.
-    }
-
-    public static function setRequest($request)
-    {
-        self::$request = $request;
     }
 
     protected function formatHost()
@@ -142,8 +131,8 @@ class UrlGenerator implements UrlGeneratorContracts
 
     protected function formatScheme()
     {
-        if (null === $this->cachedScheme) {
-            $this->cachedScheme = self::$request->getUri()->getScheme() . '://';
+        if (is_null($this->cachedScheme)) {
+            $this->cachedScheme = self::$request->getUri()->getScheme().'://';
         }
 
         return $this->cachedScheme;
@@ -157,5 +146,10 @@ class UrlGenerator implements UrlGeneratorContracts
     protected function formatQuery()
     {
         return self::$request->getUri()->getQuery();
+    }
+
+    public static function setRequest($request)
+    {
+        self::$request = $request;
     }
 }

@@ -1,12 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Api\Events;
@@ -32,7 +28,7 @@ class SearchModelField
     public $field;
 
     /**
-     * @var string
+     * @var String
      */
     public $content;
 
@@ -42,8 +38,10 @@ class SearchModelField
     public $model;
 
     /**
-     * @param string $field
-     * @param string $content
+     * @param Model $actor
+     * @param Builder $query
+     * @param String $field
+     * @param String $content
      */
     public function __construct(Model $actor, Builder $query, $field, $content = '')
     {

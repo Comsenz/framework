@@ -1,12 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Api\Events;
@@ -32,6 +28,8 @@ class ScopeModelVisibility
     public $ability;
 
     /**
+     * @param Builder $query
+     * @param User $actor
      * @param string $ability
      */
     public function __construct(Builder $query, User $actor, $ability)

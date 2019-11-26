@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Foundation;
@@ -25,66 +23,77 @@ class Application extends Container implements ContainerContract
      * @var string
      */
     protected $basePath;
+
     /**
      * Indicates if the application has been bootstrapped before.
      *
      * @var bool
      */
     protected $hasBeenBootstrapped = false;
+
     /**
      * Indicates if the application has "booted".
      *
      * @var bool
      */
     protected $booted = false;
+
     /**
      * The array of booting callbacks.
      *
      * @var callable[]
      */
     protected $bootingCallbacks = [];
+
     /**
      * The array of booted callbacks.
      *
      * @var callable[]
      */
     protected $bootedCallbacks = [];
+
     /**
      * The array of terminating callbacks.
      *
      * @var callable[]
      */
     protected $terminatingCallbacks = [];
+
     /**
      * All of the registered service providers.
      *
      * @var \Illuminate\Support\ServiceProvider[]
      */
     protected $serviceProviders = [];
+
     /**
      * The names of the loaded service providers.
      *
      * @var array
      */
     protected $loadedProviders = [];
+
     /**
      * The deferred services and their providers.
      *
      * @var array
      */
     protected $deferredServices = [];
+
     /**
      * The custom application path defined by the developer.
      *
      * @var string
      */
     protected $appPath;
+
     /**
      * The custom database path defined by the developer.
      *
      * @var string
      */
     protected $databasePath;
+
     /**
      * The custom storage path defined by the developer.
      *
@@ -116,56 +125,92 @@ class Application extends Container implements ContainerContract
     }
 
     /**
+     * Register the basic bindings into the container.
+     *
+     * @return void
+     */
+    protected function registerBaseBindings()
+    {
+        static::setInstance($this);
+        $this->instance('app', $this);
+        $this->instance(Container::class, $this);
+    }
+
+    /**
+     * Register all of the base service providers.
+     *
+     * @return void
+     */
+    protected function registerBaseServiceProviders()
+    {
+        $this->register(EventServiceProvider::class);
+//        $this->register(new LogServiceProvider($this));
+//        $this->register(new RoutingServiceProvider($this));
+    }
+
+    /**
      * Set the base path for the application.
      *
-     * @param string $basePath
-     *
+     * @param  string  $basePath
      * @return $this
      */
     public function setBasePath($basePath)
     {
         $this->basePath = rtrim($basePath, '\/');
         $this->bindPathsInContainer();
-
         return $this;
+    }
+
+    /**
+     * Bind all of the application paths in the container.
+     *
+     * @return void
+     */
+    protected function bindPathsInContainer()
+    {
+        $this->instance('path', $this->path());
+        $this->instance('path.base', $this->basePath());
+        $this->instance('path.lang', $this->langPath());
+        $this->instance('path.config', $this->configPath());
+//        $this->instance('path.public', $this->publicPath());
+        $this->instance('path.storage', $this->storagePath());
+//        $this->instance('path.database', $this->databasePath());
+        $this->instance('path.resources', $this->resourcePath());
+//        $this->instance('path.bootstrap', $this->bootstrapPath());
     }
 
     /**
      * Get the path to the application "app" directory.
      *
-     * @param string $path
-     *
+     * @param  string  $path
      * @return string
      */
     public function path($path = '')
     {
-        $appPath = $this->appPath ?: $this->basePath . \DIRECTORY_SEPARATOR . 'app';
-
-        return $appPath . ($path ? \DIRECTORY_SEPARATOR . $path : $path);
+        $appPath = $this->appPath ?: $this->basePath.DIRECTORY_SEPARATOR.'app';
+        return $appPath.($path ? DIRECTORY_SEPARATOR.$path : $path);
     }
 
     /**
      * Get the base path of the Laravel installation.
      *
-     * @param string $path Optionally, a path to append to the base path
-     *
+     * @param  string  $path Optionally, a path to append to the base path
      * @return string
      */
     public function basePath($path = '')
     {
-        return $this->basePath . ($path ? \DIRECTORY_SEPARATOR . $path : $path);
+        return $this->basePath.($path ? DIRECTORY_SEPARATOR.$path : $path);
     }
 
     /**
      * Get the path to the application configuration files.
      *
-     * @param string $path Optionally, a path to append to the config path
-     *
+     * @param  string  $path Optionally, a path to append to the config path
      * @return string
      */
     public function configPath($path = '')
     {
-        return $this->basePath . \DIRECTORY_SEPARATOR . 'config' . ($path ? \DIRECTORY_SEPARATOR . $path : $path);
+        return $this->basePath.DIRECTORY_SEPARATOR.'config'.($path ? DIRECTORY_SEPARATOR.$path : $path);
     }
 
     /**
@@ -175,7 +220,7 @@ class Application extends Container implements ContainerContract
      */
     public function storagePath()
     {
-        return $this->storagePath ?: $this->basePath . \DIRECTORY_SEPARATOR . 'storage';
+        return $this->storagePath ?: $this->basePath.DIRECTORY_SEPARATOR.'storage';
     }
 
     /**
@@ -185,7 +230,7 @@ class Application extends Container implements ContainerContract
      */
     public function langPath()
     {
-        return $this->resourcePath() . \DIRECTORY_SEPARATOR . 'lang';
+        return $this->resourcePath().DIRECTORY_SEPARATOR.'lang';
     }
 
     /**
@@ -195,7 +240,7 @@ class Application extends Container implements ContainerContract
      */
     public function resourcePath()
     {
-        return $this->storagePath ?: $this->basePath . \DIRECTORY_SEPARATOR . 'resources';
+        return $this->storagePath ?: $this->basePath.DIRECTORY_SEPARATOR.'resources';
     }
 
     /**
@@ -221,20 +266,19 @@ class Application extends Container implements ContainerContract
     /**
      * Register a service provider with the application.
      *
-     * @param \Illuminate\Support\ServiceProvider|string $provider
-     * @param bool                                       $force
-     *
+     * @param  \Illuminate\Support\ServiceProvider|string  $provider
+     * @param  bool   $force
      * @return \Illuminate\Support\ServiceProvider
      */
     public function register($provider, $force = false)
     {
-        if (($registered = $this->getProvider($provider)) && !$force) {
+        if (($registered = $this->getProvider($provider)) && ! $force) {
             return $registered;
         }
         // If the given "provider" is a string, we will resolve it, passing in the
         // application instance automatically for the developer. This is simply
         // a more convenient way of specifying your service provider classes.
-        if (\is_string($provider)) {
+        if (is_string($provider)) {
             $provider = $this->resolveProvider($provider);
         }
         $provider->register();
@@ -258,16 +302,14 @@ class Application extends Container implements ContainerContract
         if ($this->isBooted()) {
             $this->bootProvider($provider);
         }
-
         return $provider;
     }
 
     /**
      * Get the registered service provider instance if it exists.
      *
-     * @param \Illuminate\Support\ServiceProvider|string $provider
-     *
-     * @return null|\Illuminate\Support\ServiceProvider
+     * @param  \Illuminate\Support\ServiceProvider|string  $provider
+     * @return \Illuminate\Support\ServiceProvider|null
      */
     public function getProvider($provider)
     {
@@ -277,14 +319,12 @@ class Application extends Container implements ContainerContract
     /**
      * Get the registered service provider instances if any exist.
      *
-     * @param \Illuminate\Support\ServiceProvider|string $provider
-     *
+     * @param  \Illuminate\Support\ServiceProvider|string  $provider
      * @return array
      */
     public function getProviders($provider)
     {
-        $name = \is_string($provider) ? $provider : \get_class($provider);
-
+        $name = is_string($provider) ? $provider : get_class($provider);
         return Arr::where($this->serviceProviders, function ($value) use ($name) {
             return $value instanceof $name;
         });
@@ -293,8 +333,7 @@ class Application extends Container implements ContainerContract
     /**
      * Resolve a service provider instance from the class name.
      *
-     * @param string $provider
-     *
+     * @param  string  $provider
      * @return \Illuminate\Support\ServiceProvider
      */
     public function resolveProvider($provider)
@@ -303,10 +342,21 @@ class Application extends Container implements ContainerContract
     }
 
     /**
+     * Mark the given provider as registered.
+     *
+     * @param  \Illuminate\Support\ServiceProvider  $provider
+     * @return void
+     */
+    protected function markAsRegistered($provider)
+    {
+        $this->serviceProviders[] = $provider;
+        $this->loadedProviders[get_class($provider)] = true;
+    }
+
+    /**
      * Determine if the given service is a deferred service.
      *
-     * @param string $service
-     *
+     * @param  string  $service
      * @return bool
      */
     public function isDeferredService($service)
@@ -316,6 +366,8 @@ class Application extends Container implements ContainerContract
 
     /**
      * Load and boot all of the remaining deferred providers.
+     *
+     * @return void
      */
     public function loadDeferredProviders()
     {
@@ -331,18 +383,19 @@ class Application extends Container implements ContainerContract
     /**
      * Load the provider for a deferred service.
      *
-     * @param string $service
+     * @param  string  $service
+     * @return void
      */
     public function loadDeferredProvider($service)
     {
-        if (!$this->isDeferredService($service)) {
+        if (! $this->isDeferredService($service)) {
             return;
         }
         $provider = $this->deferredServices[$service];
         // If the service provider has not already been loaded and registered we can
         // register it with the application and remove the service from this list
         // of deferred services, since it will already be loaded on subsequent.
-        if (!isset($this->loadedProviders[$provider])) {
+        if (! isset($this->loadedProviders[$provider])) {
             $this->registerDeferredProvider($provider, $service);
         }
     }
@@ -350,8 +403,9 @@ class Application extends Container implements ContainerContract
     /**
      * Register a deferred provider and service.
      *
-     * @param string      $provider
-     * @param null|string $service
+     * @param  string  $provider
+     * @param  string|null  $service
+     * @return void
      */
     public function registerDeferredProvider($provider, $service = null)
     {
@@ -362,7 +416,7 @@ class Application extends Container implements ContainerContract
             unset($this->deferredServices[$service]);
         }
         $this->register($instance = new $provider($this));
-        if (!$this->isBooted()) {
+        if (! $this->isBooted()) {
             $this->booting(function () use ($instance) {
                 $this->bootProvider($instance);
             });
@@ -374,17 +428,16 @@ class Application extends Container implements ContainerContract
      *
      * (Overriding Container::make)
      *
-     * @param string $abstract
-     *
+     * @param  string  $abstract
+     * @param  array  $parameters
      * @return mixed
      */
     public function make($abstract, array $parameters = [])
     {
         $abstract = $this->getAlias($abstract);
-        if ($this->isDeferredService($abstract) && !isset($this->instances[$abstract])) {
+        if ($this->isDeferredService($abstract) && ! isset($this->instances[$abstract])) {
             $this->loadDeferredProvider($abstract);
         }
-
         return parent::make($abstract, $parameters);
     }
 
@@ -401,7 +454,8 @@ class Application extends Container implements ContainerContract
     /**
      * Register a new boot listener.
      *
-     * @param callable $callback
+     * @param  callable  $callback
+     * @return void
      */
     public function booting($callback)
     {
@@ -411,7 +465,8 @@ class Application extends Container implements ContainerContract
     /**
      * Register a new "booted" listener.
      *
-     * @param callable $callback
+     * @param  callable  $callback
+     * @return void
      */
     public function booted($callback)
     {
@@ -438,38 +493,66 @@ class Application extends Container implements ContainerContract
     }
 
     /**
+     * Call the booting callbacks for the application.
+     *
+     * @param  callable[]  $callbacks
+     * @return void
+     */
+    protected function fireAppCallbacks(array $callbacks)
+    {
+        foreach ($callbacks as $callback) {
+            call_user_func($callback, $this);
+        }
+    }
+
+    /**
+     * Boot the given service provider.
+     *
+     * @param  \Illuminate\Support\ServiceProvider  $provider
+     * @return mixed
+     */
+    protected function bootProvider(ServiceProvider $provider)
+    {
+        if (method_exists($provider, 'boot')) {
+            return $this->call([$provider, 'boot']);
+        }
+    }
+
+    /**
      * Register the core class aliases in the container.
+     *
+     * @return void
      */
     public function registerCoreContainerAliases()
     {
         foreach ([
-            'app' => [self::class, \Illuminate\Contracts\Container\Container::class, \Illuminate\Contracts\Foundation\Application::class, \Psr\Container\ContainerInterface::class],
-            'blade.compiler' => [\Illuminate\View\Compilers\BladeCompiler::class],
-            'cache' => [\Discuz\Cache\CacheManager::class, \Illuminate\Contracts\Cache\Factory::class],
-            'cache.store' => [\Illuminate\Cache\Repository::class, \Illuminate\Contracts\Cache\Repository::class],
-            'config' => [\Illuminate\Config\Repository::class, \Illuminate\Contracts\Config\Repository::class],
-            //                     'cookie'               => [\Illuminate\Cookie\CookieJar::class, \Illuminate\Contracts\Cookie\Factory::class, \Illuminate\Contracts\Cookie\QueueingFactory::class],
-            'encrypter' => [\Illuminate\Encryption\Encrypter::class, \Illuminate\Contracts\Encryption\Encrypter::class],
-            'db' => [\Illuminate\Database\DatabaseManager::class],
-            'db.connection' => [\Illuminate\Database\Connection::class, \Illuminate\Database\ConnectionInterface::class],
-            'events' => [\Illuminate\Events\Dispatcher::class, \Illuminate\Contracts\Events\Dispatcher::class],
-            'files' => [\Illuminate\Filesystem\Filesystem::class],
-            'filesystem' => [\Illuminate\Filesystem\FilesystemManager::class, \Illuminate\Contracts\Filesystem\Factory::class],
-            'filesystem.disk' => [\Illuminate\Contracts\Filesystem\Filesystem::class],
-            'filesystem.cloud' => [\Illuminate\Contracts\Filesystem\Cloud::class],
-            'hash' => [\Illuminate\Hashing\HashManager::class],
-            'hash.driver' => [\Illuminate\Contracts\Hashing\Hasher::class],
-            'log' => [\Illuminate\Log\LogManager::class, \Psr\Log\LoggerInterface::class],
-            //                     'mailer'               => [\Illuminate\Mail\Mailer::class, \Illuminate\Contracts\Mail\Mailer::class, \Illuminate\Contracts\Mail\MailQueue::class],
-            'queue' => [\Illuminate\Queue\QueueManager::class, \Illuminate\Contracts\Queue\Factory::class, \Illuminate\Contracts\Queue\Monitor::class],
-            'queue.connection' => [\Illuminate\Contracts\Queue\Queue::class],
-            'queue.failer' => [\Illuminate\Queue\Failed\FailedJobProviderInterface::class],
-            'redis' => [\Illuminate\Redis\RedisManager::class, \Illuminate\Contracts\Redis\Factory::class],
-            'session' => [\Illuminate\Session\SessionManager::class],
-            'session.store' => [\Illuminate\Session\Store::class, \Illuminate\Contracts\Session\Session::class],
-            'validator' => [\Illuminate\Validation\Factory::class, \Illuminate\Contracts\Validation\Factory::class],
-            'view' => [\Illuminate\View\Factory::class, \Illuminate\Contracts\View\Factory::class],
-        ] as $key => $aliases) {
+                     'app'                  => [self::class, \Illuminate\Contracts\Container\Container::class, \Illuminate\Contracts\Foundation\Application::class, \Psr\Container\ContainerInterface::class],
+                     'blade.compiler'       => [\Illuminate\View\Compilers\BladeCompiler::class],
+                     'cache'                => [\Discuz\Cache\CacheManager::class, \Illuminate\Contracts\Cache\Factory::class],
+                     'cache.store'          => [\Illuminate\Cache\Repository::class, \Illuminate\Contracts\Cache\Repository::class],
+                     'config'               => [\Illuminate\Config\Repository::class, \Illuminate\Contracts\Config\Repository::class],
+//                     'cookie'               => [\Illuminate\Cookie\CookieJar::class, \Illuminate\Contracts\Cookie\Factory::class, \Illuminate\Contracts\Cookie\QueueingFactory::class],
+                     'encrypter'            => [\Illuminate\Encryption\Encrypter::class, \Illuminate\Contracts\Encryption\Encrypter::class],
+                     'db'                   => [\Illuminate\Database\DatabaseManager::class],
+                     'db.connection'        => [\Illuminate\Database\Connection::class, \Illuminate\Database\ConnectionInterface::class],
+                     'events'               => [\Illuminate\Events\Dispatcher::class, \Illuminate\Contracts\Events\Dispatcher::class],
+                     'files'                => [\Illuminate\Filesystem\Filesystem::class],
+                     'filesystem'           => [\Illuminate\Filesystem\FilesystemManager::class, \Illuminate\Contracts\Filesystem\Factory::class],
+                     'filesystem.disk'      => [\Illuminate\Contracts\Filesystem\Filesystem::class],
+                     'filesystem.cloud'     => [\Illuminate\Contracts\Filesystem\Cloud::class],
+                     'hash'                 => [\Illuminate\Hashing\HashManager::class],
+                     'hash.driver'          => [\Illuminate\Contracts\Hashing\Hasher::class],
+                       'log'                  => [\Illuminate\Log\LogManager::class, \Psr\Log\LoggerInterface::class],
+//                     'mailer'               => [\Illuminate\Mail\Mailer::class, \Illuminate\Contracts\Mail\Mailer::class, \Illuminate\Contracts\Mail\MailQueue::class],
+                     'queue'                => [\Illuminate\Queue\QueueManager::class, \Illuminate\Contracts\Queue\Factory::class, \Illuminate\Contracts\Queue\Monitor::class],
+                     'queue.connection'     => [\Illuminate\Contracts\Queue\Queue::class],
+                     'queue.failer'         => [\Illuminate\Queue\Failed\FailedJobProviderInterface::class],
+                     'redis'                => [\Illuminate\Redis\RedisManager::class, \Illuminate\Contracts\Redis\Factory::class],
+                     'session'              => [\Illuminate\Session\SessionManager::class],
+                     'session.store'        => [\Illuminate\Session\Store::class, \Illuminate\Contracts\Session\Session::class],
+                     'validator'            => [\Illuminate\Validation\Factory::class, \Illuminate\Contracts\Validation\Factory::class],
+                     'view'                 => [\Illuminate\View\Factory::class, \Illuminate\Contracts\View\Factory::class],
+                 ] as $key => $aliases) {
             foreach ($aliases as $alias) {
                 $this->alias($key, $alias);
             }
@@ -478,6 +561,8 @@ class Application extends Container implements ContainerContract
 
     /**
      * Flush the container of all bindings and resolved instances.
+     *
+     * @return void
      */
     public function flush()
     {
@@ -496,8 +581,7 @@ class Application extends Container implements ContainerContract
 
     /**
      * @param string $key
-     * @param mixed  $default
-     *
+     * @param mixed $default
      * @return mixed
      */
     public function config($key, $default = null)
@@ -508,13 +592,13 @@ class Application extends Container implements ContainerContract
     /**
      * Get the application namespace.
      *
-     * @throws \RuntimeException
-     *
      * @return string
+     *
+     * @throws \RuntimeException
      */
     public function getNamespace()
     {
-        if (null !== $this->namespace) {
+        if (! is_null($this->namespace)) {
             return $this->namespace;
         }
 
@@ -557,76 +641,5 @@ class Application extends Container implements ContainerContract
     public function isDownForMaintenance()
     {
         return false;
-    }
-
-    /**
-     * Register the basic bindings into the container.
-     */
-    protected function registerBaseBindings()
-    {
-        static::setInstance($this);
-        $this->instance('app', $this);
-        $this->instance(Container::class, $this);
-    }
-
-    /**
-     * Register all of the base service providers.
-     */
-    protected function registerBaseServiceProviders()
-    {
-        $this->register(EventServiceProvider::class);
-//        $this->register(new LogServiceProvider($this));
-//        $this->register(new RoutingServiceProvider($this));
-    }
-
-    /**
-     * Bind all of the application paths in the container.
-     */
-    protected function bindPathsInContainer()
-    {
-        $this->instance('path', $this->path());
-        $this->instance('path.base', $this->basePath());
-        $this->instance('path.lang', $this->langPath());
-        $this->instance('path.config', $this->configPath());
-//        $this->instance('path.public', $this->publicPath());
-        $this->instance('path.storage', $this->storagePath());
-//        $this->instance('path.database', $this->databasePath());
-        $this->instance('path.resources', $this->resourcePath());
-//        $this->instance('path.bootstrap', $this->bootstrapPath());
-    }
-
-    /**
-     * Mark the given provider as registered.
-     *
-     * @param \Illuminate\Support\ServiceProvider $provider
-     */
-    protected function markAsRegistered($provider)
-    {
-        $this->serviceProviders[] = $provider;
-        $this->loadedProviders[\get_class($provider)] = true;
-    }
-
-    /**
-     * Call the booting callbacks for the application.
-     *
-     * @param callable[] $callbacks
-     */
-    protected function fireAppCallbacks(array $callbacks)
-    {
-        foreach ($callbacks as $callback) {
-            \call_user_func($callback, $this);
-        }
-    }
-
-    /**
-     * Boot the given service provider.
-     *
-     * @return mixed
-     */
-    protected function bootProvider(ServiceProvider $provider)
-    {
-        if (method_exists($provider, 'boot')) {
-            return $this->call([$provider, 'boot']);
-        }
     }
 }

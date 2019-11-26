@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Qcloud;
@@ -50,7 +48,6 @@ class QcloudManage extends Manager implements Factory
     public function createSmsDriver()
     {
         $config = $this->container->config('sms');
-
         return $this->buildService(SmsService::class, $config);
     }
 
@@ -58,9 +55,8 @@ class QcloudManage extends Manager implements Factory
     {
         $config = [
             'base_uri' => 'http://2020.comsenz-service.com/api/',
-            'timeout' => 2,
+            'timeout'  =>  2
         ];
-
         return $this->buildService(CheckVersionService::class, $config);
     }
 
@@ -72,7 +68,6 @@ class QcloudManage extends Manager implements Factory
     /**
      * @param $service
      * @param $config
-     *
      * @return mixed
      */
     public function buildService($service, $config)

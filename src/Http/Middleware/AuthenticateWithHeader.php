@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Http\Middleware;
@@ -29,6 +27,9 @@ class AuthenticateWithHeader implements MiddlewareInterface
     }
 
     /**
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -49,7 +50,7 @@ class AuthenticateWithHeader implements MiddlewareInterface
             // toedo 获取Token位置，根据Token解析用户并查询到当前用户
             $actor = $this->getActor($request);
 
-            if (null !== $actor && $actor->exists) {
+            if (!is_null($actor) && $actor->exists) {
                 $request = $request->withoutAttribute('oauth_access_token_id')->withoutAttribute('oauth_client_id')->withoutAttribute('oauth_user_id')->withoutAttribute('oauth_scopes')->withAttribute('actor', $actor);
             }
         }

@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Api\ExceptionHandler;
@@ -20,6 +18,8 @@ class RouteNotFoundExceptionHandler implements ExceptionHandlerInterface
      * If the exception handler is able to format a response for the provided exception,
      * then the implementation should return true.
      *
+     * @param \Exception $e
+     *
      * @return bool
      */
     public function manages(Exception $e)
@@ -30,6 +30,8 @@ class RouteNotFoundExceptionHandler implements ExceptionHandlerInterface
     /**
      * Handle the provided exception.
      *
+     * @param \Exception $e
+     *
      * @return \Tobscure\JsonApi\Exception\Handler\ResponseBag
      */
     public function handle(Exception $e)
@@ -37,7 +39,7 @@ class RouteNotFoundExceptionHandler implements ExceptionHandlerInterface
         $status = 404;
         $error = [
             'status' => (string) $status,
-            'code' => 'route_not_found',
+            'code' => 'route_not_found'
         ];
 
         return new ResponseBag($status, [$error]);

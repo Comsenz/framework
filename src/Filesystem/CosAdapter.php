@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Filesystem;
@@ -40,6 +38,8 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
 
     /**
      * CosAdapter constructor.
+     *
+     * @param array $config
      */
     public function __construct(array $config = [])
     {
@@ -114,7 +114,8 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
 
     /**
      * @param string     $path
-     * @param int|string $expiration
+     * @param string|int $expiration
+     * @param array      $options
      *
      * @return string
      */
@@ -122,7 +123,7 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
     {
         $options = array_merge($options, ['Scheme' => $this->config['scheme'] ?? 'http']);
 
-        $expiration = date('c', !is_numeric($expiration) ? strtotime($expiration) : (int) $expiration);
+        $expiration = date('c', !\is_numeric($expiration) ? \strtotime($expiration) : \intval($expiration));
 
         $objectUrl = $this->getClient()->getObjectUrl(
             $this->getBucket(),
@@ -134,7 +135,7 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
         $url = parse_url($objectUrl);
 
         if ($this->config['cdn']) {
-            return sprintf('%s/%s?%s', rtrim($this->config['cdn'], '/'), urldecode($url['path']), $url['query']);
+            return \sprintf('%s/%s?%s', \rtrim($this->config['cdn'], '/'), urldecode($url['path']), $url['query']);
         }
 
         return $objectUrl;
@@ -143,6 +144,7 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
     /**
      * @param string $path
      * @param string $contents
+     * @param Config $config
      *
      * @return array|false
      */
@@ -156,6 +158,7 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
     /**
      * @param string   $path
      * @param resource $resource
+     * @param Config   $config
      *
      * @return array|false
      */
@@ -174,6 +177,7 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
     /**
      * @param string $path
      * @param string $contents
+     * @param Config $config
      *
      * @return array|bool
      */
@@ -185,6 +189,7 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
     /**
      * @param string   $path
      * @param resource $resource
+     * @param Config   $config
      *
      * @return array|bool
      */
@@ -263,6 +268,7 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
 
     /**
      * @param string $dirname
+     * @param Config $config
      *
      * @return array|bool
      */
@@ -270,7 +276,7 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
     {
         return $this->getClient()->putObject([
             'Bucket' => $this->getBucket(),
-            'Key' => $dirname . '/',
+            'Key' => $dirname.'/',
             'Body' => '',
         ]);
     }
@@ -318,8 +324,7 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
                 $response = $this->getHttpClient()
                     ->get($this->getTemporaryUrl($path, date('+5 min')))
                     ->getBody()
-                    ->getContents()
-                ;
+                    ->getContents();
             } else {
                 $response = $this->getClient()->getObject([
                     'Bucket' => $this->getBucket(),
@@ -341,6 +346,8 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
     }
 
     /**
+     * @param \Qcloud\Cos\Client $client
+     *
      * @return $this
      */
     public function setClient(Client $client)
@@ -359,6 +366,8 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
     }
 
     /**
+     * @param \GuzzleHttp\Client $client
+     *
      * @return $this
      */
     public function setHttpClient(HttpClient $client)
@@ -376,13 +385,12 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
     public function readStream($path)
     {
         try {
-            $temporaryUrl = $this->getTemporaryUrl($path, strtotime('+5 min'));
+            $temporaryUrl = $this->getTemporaryUrl($path, \strtotime('+5 min'));
 
             $stream = $this->getHttpClient()
                 ->get($temporaryUrl, ['stream' => true])
                 ->getBody()
-                ->detach()
-            ;
+                ->detach();
 
             return ['stream' => $stream];
         } catch (\Throwable $e) {
@@ -482,6 +490,8 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
     }
 
     /**
+     * @param array $content
+     *
      * @return array
      */
     protected function normalizeFileInfo(array $content)
@@ -491,11 +501,11 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
         return [
             'type' => '/' === substr($content['Key'], -1) ? 'dir' : 'file',
             'path' => $content['Key'],
-            'size' => (int) ($content['Size']),
-            'dirname' => (string) ($path['dirname']),
-            'basename' => (string) ($path['basename']),
-            'filename' => (string) ($path['filename']),
-            'timestamp' => strtotime($content['LastModified']),
+            'size' => \intval($content['Size']),
+            'dirname' => \strval($path['dirname']),
+            'basename' => \strval($path['basename']),
+            'filename' => strval($path['filename']),
+            'timestamp' => \strtotime($content['LastModified']),
             'extension' => $path['extension'] ?? '',
         ];
     }
@@ -510,12 +520,14 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
     {
         return $this->getClient()->listObjects([
             'Bucket' => $this->getBucket(),
-            'Prefix' => ('' === (string) $directory) ? '' : ($directory . '/'),
+            'Prefix' => ('' === (string) $directory) ? '' : ($directory.'/'),
             'Delimiter' => $recursive ? '' : '/',
         ]);
     }
 
     /**
+     * @param Config $config
+     *
      * @return array
      */
     protected function getUploadOptions(Config $config)
@@ -543,7 +555,6 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
         switch ($visibility) {
             case AdapterInterface::VISIBILITY_PUBLIC:
                 $visibility = 'public-read';
-
                 break;
         }
 

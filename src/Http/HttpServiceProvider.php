@@ -1,23 +1,21 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Http;
 
-use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContracts;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContracts;
 
 class HttpServiceProvider extends ServiceProvider
 {
     public function register()
     {
         $this->app->singleton(RouteCollection::class, function () {
-            return new RouteCollection();
+            return new RouteCollection;
         });
 
         $this->app->singleton(RouteHandlerFactory::class, function ($app) {

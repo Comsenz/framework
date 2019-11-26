@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Api;
@@ -29,13 +27,13 @@ class ErrorHandler
 
     public function handler(Throwable $e)
     {
-        if (!$e instanceof Exception) {
+        if (! $e instanceof Exception) {
             $e = new Exception($e->getMessage(), $e->getCode(), $e);
         }
 
         $response = $this->errorHandler->handle($e);
 
-        $document = new Document();
+        $document = new Document;
         $document->setErrors($response->getErrors());
 
         return new JsonApiResponse($document, $response->getStatus());

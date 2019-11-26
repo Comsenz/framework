@@ -1,12 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Search;
@@ -15,8 +11,8 @@ use Discuz\Contracts\Search\Search;
 use Discuz\Contracts\Search\SearchBuilder;
 use Discuz\Contracts\Search\Searcher;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
 class MysqlSearcher implements Searcher
@@ -33,24 +29,27 @@ class MysqlSearcher implements Searcher
      *
      * @var Collection
      */
-    protected $searchSource;
+    protected $searchSource = null;
 
     /**
      * 查询构建器.
      *
      * @var SearchBuilder
      */
-    protected $searchBuilder;
+    protected $searchBuilder = null;
 
     /**
      * 搜索结果.
      *
      * @var Collection
      */
-    protected $searchResults;
+    protected $searchResults = null;
 
     /**
      * 创建一个新的查询实例.
+     *
+     * @param  Container  $container
+     * @return void
      */
     public function __construct(Container $container)
     {
@@ -60,16 +59,16 @@ class MysqlSearcher implements Searcher
     /**
      * 应用一个数据来源.
      *
+     * @param Search $search
+     * @return MysqlSearcher
      * @throws SearchBuilderException
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     *
-     * @return MysqlSearcher
      */
     public function apply(Search $search)
     {
         $this->searchSource = $search;
 
-        $builder = \get_class($search) . 'Builder';
+        $builder = get_class($search).'Builder';
 
         if (class_exists($builder)) {
             $this->searchBuilder = $this->container->make($builder);
@@ -101,6 +100,7 @@ class MysqlSearcher implements Searcher
     /**
      * 分发处理条件到[查询构建器].
      *
+     * @param array $condition
      * @return MysqlSearcher
      */
     public function conditions(array $condition = [])
@@ -115,7 +115,7 @@ class MysqlSearcher implements Searcher
 
         foreach ($condition as $key => $content) {
             if (method_exists($this->searchBuilder, $key)) {
-                $this->searchBuilder->{$key}($actor, $query, $content);
+                $this->searchBuilder->$key($actor, $query, $content);
             }
         }
 
@@ -125,6 +125,7 @@ class MysqlSearcher implements Searcher
     /**
      * 分发关联关系到[查询构建器].
      *
+     * @param array $withs
      * @return MysqlSearcher
      */
     public function withs(array $withs = [])
@@ -140,9 +141,9 @@ class MysqlSearcher implements Searcher
 
             if (!isset($withs[$include]) && method_exists($this->searchBuilder, $include)) {
                 $withs[$include] = function ($query) use ($actor, $include) {
-                    $this->searchBuilder->{$include}($actor, $query);
+                    $this->searchBuilder->$include($actor, $query);
                 };
-            } elseif (!\in_array($include, $withs, true)) {
+            } elseif (!in_array($include, $withs)) {
                 $withs[] = $include;
             }
         }
@@ -163,13 +164,13 @@ class MysqlSearcher implements Searcher
 
         $sort = $this->searchSource->getSort();
 
-        if (\is_callable($sort)) {
+        if (is_callable($sort)) {
             $sort($query);
         } else {
             foreach ($sort as $field => $order) {
-                if (\is_array($order)) {
+                if (is_array($order)) {
                     foreach ($order as $value) {
-                        $query->orderByRaw(Str::snake($field) . ' != ?', [$value]);
+                        $query->orderByRaw(Str::snake($field).' != ?', [$value]);
                     }
                 } else {
                     $query->orderBy(Str::snake($field), $order);
@@ -208,6 +209,7 @@ class MysqlSearcher implements Searcher
      * 返回查询的结果[单条].
      *
      * @param bool $reset 是否重新获取结果
+     * @return Model
      */
     public function getSingle($reset = false): Model
     {
@@ -222,6 +224,7 @@ class MysqlSearcher implements Searcher
      * 返回查询的结果[多条].
      *
      * @param bool $reset 是否重新获取结果
+     * @return Collection
      */
     public function getMultiple($reset = false): Collection
     {
@@ -250,7 +253,6 @@ class MysqlSearcher implements Searcher
      * 获取给定关系的方法名.
      *
      * @param string $name
-     *
      * @return string
      */
     private function getWithName($name)

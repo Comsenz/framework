@@ -1,12 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Http;
@@ -30,6 +26,11 @@ class FileResponse extends Response
         parent::__construct($body, $status, $headers);
     }
 
+    protected function createBody()
+    {
+        return fopen($this->file->getRealPath(), 'rb');
+    }
+
     /**
      * Sets the file to stream.
      *
@@ -38,9 +39,9 @@ class FileResponse extends Response
      * @param bool                $autoEtag
      * @param bool                $autoLastModified
      *
-     * @throws FileException
-     *
      * @return $this
+     *
+     * @throws FileException
      */
     public function setFile($file)
     {
@@ -59,10 +60,5 @@ class FileResponse extends Response
         $this->file = $file;
 
         return $this;
-    }
-
-    protected function createBody()
-    {
-        return fopen($this->file->getRealPath(), 'r');
     }
 }

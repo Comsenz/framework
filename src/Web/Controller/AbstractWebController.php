@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Web\Controller;
@@ -30,6 +28,8 @@ abstract class AbstractWebController implements RequestHandlerInterface
     }
 
     /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
      * @throws \Tobscure\JsonApi\Exception\InvalidParameterException
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -38,7 +38,6 @@ abstract class AbstractWebController implements RequestHandlerInterface
         if ($view instanceof Renderable) {
             $view = $view->render();
         }
-
         return new HtmlResponse($view);
     }
 

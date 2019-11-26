@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Foundation;
@@ -23,6 +21,7 @@ abstract class AbstractValidator
     }
 
     /**
+     * @param array $attributes
      * @throws ValidationException
      */
     public function valid(array $attributes)
@@ -38,7 +37,9 @@ abstract class AbstractValidator
     {
         $rules = Arr::only($this->getRules(), array_keys($attributes));
 
-        return $this->validator->make($attributes, $rules, $this->getMessages());
+        $validator = $this->validator->make($attributes, $rules, $this->getMessages());
+
+        return $validator;
     }
 
     /**

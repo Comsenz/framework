@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Api\Events;
@@ -29,8 +27,9 @@ class GetPermission
     public $model;
 
     /**
+     * @param User $actor
      * @param string $ability
-     * @param mixed  $model
+     * @param mixed $model
      */
     public function __construct(User $actor, $ability, $model)
     {

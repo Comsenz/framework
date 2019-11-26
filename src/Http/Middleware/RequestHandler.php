@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Http\Middleware;
@@ -32,6 +30,11 @@ class RequestHandler implements MiddlewareInterface
         krsort($this->middlewares);
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $request = $this->getNormalizedPath($request);
@@ -40,7 +43,7 @@ class RequestHandler implements MiddlewareInterface
         UrlGenerator::setRequest($request);
 
         foreach ($this->middlewares as $pathPrefix => $middleware) {
-            if (0 === strpos($requestPath, $pathPrefix)) {
+            if (strpos($requestPath, $pathPrefix) === 0) {
                 $requestHandler = $this->app->make($middleware);
 
                 if ($requestHandler instanceof MiddlewareInterface) {
@@ -51,7 +54,7 @@ class RequestHandler implements MiddlewareInterface
                     return $requestHandler->handle($request);
                 }
 
-                throw new RuntimeException(sprintf('Invalid request handler: %s', \gettype($requestHandler)));
+                throw new RuntimeException(sprintf('Invalid request handler: %s', gettype($requestHandler)));
             }
         }
 
@@ -69,11 +72,11 @@ class RequestHandler implements MiddlewareInterface
 
         $baseUri = basename($baseUrl);
 
-        $baseUrl = rtrim(substr($baseUrl, 0, \strlen($baseUrl) - \strlen($baseUri)), '/' . \DIRECTORY_SEPARATOR);
+        $baseUrl = rtrim(substr($baseUrl, 0, strlen($baseUrl) - strlen($baseUri)), '/'.\DIRECTORY_SEPARATOR);
         $requestUri = $uri->getPath() ?: '/';
 
         if ('/' !== $baseUrl && \strlen($requestUri) >= \strlen($baseUrl)) {
-            $request = $request->withUri($uri->withPath(substr($requestUri, \strlen($baseUrl))));
+            $request = $request->withUri($uri->withPath(substr($requestUri, strlen($baseUrl))));
         }
 
         return $request;

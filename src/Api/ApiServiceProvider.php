@@ -1,15 +1,12 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Api;
 
-use Discuz\Api\Events\ApiExceptionRegisterHandler;
 use Discuz\Api\ExceptionHandler\NotAuthenticatedExceptionHandler;
 use Discuz\Api\ExceptionHandler\PermissionDeniedExceptionHandler;
 use Discuz\Api\ExceptionHandler\RouteNotFoundExceptionHandler;
@@ -18,6 +15,7 @@ use Discuz\Api\ExceptionHandler\TencentCloudSDKExceptionHandler;
 use Discuz\Api\ExceptionHandler\ValidationExceptionHandler;
 use Discuz\Api\Listeners\AutoResisterApiExceptionRegisterHandler;
 use Discuz\Api\Middleware\HandlerErrors;
+use Discuz\Api\Events\ApiExceptionRegisterHandler;
 use Discuz\Foundation\Application;
 use Discuz\Http\Middleware\AuthenticateWithHeader;
 use Discuz\Http\Middleware\DispatchRoute;
@@ -25,9 +23,9 @@ use Discuz\Http\Middleware\EnableCrossRequest;
 use Discuz\Http\Middleware\ParseJsonBody;
 use Discuz\Http\RouteCollection;
 use Illuminate\Support\ServiceProvider;
-use Tobscure\JsonApi\ErrorHandler;
 use Tobscure\JsonApi\Exception\Handler\FallbackExceptionHandler;
 use Zend\Stratigility\MiddlewarePipe;
+use Tobscure\JsonApi\ErrorHandler;
 
 class ApiServiceProvider extends ServiceProvider
 {
@@ -39,12 +37,11 @@ class ApiServiceProvider extends ServiceProvider
             $pipe->pipe($app->make(ParseJsonBody::class));
             $pipe->pipe($app->make(AuthenticateWithHeader::class));
             $pipe->pipe($app->make(EnableCrossRequest::class));
-
             return $pipe;
         });
 
         $this->app->singleton(ErrorHandler::class, function (Application $app) {
-            $errorHandler = new ErrorHandler();
+            $errorHandler = new ErrorHandler;
             $errorHandler->registerHandler(new RouteNotFoundExceptionHandler());
             $errorHandler->registerHandler(new ValidationExceptionHandler());
             $errorHandler->registerHandler(new NotAuthenticatedExceptionHandler());
@@ -55,7 +52,6 @@ class ApiServiceProvider extends ServiceProvider
             $app->make('events')->dispatch(new ApiExceptionRegisterHandler($errorHandler));
 
             $errorHandler->registerHandler(new FallbackExceptionHandler($app->config('debug')));
-
             return $errorHandler;
         });
 

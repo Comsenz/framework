@@ -1,17 +1,15 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Foundation;
 
+use Discuz\Contracts\Policy\Policy;
 use Discuz\Api\Events\GetPermission;
 use Discuz\Api\Events\ScopeModelVisibility;
-use Discuz\Contracts\Policy\Policy;
 use Illuminate\Contracts\Events\Dispatcher;
 
 abstract class AbstractPolicy implements Policy
@@ -21,6 +19,9 @@ abstract class AbstractPolicy implements Policy
      */
     protected $model;
 
+    /**
+     * @param Dispatcher $events
+     */
     public function subscribe(Dispatcher $events)
     {
         $events->listen(GetPermission::class, [$this, 'getPermission']);
@@ -28,38 +29,42 @@ abstract class AbstractPolicy implements Policy
     }
 
     /**
+     * @param GetPermission $event
      * @return bool|void
      */
     public function getPermission(GetPermission $event)
     {
-        if (!$event->model instanceof $this->model) {
+        if (! $event->model instanceof $this->model) {
             return;
         }
 
         if (method_exists($this, $event->ability)) {
-            $result = \call_user_func_array([$this, $event->ability], [$event->actor, $event->model]);
+            $result = call_user_func_array([$this, $event->ability], [$event->actor, $event->model]);
 
-            if (null !== $result) {
+            if (! is_null($result)) {
                 return $result;
             }
         }
 
         if (method_exists($this, 'can')) {
-            return \call_user_func_array([$this, 'can'], [$event->actor, $event->ability, $event->model]);
+            return call_user_func_array([$this, 'can'], [$event->actor, $event->ability, $event->model]);
         }
     }
 
+    /**
+     * @param ScopeModelVisibility $event
+     */
     public function scopeModelVisibility(ScopeModelVisibility $event)
     {
         if ($event->query->getModel() instanceof $this->model) {
-            if ('view' === substr($event->ability, 0, 4)) {
-                $method = 'find' . substr($event->ability, 4);
+            if (substr($event->ability, 0, 4) === 'view') {
+                $method = 'find'.substr($event->ability, 4);
 
                 if (method_exists($this, $method)) {
-                    \call_user_func_array([$this, $method], [$event->actor, $event->query]);
+                    call_user_func_array([$this, $method], [$event->actor, $event->query]);
                 }
             } elseif (method_exists($this, 'findWithPermission')) {
-                \call_user_func_array([$this, 'findWithPermission'], [$event->actor, $event->query, $event->ability]);
+                call_user_func_array([$this, 'findWithPermission'], [$event->actor, $event->query, $event->ability]);
             }
         }
     }

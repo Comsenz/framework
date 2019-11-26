@@ -1,12 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Foundation;
@@ -26,7 +22,7 @@ trait EventsDispatchTrait
      * 分发并清空某一个实体的所有暂存事件.
      *
      * @param object $entity
-     * @param User   $actor
+     * @param User $actor
      */
     public function dispatchEventsFor($entity, $actor = null)
     {

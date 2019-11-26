@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Api\Serializer;
@@ -41,6 +39,9 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
         return $this->request;
     }
 
+    /**
+     * @param Request $request
+     */
     public function setRequest(Request $request)
     {
         $this->request = $request;
@@ -60,7 +61,7 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
      */
     public function getAttributes($model, array $fields = null)
     {
-        if (!\is_object($model) && !\is_array($model)) {
+        if (! is_object($model) && ! is_array($model)) {
             return [];
         }
 
@@ -74,12 +75,30 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
     }
 
     /**
+     * Get the default set of serialized attributes for a model.
+     *
+     * @param object|array $model
+     * @return array
+     */
+    abstract protected function getDefaultAttributes($model);
+
+    /**
+     * @param DateTime|null $date
+     * @return string|null
+     */
+    protected function formatDate(DateTime $date = null)
+    {
+        if ($date) {
+            return $date->format(DateTime::RFC3339);
+        }
+    }
+
+    /**
      * Get a relationship builder for a has-one relationship.
      *
-     * @param mixed                              $model
-     * @param Closure|SerializerInterface|string $serializer
-     * @param null|Closure|string                $relation
-     *
+     * @param mixed $model
+     * @param string|Closure|SerializerInterface $serializer
+     * @param string|Closure|null $relation
      * @return Relationship
      */
     public function hasOne($model, $serializer, $relation = null)
@@ -90,10 +109,9 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
     /**
      * Get a relationship builder for a has-many relationship.
      *
-     * @param mixed                              $model
-     * @param Closure|SerializerInterface|string $serializer
-     * @param null|string                        $relation
-     *
+     * @param mixed $model
+     * @param string|Closure|SerializerInterface $serializer
+     * @param string|null $relation
      * @return Relationship
      */
     public function hasMany($model, $serializer, $relation = null)
@@ -102,46 +120,26 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
     }
 
     /**
-     * Get the default set of serialized attributes for a model.
-     *
-     * @param array|object $model
-     *
-     * @return array
-     */
-    abstract protected function getDefaultAttributes($model);
-
-    /**
-     * @return null|string
-     */
-    protected function formatDate(DateTime $date = null)
-    {
-        if ($date) {
-            return $date->format(DateTime::RFC3339);
-        }
-    }
-
-    /**
-     * @param mixed                              $model
-     * @param Closure|SerializerInterface|string $serializer
-     * @param null|string                        $relation
-     * @param bool                               $many
-     *
+     * @param mixed $model
+     * @param string|Closure|SerializerInterface $serializer
+     * @param string|null $relation
+     * @param bool $many
      * @return Relationship
      */
     protected function buildRelationship($model, $serializer, $relation = null, $many = false)
     {
-        if (null === $relation) {
+        if (is_null($relation)) {
             list(, , $caller) = debug_backtrace(false, 3);
 
             $relation = $caller['function'];
         }
 
-        if ($model->{$relation}) {
-            $serializer = $this->resolveSerializer($serializer, $model, $model->{$relation});
+        if ($model->$relation) {
+            $serializer = $this->resolveSerializer($serializer, $model, $model->$relation);
 
             $type = $many ? Collection::class : Resource::class;
 
-            $element = new $type($model->{$relation}, $serializer);
+            $element = new $type($model->$relation, $serializer);
 
             return new Relationship($element);
         }
@@ -151,24 +149,22 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
      * @param mixed $serializer
      * @param mixed $model
      * @param mixed $data
-     *
-     * @throws InvalidArgumentException
-     *
      * @return SerializerInterface
+     * @throws InvalidArgumentException
      */
     protected function resolveSerializer($serializer, $model, $data)
     {
         if ($serializer instanceof Closure) {
-            $serializer = \call_user_func($serializer, $model, $data);
+            $serializer = call_user_func($serializer, $model, $data);
         }
 
-        if (\is_string($serializer)) {
+        if (is_string($serializer)) {
             $serializer = $this->resolveSerializerClass($serializer);
         }
 
-        if (!($serializer instanceof SerializerInterface)) {
+        if (! ($serializer instanceof SerializerInterface)) {
             throw new InvalidArgumentException('Serializer must be an instance of '
-                . SerializerInterface::class);
+                .SerializerInterface::class);
         }
 
         return $serializer;
@@ -176,7 +172,6 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
 
     /**
      * @param string $class
-     *
      * @return object
      */
     protected function resolveSerializerClass($class)

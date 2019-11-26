@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Auth;
@@ -56,6 +54,13 @@ class Gate implements GateContract
 
     /**
      * Create a new gate instance.
+     *
+     * @param  Container $container
+     * @param  callable  $userResolver
+     * @param  array  $abilities
+     * @param  array  $policies
+     * @param  array  $beforeCallbacks
+     * @return void
      */
     public function __construct(Container $container, callable $userResolver, array $abilities = [], array $policies = [], array $beforeCallbacks = [])
     {
@@ -69,8 +74,7 @@ class Gate implements GateContract
     /**
      * Determine if a given ability has been defined.
      *
-     * @param string $ability
-     *
+     * @param  string  $ability
      * @return bool
      */
     public function has($ability)
@@ -81,18 +85,17 @@ class Gate implements GateContract
     /**
      * Define a new ability.
      *
-     * @param string          $ability
-     * @param callable|string $callback
+     * @param  string  $ability
+     * @param  callable|string  $callback
+     * @return $this
      *
      * @throws \InvalidArgumentException
-     *
-     * @return $this
      */
     public function define($ability, $callback)
     {
-        if (\is_callable($callback)) {
+        if (is_callable($callback)) {
             $this->abilities[$ability] = $callback;
-        } elseif (\is_string($callback) && Str::contains($callback, '@')) {
+        } elseif (is_string($callback) && Str::contains($callback, '@')) {
             $this->abilities[$ability] = $this->buildAbilityCallback($callback);
         } else {
             throw new InvalidArgumentException("Callback must be a callable or a 'Class@method' string.");
@@ -102,11 +105,25 @@ class Gate implements GateContract
     }
 
     /**
+     * Create the ability callback for a callback string.
+     *
+     * @param  string  $callback
+     * @return \Closure
+     */
+    protected function buildAbilityCallback($callback)
+    {
+        return function () use ($callback) {
+            list($class, $method) = explode('@', $callback);
+
+            return call_user_func_array([$this->resolvePolicy($class), $method], func_get_args());
+        };
+    }
+
+    /**
      * Define a policy class for a given class type.
      *
-     * @param string $class
-     * @param string $policy
-     *
+     * @param  string  $class
+     * @param  string  $policy
      * @return $this
      */
     public function policy($class, $policy)
@@ -119,6 +136,7 @@ class Gate implements GateContract
     /**
      * Register a callback to run before all Gate checks.
      *
+     * @param  callable  $callback
      * @return $this
      */
     public function before(callable $callback)
@@ -131,9 +149,8 @@ class Gate implements GateContract
     /**
      * Determine if the given ability should be granted for the current user.
      *
-     * @param string      $ability
-     * @param array|mixed $arguments
-     *
+     * @param  string  $ability
+     * @param  array|mixed  $arguments
      * @return bool
      */
     public function allows($ability, $arguments = [])
@@ -144,57 +161,150 @@ class Gate implements GateContract
     /**
      * Determine if the given ability should be denied for the current user.
      *
-     * @param string      $ability
-     * @param array|mixed $arguments
-     *
+     * @param  string  $ability
+     * @param  array|mixed  $arguments
      * @return bool
      */
     public function denies($ability, $arguments = [])
     {
-        return !$this->allows($ability, $arguments);
+        return ! $this->allows($ability, $arguments);
     }
 
     /**
      * Determine if the given ability should be granted for the current user.
      *
-     * @param string      $ability
-     * @param array|mixed $arguments
-     *
+     * @param  string  $ability
+     * @param  array|mixed  $arguments
      * @return bool
      */
     public function check($ability, $arguments = [])
     {
-        if (!$user = $this->resolveUser()) {
+        if (! $user = $this->resolveUser()) {
             return false;
         }
 
-        $arguments = \is_array($arguments) ? $arguments : [$arguments];
+        $arguments = is_array($arguments) ? $arguments : [$arguments];
 
-        if (null !== ($result = $this->callBeforeCallbacks($user, $ability, $arguments))) {
+        if (! is_null($result = $this->callBeforeCallbacks($user, $ability, $arguments))) {
             return $result;
         }
 
         $callback = $this->resolveAuthCallback($user, $ability, $arguments);
 
-        return \call_user_func_array($callback, array_merge([$user], $arguments));
+        return call_user_func_array($callback, array_merge([$user], $arguments));
+    }
+
+    /**
+     * Call all of the before callbacks and return if a result is given.
+     *
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param  string  $ability
+     * @param  array  $arguments
+     * @return bool|void
+     */
+    protected function callBeforeCallbacks($user, $ability, array $arguments)
+    {
+        $arguments = array_merge([$user, $ability], $arguments);
+
+        foreach ($this->beforeCallbacks as $before) {
+            if (! is_null($result = call_user_func_array($before, $arguments))) {
+                return $result;
+            }
+        }
+    }
+
+    /**
+     * Resolve the callable for the given ability and arguments.
+     *
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param  string  $ability
+     * @param  array  $arguments
+     * @return callable
+     */
+    protected function resolveAuthCallback($user, $ability, array $arguments)
+    {
+        if ($this->firstArgumentCorrespondsToPolicy($arguments)) {
+            return $this->resolvePolicyCallback($user, $ability, $arguments);
+        } elseif (isset($this->abilities[$ability])) {
+            return $this->abilities[$ability];
+        } else {
+            return function () {
+                return false;
+            };
+        }
+    }
+
+    /**
+     * Determine if the first argument in the array corresponds to a policy.
+     *
+     * @param  array  $arguments
+     * @return bool
+     */
+    protected function firstArgumentCorrespondsToPolicy(array $arguments)
+    {
+        if (! isset($arguments[0])) {
+            return false;
+        }
+
+        if (is_object($arguments[0])) {
+            return isset($this->policies[get_class($arguments[0])]);
+        }
+
+        return is_string($arguments[0]) && isset($this->policies[$arguments[0]]);
+    }
+
+    /**
+     * Resolve the callback for a policy check.
+     *
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param  string  $ability
+     * @param  array  $arguments
+     * @return callable
+     */
+    protected function resolvePolicyCallback($user, $ability, array $arguments)
+    {
+        return function () use ($user, $ability, $arguments) {
+            $instance = $this->getPolicyFor($arguments[0]);
+
+            if (method_exists($instance, 'before')) {
+                // We will prepend the user and ability onto the arguments so that the before
+                // callback can determine which ability is being called. Then we will call
+                // into the policy before methods with the arguments and get the result.
+                $beforeArguments = array_merge([$user, $ability], $arguments);
+
+                $result = call_user_func_array([$instance, 'before'], $beforeArguments);
+
+                // If we received a non-null result from the before method, we will return it
+                // as the result of a check. This allows developers to override the checks
+                // in the policy and return a result for all rules defined in the class.
+                if (! is_null($result)) {
+                    return $result;
+                }
+            }
+
+            if (! is_callable([$instance, $ability])) {
+                return false;
+            }
+
+            return call_user_func_array([$instance, $ability], array_merge([$user], $arguments));
+        };
     }
 
     /**
      * Get a policy instance for a given class.
      *
-     * @param object|string $class
+     * @param  object|string  $class
+     * @return mixed
      *
      * @throws \InvalidArgumentException
-     *
-     * @return mixed
      */
     public function getPolicyFor($class)
     {
-        if (\is_object($class)) {
-            $class = \get_class($class);
+        if (is_object($class)) {
+            $class = get_class($class);
         }
 
-        if (!isset($this->policies[$class])) {
+        if (! isset($this->policies[$class])) {
             throw new InvalidArgumentException("Policy not defined for [{$class}].");
         }
 
@@ -204,8 +314,7 @@ class Gate implements GateContract
     /**
      * Build a policy class instance of the given type.
      *
-     * @param object|string $class
-     *
+     * @param  object|string  $class
      * @return mixed
      */
     public function resolvePolicy($class)
@@ -216,8 +325,7 @@ class Gate implements GateContract
     /**
      * Get a guard instance for the given user.
      *
-     * @param \Illuminate\Contracts\Auth\Authenticatable|mixed $user
-     *
+     * @param  \Illuminate\Contracts\Auth\Authenticatable|mixed  $user
      * @return static
      */
     public function forUser($user)
@@ -234,8 +342,19 @@ class Gate implements GateContract
     }
 
     /**
+     * Resolve the user from the user resolver.
+     *
+     * @return mixed
+     */
+    protected function resolveUser()
+    {
+        return call_user_func($this->userResolver);
+    }
+
+    /**
      * Register a callback to run after all Gate checks.
      *
+     * @param  callable $callback
      * @return GateContract
      */
     public function after(callable $callback)
@@ -246,9 +365,8 @@ class Gate implements GateContract
     /**
      * Determine if any one of the given abilities should be granted for the current user.
      *
-     * @param iterable|string $abilities
-     * @param array|mixed     $arguments
-     *
+     * @param  iterable|string $abilities
+     * @param  array|mixed $arguments
      * @return bool
      */
     public function any($abilities, $arguments = [])
@@ -259,12 +377,11 @@ class Gate implements GateContract
     /**
      * Determine if the given ability should be granted for the current user.
      *
-     * @param string      $ability
-     * @param array|mixed $arguments
+     * @param  string $ability
+     * @param  array|mixed $arguments
+     * @return \Illuminate\Auth\Access\Response
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
-     *
-     * @return \Illuminate\Auth\Access\Response
      */
     public function authorize($ability, $arguments = [])
     {
@@ -284,9 +401,8 @@ class Gate implements GateContract
     /**
      * Get the raw result from the authorization callback.
      *
-     * @param string      $ability
-     * @param array|mixed $arguments
-     *
+     * @param  string      $ability
+     * @param  array|mixed $arguments
      * @return mixed
      */
     public function raw($ability, $arguments = [])
@@ -299,7 +415,7 @@ class Gate implements GateContract
      *
      * @param string $name
      * @param string $class
-     *
+     * @param array|null $abilities
      * @return GateContract
      */
     public function resource($name, $class, array $abilities = null)
@@ -310,135 +426,12 @@ class Gate implements GateContract
     /**
      * Inspect the user for the given ability.
      *
-     * @param string      $ability
+     * @param string $ability
      * @param array|mixed $arguments
-     *
      * @return \Illuminate\Auth\Access\Response
      */
     public function inspect($ability, $arguments = [])
     {
         // TODO: Implement inspect() method.
-    }
-
-    /**
-     * Create the ability callback for a callback string.
-     *
-     * @param string $callback
-     *
-     * @return \Closure
-     */
-    protected function buildAbilityCallback($callback)
-    {
-        return function () use ($callback) {
-            list($class, $method) = explode('@', $callback);
-
-            return \call_user_func_array([$this->resolvePolicy($class), $method], \func_get_args());
-        };
-    }
-
-    /**
-     * Call all of the before callbacks and return if a result is given.
-     *
-     * @param \Illuminate\Contracts\Auth\Authenticatable $user
-     * @param string                                     $ability
-     *
-     * @return bool|void
-     */
-    protected function callBeforeCallbacks($user, $ability, array $arguments)
-    {
-        $arguments = array_merge([$user, $ability], $arguments);
-
-        foreach ($this->beforeCallbacks as $before) {
-            if (null !== ($result = \call_user_func_array($before, $arguments))) {
-                return $result;
-            }
-        }
-    }
-
-    /**
-     * Resolve the callable for the given ability and arguments.
-     *
-     * @param \Illuminate\Contracts\Auth\Authenticatable $user
-     * @param string                                     $ability
-     *
-     * @return callable
-     */
-    protected function resolveAuthCallback($user, $ability, array $arguments)
-    {
-        if ($this->firstArgumentCorrespondsToPolicy($arguments)) {
-            return $this->resolvePolicyCallback($user, $ability, $arguments);
-        }
-        if (isset($this->abilities[$ability])) {
-            return $this->abilities[$ability];
-        }
-
-        return function () {
-            return false;
-        };
-    }
-
-    /**
-     * Determine if the first argument in the array corresponds to a policy.
-     *
-     * @return bool
-     */
-    protected function firstArgumentCorrespondsToPolicy(array $arguments)
-    {
-        if (!isset($arguments[0])) {
-            return false;
-        }
-
-        if (\is_object($arguments[0])) {
-            return isset($this->policies[\get_class($arguments[0])]);
-        }
-
-        return \is_string($arguments[0]) && isset($this->policies[$arguments[0]]);
-    }
-
-    /**
-     * Resolve the callback for a policy check.
-     *
-     * @param \Illuminate\Contracts\Auth\Authenticatable $user
-     * @param string                                     $ability
-     *
-     * @return callable
-     */
-    protected function resolvePolicyCallback($user, $ability, array $arguments)
-    {
-        return function () use ($user, $ability, $arguments) {
-            $instance = $this->getPolicyFor($arguments[0]);
-
-            if (method_exists($instance, 'before')) {
-                // We will prepend the user and ability onto the arguments so that the before
-                // callback can determine which ability is being called. Then we will call
-                // into the policy before methods with the arguments and get the result.
-                $beforeArguments = array_merge([$user, $ability], $arguments);
-
-                $result = \call_user_func_array([$instance, 'before'], $beforeArguments);
-
-                // If we received a non-null result from the before method, we will return it
-                // as the result of a check. This allows developers to override the checks
-                // in the policy and return a result for all rules defined in the class.
-                if (null !== $result) {
-                    return $result;
-                }
-            }
-
-            if (!\is_callable([$instance, $ability])) {
-                return false;
-            }
-
-            return \call_user_func_array([$instance, $ability], array_merge([$user], $arguments));
-        };
-    }
-
-    /**
-     * Resolve the user from the user resolver.
-     *
-     * @return mixed
-     */
-    protected function resolveUser()
-    {
-        return \call_user_func($this->userResolver);
     }
 }

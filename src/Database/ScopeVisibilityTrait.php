@@ -1,12 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Database;
@@ -19,6 +15,9 @@ trait ScopeVisibilityTrait
 {
     /**
      * Scope a query to only include records that are visible to a user.
+     *
+     * @param Builder $query
+     * @param User $actor
      */
     public function scopeWhereVisibleTo(Builder $query, User $actor)
     {

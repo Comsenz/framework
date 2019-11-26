@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Database;
@@ -43,6 +41,8 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
 
     /**
      * Register the service provider.
+     *
+     * @return void
      */
     public function register()
     {
@@ -53,19 +53,9 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
     }
 
     /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return array_merge([
-            'migrator', 'migration.repository', 'migration.creator',
-        ], array_values($this->commands));
-    }
-
-    /**
      * Register the migration repository service.
+     *
+     * @return void
      */
     protected function registerRepository()
     {
@@ -78,6 +68,8 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
 
     /**
      * Register the migrator service.
+     *
+     * @return void
      */
     protected function registerMigrator()
     {
@@ -86,13 +78,14 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
         // so the migrator can resolve any of these connections when it needs to.
         $this->app->singleton('migrator', function ($app) {
             $repository = $app['migration.repository'];
-
             return new Migrator($repository, $app['db'], $app['files'], $app['events']);
         });
     }
 
     /**
      * Register the migration creator.
+     *
+     * @return void
      */
     protected function registerCreator()
     {
@@ -103,17 +96,22 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
 
     /**
      * Register the given commands.
+     *
+     * @param  array  $commands
+     * @return void
      */
     protected function registerCommands(array $commands)
     {
         foreach (array_keys($commands) as $command) {
-            \call_user_func_array([$this, "register{$command}Command"], []);
+            call_user_func_array([$this, "register{$command}Command"], []);
         }
         $this->commands(array_values($commands));
     }
 
     /**
      * Register the command.
+     *
+     * @return void
      */
     protected function registerMigrateCommand()
     {
@@ -124,16 +122,20 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
 
     /**
      * Register the command.
+     *
+     * @return void
      */
     protected function registerMigrateFreshCommand()
     {
         $this->app->singleton('command.migrate.fresh', function () {
-            return new FreshCommand();
+            return new FreshCommand;
         });
     }
 
     /**
      * Register the command.
+     *
+     * @return void
      */
     protected function registerMigrateInstallCommand()
     {
@@ -144,6 +146,8 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
 
     /**
      * Register the command.
+     *
+     * @return void
      */
     protected function registerMigrateMakeCommand()
     {
@@ -153,23 +157,26 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
             // creation of the migrations, and may be extended by these developers.
             $creator = $app['migration.creator'];
             $composer = $app['composer'];
-
             return new MigrateMakeCommand($creator, $composer);
         });
     }
 
     /**
      * Register the command.
+     *
+     * @return void
      */
     protected function registerMigrateRefreshCommand()
     {
         $this->app->singleton('command.migrate.refresh', function () {
-            return new RefreshCommand();
+            return new RefreshCommand;
         });
     }
 
     /**
      * Register the command.
+     *
+     * @return void
      */
     protected function registerMigrateResetCommand()
     {
@@ -180,6 +187,8 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
 
     /**
      * Register the command.
+     *
+     * @return void
      */
     protected function registerMigrateRollbackCommand()
     {
@@ -190,11 +199,25 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
 
     /**
      * Register the command.
+     *
+     * @return void
      */
     protected function registerMigrateStatusCommand()
     {
         $this->app->singleton('command.migrate.status', function ($app) {
             return new StatusCommand($app['migrator']);
         });
+    }
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return array_merge([
+            'migrator', 'migration.repository', 'migration.creator',
+        ], array_values($this->commands));
     }
 }

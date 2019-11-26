@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Auth;
@@ -28,7 +26,7 @@ class Guest extends User
      */
     public function getGroupsAttribute()
     {
-        if (!isset($this->attributes['groups'])) {
+        if (! isset($this->attributes['groups'])) {
             $this->attributes['groups'] = $this->relations['groups'] = Group::find(Group::GUEST_ID);
         }
 

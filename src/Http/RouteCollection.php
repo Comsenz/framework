@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Http;
@@ -23,6 +21,7 @@ class RouteCollection
      * @var DataGenerator
      */
     protected $dataGenerator;
+
     /**
      * @var RouteParser
      */
@@ -32,8 +31,8 @@ class RouteCollection
 
     public function __construct()
     {
-        $this->dataGenerator = new DataGenerator\GroupCountBased();
-        $this->routeParser = new RouteParser\Std();
+        $this->dataGenerator = new DataGenerator\GroupCountBased;
+        $this->routeParser = new RouteParser\Std;
 
         $this->currentGroupPrefix = '';
     }
@@ -80,7 +79,6 @@ class RouteCollection
         }
 
         $this->reverse[$name] = $routeDatas;
-
         return $this;
     }
 
@@ -89,22 +87,20 @@ class RouteCollection
         return $this->dataGenerator->getData();
     }
 
+    protected function fixPathPart(&$part, $key, array $parameters)
+    {
+        if (is_array($part) && array_key_exists($part[0], $parameters)) {
+            $part = $parameters[$part[0]];
+        }
+    }
+
     public function getPath($name, array $parameters = [])
     {
         if (isset($this->reverse[$name])) {
             $parts = $this->reverse[$name][0];
             array_walk($parts, [$this, 'fixPathPart'], $parameters);
-
-            return '/' . ltrim(implode('', $parts), '/');
+            return '/'.ltrim(implode('', $parts), '/');
         }
-
-        throw new \RuntimeException("Route {$name} not found");
-    }
-
-    protected function fixPathPart(&$part, $key, array $parameters)
-    {
-        if (\is_array($part) && \array_key_exists($part[0], $parameters)) {
-            $part = $parameters[$part[0]];
-        }
+        throw new \RuntimeException("Route $name not found");
     }
 }

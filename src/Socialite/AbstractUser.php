@@ -1,16 +1,15 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Socialite;
 
-use ArrayAccess;
 use Discuz\Contracts\Socialite\User;
+
+use ArrayAccess;
 
 abstract class AbstractUser implements ArrayAccess, User
 {
@@ -20,30 +19,35 @@ abstract class AbstractUser implements ArrayAccess, User
      * @var mixed
      */
     public $id;
+
     /**
      * The user's nickname / username.
      *
      * @var string
      */
     public $nickname;
+
     /**
      * The user's full name.
      *
      * @var string
      */
     public $name;
+
     /**
      * The user's e-mail address.
      *
      * @var string
      */
     public $email;
+
     /**
      * The user's avatar image URL.
      *
      * @var string
      */
     public $avatar;
+
     /**
      * The user's raw attributes.
      *
@@ -114,18 +118,19 @@ abstract class AbstractUser implements ArrayAccess, User
     /**
      * Set the raw user array from the provider.
      *
+     * @param  array  $user
      * @return $this
      */
     public function setRaw(array $user)
     {
         $this->user = $user;
-
         return $this;
     }
 
     /**
      * Map the given array onto the user's properties.
      *
+     * @param  array  $attributes
      * @return $this
      */
     public function map(array $attributes)
@@ -133,27 +138,24 @@ abstract class AbstractUser implements ArrayAccess, User
         foreach ($attributes as $key => $value) {
             $this->{$key} = $value;
         }
-
         return $this;
     }
 
     /**
      * Determine if the given raw user attribute exists.
      *
-     * @param string $offset
-     *
+     * @param  string  $offset
      * @return bool
      */
     public function offsetExists($offset)
     {
-        return \array_key_exists($offset, $this->user);
+        return array_key_exists($offset, $this->user);
     }
 
     /**
      * Get the given key from the raw user.
      *
-     * @param string $offset
-     *
+     * @param  string  $offset
      * @return mixed
      */
     public function offsetGet($offset)
@@ -164,8 +166,9 @@ abstract class AbstractUser implements ArrayAccess, User
     /**
      * Set the given attribute on the raw user array.
      *
-     * @param string $offset
-     * @param mixed  $value
+     * @param  string  $offset
+     * @param  mixed  $value
+     * @return void
      */
     public function offsetSet($offset, $value)
     {
@@ -175,7 +178,8 @@ abstract class AbstractUser implements ArrayAccess, User
     /**
      * Unset the given value from the raw user array.
      *
-     * @param string $offset
+     * @param  string  $offset
+     * @return void
      */
     public function offsetUnset($offset)
     {

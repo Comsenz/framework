@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Database;
@@ -20,6 +18,6 @@ class MigrationCreator extends BaseMigrationCreator
      */
     public function stubPath()
     {
-        return __DIR__ . '/stubs';
+        return __DIR__.'/stubs';
     }
 }

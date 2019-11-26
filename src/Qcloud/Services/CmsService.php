@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Qcloud\Services;
@@ -23,7 +21,6 @@ class CmsService extends AbstractService
     {
         $clientRequest = new TextModerationRequest();
         $clientRequest->fromJsonString(json_encode(['Content' => base64_encode($content)]));
-
         return $this->client->TextModeration($clientRequest)->serialize();
     }
 
@@ -31,7 +28,6 @@ class CmsService extends AbstractService
     {
         $clientRequest = new ImageModerationRequest();
         $clientRequest->fromJsonString(json_encode($params));
-
         return $this->client->ImageModeration($clientRequest)->serialize();
     }
 

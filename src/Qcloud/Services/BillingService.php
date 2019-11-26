@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Qcloud\Services;
@@ -19,7 +17,6 @@ class BillingService extends AbstractService
     public function DescribeAccountBalance()
     {
         $req = new DescribeAccountBalanceRequest();
-
         return $this->client->DescribeAccountBalance($req)->serialize();
     }
 

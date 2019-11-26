@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Http;
@@ -32,22 +30,20 @@ class RouteHandlerFactory
         return function (Request $request, array $routeParams) use ($controller) {
             $controller = $this->resolveController($controller);
             $request = $request->withQueryParams(array_merge($request->getQueryParams(), $routeParams));
-
             return $controller->handle($request);
         };
     }
 
     private function resolveController($controller): Handler
     {
-        if (\is_callable($controller)) {
+        if (is_callable($controller)) {
             $controller = $this->container->call($controller);
         } else {
             $controller = $this->container->make($controller);
         }
-        if (!$controller instanceof Handler) {
-            throw new InvalidArgumentException('Controller must be an instance of ' . Handler::class);
+        if (! $controller instanceof Handler) {
+            throw new InvalidArgumentException('Controller must be an instance of '.Handler::class);
         }
-
         return $controller;
     }
 }

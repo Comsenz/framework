@@ -1,18 +1,16 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Auth;
 
 use App\Models\User;
-use Carbon\Laravel\ServiceProvider;
 use Discuz\Api\Events\GetPermission;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use Carbon\Laravel\ServiceProvider;
 use RuntimeException;
 
 class AuthServiceProvider extends ServiceProvider
@@ -42,11 +40,11 @@ class AuthServiceProvider extends ServiceProvider
                 new GetPermission($actor, $ability, $model)
             );
 
-            if (null !== $allowed) {
+            if (! is_null($allowed)) {
                 return $allowed;
             }
 
-            if ($actor->isAdmin() || (!$model && $actor->hasPermission($ability))) {
+            if ($actor->isAdmin() || (! $model && $actor->hasPermission($ability))) {
                 return true;
             }
 
@@ -55,7 +53,5 @@ class AuthServiceProvider extends ServiceProvider
 
         User::setHasher($this->app->make('hash'));
         User::setGate($gate);
-
-        $events->subscribe(UserPolicy::class);
     }
 }

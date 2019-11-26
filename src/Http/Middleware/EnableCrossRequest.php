@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Http\Middleware;
@@ -21,13 +19,18 @@ class EnableCrossRequest implements MiddlewareInterface
         'http://editor.swagger.io',
     ];
 
+    /**
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $origin = Arr::get($request->getServerParams(), 'HTTP_ORIGIN') ?? '';
 
         $response = $handler->handle($request);
 
-        if (\in_array($origin, self::ALLOW_ORIGIN, true)) {
+        if (in_array($origin, self::ALLOW_ORIGIN)) {
             $response = $response->withAddedHeader('Access-Control-Allow-Origin', $origin);
             $response = $response->withAddedHeader('Access-Control-Allow-Headers', 'Origin, Content-Type, Cookie, X-CSRF-TOKEN, Accept, Authorization, X-XSRF-TOKEN');
             $response = $response->withAddedHeader('Access-Control-Expose-Headers', 'Authorization, authenticated');

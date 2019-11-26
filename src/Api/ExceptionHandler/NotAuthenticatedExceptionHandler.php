@@ -1,10 +1,8 @@
 <?php
 
-/*
- *
+/**
  * Discuz & Tencent Cloud
  * This is NOT a freeware, use is subject to license terms
- *
  */
 
 namespace Discuz\Api\ExceptionHandler;
@@ -32,7 +30,7 @@ class NotAuthenticatedExceptionHandler implements ExceptionHandlerInterface
         $status = 401;
         $error = [
             'status' => (string) $status,
-            'code' => 'not_authenticated',
+            'code' => 'not_authenticated'
         ];
 
         return new ResponseBag($status, [$error]);
