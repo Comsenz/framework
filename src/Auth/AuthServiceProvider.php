@@ -53,7 +53,5 @@ class AuthServiceProvider extends ServiceProvider
 
         User::setHasher($this->app->make('hash'));
         User::setGate($gate);
-
-        $events->subscribe(UserPolicy::class);
     }
 }
