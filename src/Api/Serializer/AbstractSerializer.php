@@ -134,14 +134,30 @@ abstract class AbstractSerializer extends BaseAbstractSerializer
             $relation = $caller['function'];
         }
 
-        if ($model->$relation) {
-            $serializer = $this->resolveSerializer($serializer, $model, $model->$relation);
+        $data = $this->getRelationshipData($model, $relation);
+
+        if ($data) {
+            $serializer = $this->resolveSerializer($serializer, $model, $data);
 
             $type = $many ? Collection::class : Resource::class;
 
-            $element = new $type($model->$relation, $serializer);
+            $element = new $type($data, $serializer);
 
             return new Relationship($element);
+        }
+    }
+
+    /**
+     * @param mixed $model
+     * @param string $relation
+     * @return mixed
+     */
+    protected function getRelationshipData($model, $relation)
+    {
+        if (is_object($model)) {
+            return $model->$relation;
+        } elseif (is_array($model)) {
+            return $model[$relation];
         }
     }
 
