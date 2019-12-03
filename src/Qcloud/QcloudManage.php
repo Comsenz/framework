@@ -54,7 +54,7 @@ class QcloudManage extends Manager implements Factory
     public function createCheckVersionDriver()
     {
         $config = [
-            'base_uri' => 'http://2020.comsenz-service.com/api/',
+            'base_uri' => 'https://2020.comsenz-service.com/api/',
             'timeout'  =>  2
         ];
         return $this->buildService(CheckVersionService::class, $config);
