@@ -172,7 +172,7 @@ class Application extends Container implements ContainerContract
         $this->instance('path.base', $this->basePath());
         $this->instance('path.lang', $this->langPath());
         $this->instance('path.config', $this->configPath());
-//        $this->instance('path.public', $this->publicPath());
+        $this->instance('path.public', $this->publicPath());
         $this->instance('path.storage', $this->storagePath());
 //        $this->instance('path.database', $this->databasePath());
         $this->instance('path.resources', $this->resourcePath());
@@ -212,6 +212,17 @@ class Application extends Container implements ContainerContract
     {
         return $this->basePath.DIRECTORY_SEPARATOR.'config'.($path ? DIRECTORY_SEPARATOR.$path : $path);
     }
+
+    /**
+     * Get the path to the public / web directory.
+     *
+     * @return string
+     */
+    public function publicPath()
+    {
+        return $this->basePath.DIRECTORY_SEPARATOR.'public';
+    }
+
 
     /**
      * Get the path to the storage directory.
