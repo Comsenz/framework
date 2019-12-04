@@ -18,6 +18,7 @@ use Discuz\Api\Middleware\HandlerErrors;
 use Discuz\Api\Events\ApiExceptionRegisterHandler;
 use Discuz\Foundation\Application;
 use Discuz\Http\Middleware\AuthenticateWithHeader;
+use Discuz\Http\Middleware\CheckoutSite;
 use Discuz\Http\Middleware\DispatchRoute;
 use Discuz\Http\Middleware\EnableCrossRequest;
 use Discuz\Http\Middleware\ParseJsonBody;
@@ -37,6 +38,7 @@ class ApiServiceProvider extends ServiceProvider
             $pipe->pipe($app->make(ParseJsonBody::class));
             $pipe->pipe($app->make(AuthenticateWithHeader::class));
             $pipe->pipe($app->make(EnableCrossRequest::class));
+            $pipe->pipe($app->make(CheckoutSite::class));
             return $pipe;
         });
 
