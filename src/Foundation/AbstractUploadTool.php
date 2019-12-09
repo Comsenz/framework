@@ -29,6 +29,11 @@ abstract class AbstractUploadTool implements UploadTool
     /**
      * @var string
      */
+    protected $extension = '';
+
+    /**
+     * @var string
+     */
     protected $uploadName = '';
 
     /**
@@ -42,22 +47,22 @@ abstract class AbstractUploadTool implements UploadTool
     protected $fullPath = '';
 
     /**
-     * @var type
+     * @var array
      */
     protected $fileType = [];
 
     /**
-     * @var type
+     * @var int
      */
     protected $fileSize = 5*1024*1024;
 
     /**
-     * @var type
+     * @var array
      */
     protected $options = ['visibility' => 'public'];
 
     /**
-     * @var type
+     * @var int
      */
     protected $error = 0;
 
@@ -73,11 +78,11 @@ abstract class AbstractUploadTool implements UploadTool
     {
         $this->file = $file;
 
-        $extension = pathinfo($this->file->getClientFilename(), PATHINFO_EXTENSION);
+        $this->extension = pathinfo($this->file->getClientFilename(), PATHINFO_EXTENSION);
 
         $this->uploadPath = $uploadPath?:$this->uploadPath;
 
-        $this->uploadName = $uploadName?:Str::random().'.'.$extension;
+        $this->uploadName = $uploadName?:Str::random().'.'.$this->extension;
 
         $this->options = is_string($options)
             ? ['visibility' => $options]
@@ -90,6 +95,8 @@ abstract class AbstractUploadTool implements UploadTool
 
     /**
      * {@inheritdoc}
+     *
+     * @throws UploadVerifyException
      */
     public function save(array $type = [], int $size = 0)
     {
@@ -129,24 +136,36 @@ abstract class AbstractUploadTool implements UploadTool
 
     /**
      * {@inheritdoc}
+     *
+     * @throws UploadVerifyException
      */
     public function verifyFileType(array $type = [])
     {
         $this->error = 0;
 
-        $type = $type?:$this->fileType;
+        $type = $type ?: $this->fileType;
+
+        if (! in_array($this->extension, $type)) {
+            throw new UploadVerifyException('file_type_not_allow');
+        }
 
         return $this;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @throws UploadVerifyException
      */
     public function verifyFileSize(int $size = 0)
     {
         $this->error = 0;
 
-        $size = $size?:$this->fileSize;
+        $size = $size ?: $this->fileSize;
+
+        if ($this->file->getSize() > $size) {
+            throw new UploadVerifyException('file_size_not_allow');
+        }
 
         return $this;
     }
