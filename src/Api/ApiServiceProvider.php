@@ -39,6 +39,7 @@ class ApiServiceProvider extends ServiceProvider
 
             if(!file_exists($this->app->configPath('config.php'))) {
                 $pipe->pipe($app->make(InstallMiddle::class));
+                return $pipe;
             }
 
             $pipe->pipe($app->make(HandlerErrors::class));
