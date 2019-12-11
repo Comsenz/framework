@@ -26,8 +26,4 @@ class HttpServiceProvider extends ServiceProvider
             return new UrlGenerator($app, $app->make(RouteCollection::class));
         });
     }
-
-    public function boot()
-    {
-    }
 }

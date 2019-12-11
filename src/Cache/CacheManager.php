@@ -62,7 +62,7 @@ class CacheManager extends Manager implements FactoryContracts
      */
     protected function resolve($name)
     {
-        $config = Arr::get($this->container->config('cache'), 'stores');
+        $config = Arr::get($this->container['config']['cache'], 'stores');
         $config = $config[$name];
 
         if (is_null($config)) {
@@ -89,7 +89,7 @@ class CacheManager extends Manager implements FactoryContracts
      */
     public function getDefaultDriver()
     {
-        return Arr::get($this->container->config('cache'), 'default');
+        return Arr::get($this->container['config']['cache'], 'default');
     }
 
     /**

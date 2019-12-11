@@ -12,6 +12,7 @@ use Discuz\Auth\AuthServiceProvider;
 use Discuz\Cache\CacheServiceProvider;
 use Discuz\Database\DatabaseServiceProvider;
 use Discuz\Filesystem\FilesystemServiceProvider;
+use Discuz\Http\Exception\NotConfig;
 use Discuz\Http\HttpServiceProvider;
 use Discuz\Qcloud\QcloudServiceProvider;
 use Discuz\Queue\QueueServiceProvider;
@@ -81,7 +82,11 @@ class SiteApp
 
     private function loadConfig()
     {
-        return include $this->app->basePath('config/config.php');
+        if(file_exists($path = $this->app->basePath('config/config.php'))) {
+            return include $path;
+        }
+
+        return [];
     }
 
     private function getIlluminateConfig()
@@ -90,7 +95,28 @@ class SiteApp
             array_merge(
             [
                     'database' => [
-                        'redis' => $this->app->config('redis')
+                        'default' => 'mysql',
+                        'redis' => $this->app->config('redis'),
+                        'connections' => [
+                            'mysql' => $this->app->config('database')
+                        ]
+                    ],
+                    'cache' => [
+                        'default' => 'file', //如果配置的 redis 可用， 会自动切换为redis
+
+                        'stores' => [
+                            'file' => [
+                                'driver' => 'file',
+                                'path' => storage_path('cache/data'),
+                            ],
+                            'redis' => [
+                                'driver' => 'redis',
+                                'connection' => 'cache',
+                            ],
+                        ],
+
+                        'prefix' => 'discuz_cache',
+
                     ],
                     'view' => [
                         'paths' => [

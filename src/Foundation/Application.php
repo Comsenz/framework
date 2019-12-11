@@ -643,7 +643,7 @@ class Application extends Container implements ContainerContract
 
     public function registerConfiguredProviders()
     {
-        $providers = $this->config('providers');
+        $providers = $this->config('providers', []);
         foreach ($providers as $provider) {
             $this->register($provider);
         }

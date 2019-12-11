@@ -7,6 +7,8 @@
 
 namespace Discuz\Api;
 
+use Discuz\Api\Controller\AbstractSerializeController;
+use Discuz\Api\ExceptionHandler\FallbackExceptionHandler;
 use Discuz\Api\ExceptionHandler\NotAuthenticatedExceptionHandler;
 use Discuz\Api\ExceptionHandler\PermissionDeniedExceptionHandler;
 use Discuz\Api\ExceptionHandler\RouteNotFoundExceptionHandler;
@@ -16,6 +18,7 @@ use Discuz\Api\ExceptionHandler\ValidationExceptionHandler;
 use Discuz\Api\Listeners\AutoResisterApiExceptionRegisterHandler;
 use Discuz\Api\Middleware\HandlerErrors;
 use Discuz\Api\Events\ApiExceptionRegisterHandler;
+use Discuz\Api\Middleware\InstallMiddle;
 use Discuz\Foundation\Application;
 use Discuz\Http\Middleware\AuthenticateWithHeader;
 use Discuz\Http\Middleware\CheckoutSite;
@@ -24,7 +27,6 @@ use Discuz\Http\Middleware\EnableCrossRequest;
 use Discuz\Http\Middleware\ParseJsonBody;
 use Discuz\Http\RouteCollection;
 use Illuminate\Support\ServiceProvider;
-use Tobscure\JsonApi\Exception\Handler\FallbackExceptionHandler;
 use Zend\Stratigility\MiddlewarePipe;
 use Tobscure\JsonApi\ErrorHandler;
 
@@ -34,6 +36,11 @@ class ApiServiceProvider extends ServiceProvider
     {
         $this->app->singleton('discuz.api.middleware', function (Application $app) {
             $pipe = new MiddlewarePipe();
+
+            if(!file_exists($this->app->configPath('config.php'))) {
+                $pipe->pipe($app->make(InstallMiddle::class));
+            }
+
             $pipe->pipe($app->make(HandlerErrors::class));
             $pipe->pipe($app->make(ParseJsonBody::class));
             $pipe->pipe($app->make(AuthenticateWithHeader::class));
@@ -68,6 +75,8 @@ class ApiServiceProvider extends ServiceProvider
         $this->populateRoutes($this->app->make(RouteCollection::class));
 
         $this->app->make('events')->listen(ApiExceptionRegisterHandler::class, AutoResisterApiExceptionRegisterHandler::class);
+
+        AbstractSerializeController::setContainer($this->app);
     }
 
     protected function populateRoutes(RouteCollection $route)

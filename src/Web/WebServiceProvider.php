@@ -7,6 +7,7 @@
 
 namespace Discuz\Web;
 
+use Discuz\Http\Middleware\DispatchRoute;
 use Discuz\Http\Middleware\HandleErrorsWithView;
 use Discuz\Http\Middleware\HandleErrorsWithWhoops;
 use Discuz\Http\RouteCollection;
@@ -27,6 +28,11 @@ class WebServiceProvider extends ServiceProvider
                 $pipe->pipe($app->make(HandleErrorsWithView::class));
             }
             return $pipe;
+        });
+
+        //保证路由中间件最后执行
+        $this->app->afterResolving('discuz.web.middleware', function (MiddlewarePipe $pipe) {
+            $pipe->pipe($this->app->make(DispatchRoute::class));
         });
     }
 

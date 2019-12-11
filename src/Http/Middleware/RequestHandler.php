@@ -8,6 +8,7 @@
 namespace Discuz\Http\Middleware;
 
 use Discuz\Foundation\Application;
+use Discuz\Http\Exception\NotConfig;
 use Discuz\Http\UrlGenerator;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
@@ -30,10 +31,12 @@ class RequestHandler implements MiddlewareInterface
         krsort($this->middlewares);
     }
 
+
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
+     * @throws NotConfig
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

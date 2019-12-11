@@ -19,12 +19,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class AuthenticateWithHeader implements MiddlewareInterface
 {
-    protected $app;
-
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-    }
 
     /**
      * @param ServerRequestInterface $request
@@ -41,7 +35,7 @@ class AuthenticateWithHeader implements MiddlewareInterface
         if ($headerLine) {
             $accessTokenRepository = new AccessTokenRepository();
 
-            $publickey = $this->app->basePath('config/public.key');
+            $publickey = storage_path('cert/public.key');
 
             $server = new ResourceServer($accessTokenRepository, $publickey);
 

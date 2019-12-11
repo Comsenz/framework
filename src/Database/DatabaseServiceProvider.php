@@ -7,49 +7,30 @@
 
 namespace Discuz\Database;
 
-use Illuminate\Database\Capsule\Manager;
-use Illuminate\Database\ConnectionInterface;
+use Discuz\Console\Event\Configuring;
 use Illuminate\Database\ConnectionResolverInterface;
+use Illuminate\Database\Connectors\ConnectionFactory;
+use Illuminate\Database\Console\Migrations\MigrateCommand;
+use Illuminate\Database\Console\Migrations\MigrateMakeCommand;
+use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 
 class DatabaseServiceProvider extends ServiceProvider
 {
+
+    protected $commands = [
+        MigrateCommand::class,
+        MigrateMakeCommand::class
+    ];
+
     /**
      * {@inheritdoc}
      */
     public function register()
     {
-        $this->app->singleton(Manager::class, function ($app) {
-            $manager = new Manager($app);
 
-            $config = $app->config('database');
-            $manager->addConnection($config, 'discuz.master');
-
-            return $manager;
-        });
-
-        $this->app->singleton(ConnectionResolverInterface::class, function ($app) {
-            $manager = $app->make(Manager::class);
-            $manager->setAsGlobal();
-            $manager->bootEloquent();
-
-            $dbManager = $manager->getDatabaseManager();
-            $dbManager->setDefaultConnection('discuz.master');
-
-            return $dbManager;
-        });
-
-        $this->app->alias(ConnectionResolverInterface::class, 'db');
-
-        $this->app->singleton(ConnectionInterface::class, function ($app) {
-            $resolver = $app->make(ConnectionResolverInterface::class);
-
-            return $resolver->connection();
-        });
-
-        $this->app->alias(ConnectionInterface::class, 'db.connection');
-        $this->app->alias(ConnectionInterface::class, 'discuz.db');
+        $this->registerConnectionServices();
     }
 
     /**
@@ -57,7 +38,41 @@ class DatabaseServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Model::setConnectionResolver($this->app->make(ConnectionResolverInterface::class));
+        Model::setConnectionResolver($this->app->make('db'));
         Model::setEventDispatcher($this->app->make('events'));
+
+        $this->app['events']->listen(Configuring::class, function (Configuring $event) {
+            foreach ($this->commands as $command) {
+                $event->addCommand($command);
+            }
+        });
+    }
+
+    /**
+     * Register the primary database bindings.
+     *
+     * @return void
+     */
+    protected function registerConnectionServices()
+    {
+        // The connection factory is used to create the actual connection instances on
+        // the database. We will inject the factory into the manager so that it may
+        // make the connections while they are actually needed and not of before.
+        $this->app->singleton('db.factory', function ($app) {
+            return new ConnectionFactory($app);
+        });
+
+        // The database manager is used to resolve various connections, since multiple
+        // connections might be managed. It also implements the connection resolver
+        // interface which may be used by other components requiring connections.
+        $this->app->singleton('db', function ($app) {
+            return new DatabaseManager($app, $app['db.factory']);
+        });
+
+        $this->app->bind('db.connection', function ($app) {
+            return $app['db']->connection();
+        });
+
+        $this->app->alias('db', ConnectionResolverInterface::class);
     }
 }

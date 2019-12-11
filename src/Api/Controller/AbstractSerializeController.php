@@ -8,6 +8,7 @@
 namespace Discuz\Api\Controller;
 
 use Discuz\Api\JsonApiResponse;
+use Illuminate\Contracts\Container\Container;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -69,6 +70,11 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     public $sort;
 
     /**
+     * @var Container
+     */
+    protected static $container;
+
+    /**
      * {@inheritdoc}
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -77,7 +83,7 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
 
         $data = $this->data($request, $document);
 
-        $serializer = app()->make($this->serializer);
+        $serializer = static::$container->make($this->serializer);
         $serializer->setRequest($request);
 
         $element = $this->createElement($data, $serializer)
@@ -172,5 +178,10 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     protected function buildParameters(ServerRequestInterface $request)
     {
         return new Parameters($request->getQueryParams());
+    }
+
+    public static function setContainer($container)
+    {
+        static::$container = $container;
     }
 }
