@@ -91,6 +91,22 @@ class SiteApp
 
     private function getIlluminateConfig()
     {
+
+        $discuzConfig = [
+            'queue' => $this->app->config('queue'),
+            'filesystems' => $this->app->config('filesystems'),
+            'app' => [
+                'key' => $this->app->config('key'),
+                'cipher' => $this->app->config('cipher'),
+                'locale' => $this->app->config('locale'),
+                'fallback_locale' => $this->app->config('fallback_locale'),
+            ]
+        ];
+
+        if($this->app->config('cache')) {
+            $discuzConfig['cache'] = $this->app->config('cache');
+        }
+
         $config = new ConfigRepository(
             array_merge(
             [
@@ -125,17 +141,7 @@ class SiteApp
                         'compiled' => realpath(storage_path('views')),
                     ]
                 ],
-            [
-                    'cache' => $this->app->config('cache'),
-                    'queue' => $this->app->config('queue'),
-                    'filesystems' => $this->app->config('filesystems'),
-                    'app' => [
-                        'key' => $this->app->config('key'),
-                        'cipher' => $this->app->config('cipher'),
-                        'locale' => $this->app->config('locale'),
-                        'fallback_locale' => $this->app->config('fallback_locale'),
-                    ]
-                ]
+                $discuzConfig
             )
         );
 
