@@ -19,10 +19,21 @@ use Illuminate\Contracts\Console\Kernel as KernelContract;
 use ReflectionClass;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Finder\Finder;
 
 class Kernel extends SiteApp implements KernelContract
 {
+
+    /**
+     * The output from the previous command.
+     *
+     * @var \Symfony\Component\Console\Output\BufferedOutput
+     */
+    protected $lastOutput;
+
     protected $disco;
 
     public function __construct(Application $app)
@@ -68,18 +79,17 @@ class Kernel extends SiteApp implements KernelContract
     protected function getName()
     {
         return <<<EOF
- _____   _                           _____   _                 
-(____ \ (_)                         (____ \ (_)                
- _   \ \ _  ___  ____ _   _ _____    _   \ \ _  ___  ____ ___  
-| |   | | |/___)/ ___) | | (___  )  | |   | | |/___)/ ___) _ \ 
+ _____   _                           _____   _
+(____ \ (_)                         (____ \ (_)
+ _   \ \ _  ___  ____ _   _ _____    _   \ \ _  ___  ____ ___
+| |   | | |/___)/ ___) | | (___  )  | |   | | |/___)/ ___) _ \
 | |__/ /| |___ ( (___| |_| |/ __/   | |__/ /| |___ ( (__| |_| |
-|_____/ |_(___/ \____)\____(_____)  |_____/ |_(___/ \____)___/ 
+|_____/ |_(___/ \____)\____(_____)  |_____/ |_(___/ \____)___/
 EOF;
     }
 
     protected function registerServiceProvider()
     {
-        $this->app->register(MigrationServiceProvider::class);
         $this->app->register(ConsoleServiceProvider::class);
     }
 
@@ -95,17 +105,18 @@ EOF;
         // TODO: Implement handle() method.
     }
 
-    /**
-     * Run an Artisan console command by name.
-     *
-     * @param string $command
-     * @param array $parameters
-     * @param \Symfony\Component\Console\Output\OutputInterface|null $outputBuffer
-     * @return int
-     */
+
     public function call($command, array $parameters = [], $outputBuffer = null)
     {
-        // TODO: Implement call() method.
+        $this->siteBoot();
+
+        $console = $this->getDisco();
+
+        $this->app['events']->dispatch(new Configuring($console, $this->app));
+
+        [$command, $input] = $this->parseCommand($command, $parameters);
+
+        return $console->get($command)->run($input, $this->lastOutput = $outputBuffer ?: new BufferedOutput());
     }
 
     /**
@@ -203,5 +214,31 @@ EOF;
     protected function scheduleCache()
     {
         return Env::get('SCHEDULE_CACHE_DRIVER');
+    }
+
+    /**
+     * Parse the incoming Artisan command and its input.
+     *
+     * @param  string  $command
+     * @param  array  $parameters
+     * @return array
+     */
+    protected function parseCommand($command, $parameters)
+    {
+        if (is_subclass_of($command, Command::class)) {
+            $callingClass = true;
+
+            $command = $this->app->make($command)->getName();
+        }
+
+        if (! isset($callingClass) && empty($parameters)) {
+            $input = new StringInput($command);
+        } else {
+            array_unshift($parameters, $command);
+
+            $input = new ArrayInput($parameters);
+        }
+
+        return [$command, $input ?? null];
     }
 }

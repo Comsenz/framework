@@ -8,10 +8,10 @@
 namespace Discuz\Database;
 
 use Discuz\Console\Event\Configuring;
+use Discuz\Database\Console\MigrateMakeCommand;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Connectors\ConnectionFactory;
 use Illuminate\Database\Console\Migrations\MigrateCommand;
-use Illuminate\Database\Console\Migrations\MigrateMakeCommand;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
@@ -20,7 +20,7 @@ class DatabaseServiceProvider extends ServiceProvider
 {
 
     protected $commands = [
-        MigrateCommand::class,
+//        MigrateCommand::class,
         MigrateMakeCommand::class
     ];
 

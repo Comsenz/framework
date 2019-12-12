@@ -11,6 +11,7 @@ use Discuz\Api\ApiServiceProvider;
 use Discuz\Auth\AuthServiceProvider;
 use Discuz\Cache\CacheServiceProvider;
 use Discuz\Database\DatabaseServiceProvider;
+use Discuz\Database\MigrationServiceProvider;
 use Discuz\Filesystem\FilesystemServiceProvider;
 use Discuz\Http\Exception\NotConfig;
 use Discuz\Http\HttpServiceProvider;
@@ -51,6 +52,7 @@ class SiteApp
 
         $this->app->register(HttpServiceProvider::class);
         $this->app->register(DatabaseServiceProvider::class);
+        $this->app->register(MigrationServiceProvider::class);
         $this->app->register(FilesystemServiceProvider::class);
         $this->app->register(EncryptionServiceProvider::class);
         $this->app->register(CacheServiceProvider::class);
@@ -112,6 +114,7 @@ class SiteApp
             [
                     'database' => [
                         'default' => 'mysql',
+                        'migrations' => 'migrations',
                         'redis' => $this->app->config('redis'),
                         'connections' => [
                             'mysql' => $this->app->config('database')

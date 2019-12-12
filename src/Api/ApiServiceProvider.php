@@ -37,7 +37,7 @@ class ApiServiceProvider extends ServiceProvider
         $this->app->singleton('discuz.api.middleware', function (Application $app) {
             $pipe = new MiddlewarePipe();
 
-            if(!file_exists($this->app->configPath('config.php'))) {
+            if(!$this->app->isInstall()) {
                 $pipe->pipe($app->make(InstallMiddle::class));
                 return $pipe;
             }

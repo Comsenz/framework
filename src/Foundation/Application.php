@@ -174,7 +174,7 @@ class Application extends Container implements ContainerContract
         $this->instance('path.config', $this->configPath());
         $this->instance('path.public', $this->publicPath());
         $this->instance('path.storage', $this->storagePath());
-//        $this->instance('path.database', $this->databasePath());
+        $this->instance('path.database', $this->databasePath());
         $this->instance('path.resources', $this->resourcePath());
 //        $this->instance('path.bootstrap', $this->bootstrapPath());
     }
@@ -254,24 +254,8 @@ class Application extends Container implements ContainerContract
         return $this->storagePath ?: $this->basePath.DIRECTORY_SEPARATOR.'resources';
     }
 
-    /**
-     * Determine if the application configuration is cached.
-     *
-     * @return bool
-     */
-    public function configurationIsCached()
-    {
-        return false;
-    }
-
-    /**
-     * Get the path to the configuration cache file.
-     *
-     * @return string
-     */
-    public function getCachedConfigPath()
-    {
-        return '';
+    public function databasePath() {
+        return $this->basePath.DIRECTORY_SEPARATOR.'database';
     }
 
     /**
@@ -652,5 +636,10 @@ class Application extends Container implements ContainerContract
     public function isDownForMaintenance()
     {
         return false;
+    }
+
+    public function isInstall()
+    {
+        return file_exists($this->configPath('config.php'));
     }
 }
