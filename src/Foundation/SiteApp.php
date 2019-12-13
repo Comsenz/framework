@@ -117,7 +117,8 @@ class SiteApp
                         'migrations' => 'migrations',
                         'redis' => $this->app->config('redis'),
                         'connections' => [
-                            'mysql' => $this->app->config('database')
+                            'mysql' => $this->app->config('database'),
+                            'discuz_mysql' => $this->app->config('database')
                         ]
                     ],
                     'cache' => [
