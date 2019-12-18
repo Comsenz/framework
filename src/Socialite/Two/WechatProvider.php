@@ -9,6 +9,8 @@ namespace Discuz\Socialite\Two;
 
 use Discuz\Contracts\Socialite\Provider as ProviderInterface;
 use Discuz\Socialite\Exception\SocialiteException;
+use Illuminate\Support\Arr;
+use Zend\Diactoros\Response\RedirectResponse;
 
 class WechatProvider extends AbstractProvider implements ProviderInterface
 {
@@ -122,5 +124,31 @@ class WechatProvider extends AbstractProvider implements ProviderInterface
             $this->openId = $this->credentialsResponseBody['openid'];
         }
         return $this->credentialsResponseBody;
+    }
+
+    public function redirect()
+    {
+        $state = null;
+        if ($this->usesState()) {
+            $this->request->getAttribute('cache')->put('state', $state = $this->getState());
+        }
+        return new RedirectResponse($this->getAuthUrl($state));
+    }
+
+
+    protected function getState()
+    {
+        return ($this->request->getAttribute('actor'))->id;
+    }
+
+    /**
+     * Determine if the current request / session has a mismatching "state".
+     *
+     * @return bool
+     */
+    protected function hasInvalidState()
+    {
+        $state = $this->request->getAttribute('cache')->pull('state');
+        return !(strlen($state) > 0 && Arr::get($this->request->getQueryParams(), 'state') == $state);
     }
 }
