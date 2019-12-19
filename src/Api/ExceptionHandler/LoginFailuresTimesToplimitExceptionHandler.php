@@ -31,7 +31,7 @@ class LoginFailuresTimesToplimitExceptionHandler implements ExceptionHandlerInte
 
         $error = [
             'status' => (string) $status,
-            'code' => 'Login Times Failures Times Toplimit'
+            'code' => 'login_times_failures_times_toplimit'
         ];
 
         return new ResponseBag($status, [$error]);
