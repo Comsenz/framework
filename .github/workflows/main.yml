@@ -1,15 +1,12 @@
-name: Fix Code
+name: pull code
 
 on: [push]
 
 jobs:
-  fixcode:
+  pullcode:
 
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: Comsenz/fixcode-action@master
-      env:
-        ACTOR: ${{ secrets.ACTOR }}
-        TOKEN: ${{ secrets.TOKEN }}
+      - name: pull code
+        run: cd /home/wwwroot/discuss/framework && git pull && composer update
