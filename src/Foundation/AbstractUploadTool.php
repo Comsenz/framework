@@ -100,9 +100,9 @@ abstract class AbstractUploadTool implements UploadTool
      */
     public function save(array $type = [], int $size = 0)
     {
-        $this->verifyFileType();
+        $this->verifyFileType($type);
 
-        $this->verifyFileSize();
+        $this->verifyFileSize($size);
 
         if ($this->error) {
             throw new UploadVerifyException();

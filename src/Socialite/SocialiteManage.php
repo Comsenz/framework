@@ -7,9 +7,11 @@
 
 namespace Discuz\Socialite;
 
+use Discuz\Contracts\Setting\SettingsRepository;
 use Discuz\Contracts\Socialite\Factory;
 use Discuz\Socialite\Two\GithubProvider;
-use Discuz\Socialite\Two\WeixinProvider;
+use Discuz\Socialite\Two\WechatProvider;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Manager;
 use Illuminate\Support\Str;
@@ -48,15 +50,15 @@ class SocialiteManage extends Manager implements Factory
         );
     }
 
-    protected function createWeixinDriver()
+    protected function createWechatDriver()
     {
         $config = [
             'client_id' => 'wxba449971e7a27c1c',
             'client_secret' => '4b17fce50aabe26833c8ee201e5923bf',
-            'redirect' => 'http://dev.discuss.com/api/oauth/weixin',
+            'redirect' => 'http://dev.discuss.com/api/oauth/wechat',
         ];
         return $this->buildProvider(
-            WeixinProvider::class,
+            WechatProvider::class,
             $config
         );
     }

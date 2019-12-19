@@ -83,7 +83,7 @@ abstract class AbstractProvider implements ProviderContract
      *
      * @var bool
      */
-    protected $stateless = false;
+    protected $stateless = true;
 
     /**
      * The custom Guzzle configuration options.
@@ -374,7 +374,7 @@ abstract class AbstractProvider implements ProviderContract
      */
     protected function usesState()
     {
-        return ! $this->stateless;
+        return $this->stateless;
     }
 
     /**
