@@ -9,6 +9,7 @@ namespace Discuz\Api;
 
 use Discuz\Api\Controller\AbstractSerializeController;
 use Discuz\Api\ExceptionHandler\FallbackExceptionHandler;
+use Discuz\Api\ExceptionHandler\LoginFailuresTimesToplimitExceptionHandler;
 use Discuz\Api\ExceptionHandler\NotAuthenticatedExceptionHandler;
 use Discuz\Api\ExceptionHandler\PermissionDeniedExceptionHandler;
 use Discuz\Api\ExceptionHandler\RouteNotFoundExceptionHandler;
@@ -58,6 +59,7 @@ class ApiServiceProvider extends ServiceProvider
             $errorHandler->registerHandler(new PermissionDeniedExceptionHandler());
             $errorHandler->registerHandler(new TencentCloudSDKExceptionHandler());
             $errorHandler->registerHandler(new ServiceResponseExceptionHandler());
+            $errorHandler->registerHandler(new LoginFailuresTimesToplimitExceptionHandler());
 
             $app->make('events')->dispatch(new ApiExceptionRegisterHandler($errorHandler));
 
