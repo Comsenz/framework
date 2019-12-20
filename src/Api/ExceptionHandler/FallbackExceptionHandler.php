@@ -1,12 +1,8 @@
 <?php
 
-/*
- * This file is part of JSON-API.
- *
- * (c) Toby Zerner <toby.zerner@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
  */
 
 namespace Discuz\Api\ExceptionHandler;
@@ -57,12 +53,9 @@ class FallbackExceptionHandler implements ExceptionHandlerInterface
      */
     private function constructError(Exception $e, $status)
     {
-        $error = ['code' => $status, 'title' => 'Internal server error'];
-
-//        if ($this->debug) {
-            $error['detail'] = (string) $e;
-//        }
-
-        return $error;
+        return [
+            'status' => (string) $status,
+            'code' => $e->getMessage() ?: 'no_message',
+        ];
     }
 }
