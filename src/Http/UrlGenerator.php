@@ -33,7 +33,7 @@ class UrlGenerator implements UrlGeneratorContracts
      */
     public function current()
     {
-        return  collect([$this->formatScheme().$this->formatHost().$this->formatPath(), $this->formatQuery()])->filter()->join('?');
+        return  collect([$this->formatConfigHost().$this->formatPath(), $this->formatQuery()])->filter()->join('?');
     }
 
     /**
@@ -58,7 +58,7 @@ class UrlGenerator implements UrlGeneratorContracts
     public function to($path, $extra = [], $secure = null)
     {
         // TODO: Implement to() method.
-        return $this->formatScheme().$this->formatHost().$path;
+        return $this->formatConfigHost().$path;
     }
 
     /**
@@ -97,7 +97,7 @@ class UrlGenerator implements UrlGeneratorContracts
      */
     public function route($name, $parameters = [], $absolute = true)
     {
-        return $this->formatScheme().$this->formatHost().$this->routes->getPath($name, $parameters);
+        return $this->formatConfigHost().$this->routes->getPath($name, $parameters);
     }
 
     /**
@@ -127,6 +127,11 @@ class UrlGenerator implements UrlGeneratorContracts
     protected function formatHost()
     {
         return self::$request->getUri()->getHost();
+    }
+
+    protected function formatConfigHost()
+    {
+        return app()->config('site_url');
     }
 
     protected function formatScheme()
