@@ -15,7 +15,6 @@ use Discuz\Qcloud\Services\CmsService;
 use Discuz\Qcloud\Services\SmsService;
 use Discuz\Qcloud\Services\YunsouService;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Support\Manager;
 use InvalidArgumentException;
 
@@ -28,10 +27,9 @@ class QcloudManage extends Manager implements Factory
         parent::__construct($container);
 
         $settings = $container->make(SettingsRepository::class);
-        $encrypter = $container->make(Encrypter::class);
 
-        $this->qcloudConfig = collect($settings->tag('qcloud'))->map(function ($value) use ($encrypter) {
-            return $value ? $encrypter->decrypt($value) : null;
+        $this->qcloudConfig = collect($settings->tag('qcloud'))->map(function ($value) {
+            return $value ? $value : null;
         });
     }
 
@@ -54,7 +52,7 @@ class QcloudManage extends Manager implements Factory
     public function createCheckVersionDriver()
     {
         $config = [
-            'base_uri' => 'https://2020.comsenz-service.com/api/',
+            'base_uri' => app()->config('site_url') . '/api/',
             'timeout'  =>  2
         ];
         return $this->buildService(CheckVersionService::class, $config);
