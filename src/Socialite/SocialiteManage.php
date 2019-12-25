@@ -57,6 +57,11 @@ class SocialiteManage extends Manager implements Factory
             'client_secret' => '4b17fce50aabe26833c8ee201e5923bf',
             'redirect' => 'http://dev.discuss.com/api/oauth/wechat',
         ];
+
+        if($sessionId = $this->request->getAttribute('sessionId')) {
+            $config['redirect'] = $config['redirect'].'?'.http_build_query(['sessionId' => $sessionId]);
+        }
+
         return $this->buildProvider(
             WechatProvider::class,
             $config
