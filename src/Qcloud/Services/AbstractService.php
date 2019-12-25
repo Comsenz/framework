@@ -27,8 +27,7 @@ abstract class AbstractService
 
     public function __construct($config)
     {
-        $this->cred = new Credential($config['secretId'], $config['secretKey'], $config['token']);
-
+        $this->cred = new Credential($config['qcloud_secret_id'], $config['qcloud_secret_key'], '');
 
         $this->httpProfile = new HttpProfile();
         $this->setEndpoint();

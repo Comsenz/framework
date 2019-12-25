@@ -7,6 +7,7 @@
 
 namespace Discuz\Http;
 
+use Discuz\Contracts\Setting\SettingsRepository;
 use Discuz\Foundation\Application;
 use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContracts;
 
@@ -131,7 +132,7 @@ class UrlGenerator implements UrlGeneratorContracts
 
     protected function formatConfigHost()
     {
-        return app()->config('site_url');
+        return $this->app->config('site_url');
     }
 
     protected function formatScheme()

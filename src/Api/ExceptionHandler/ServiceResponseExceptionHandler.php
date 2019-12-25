@@ -43,6 +43,6 @@ class ServiceResponseExceptionHandler implements ExceptionHandlerInterface
             'detail' => $e->__toString()
         ];
 
-        return new ResponseBag($status, $error);
+        return new ResponseBag($status, [$error]);
     }
 }

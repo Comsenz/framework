@@ -9,6 +9,7 @@ namespace Discuz\Socialite;
 
 use Discuz\Contracts\Setting\SettingsRepository;
 use Discuz\Contracts\Socialite\Factory;
+use Discuz\Http\UrlGenerator;
 use Discuz\Socialite\Two\GithubProvider;
 use Discuz\Socialite\Two\WechatProvider;
 use Illuminate\Contracts\Container\Container;
@@ -52,10 +53,11 @@ class SocialiteManage extends Manager implements Factory
 
     protected function createWechatDriver()
     {
+        // 公众号接口(微信H5) 配置
         $config = [
-            'client_id' => 'wxba449971e7a27c1c',
-            'client_secret' => '4b17fce50aabe26833c8ee201e5923bf',
-            'redirect' => 'http://dev.discuss.com/api/oauth/wechat',
+            'client_id' => $this->container->make(SettingsRepository::class)->get('offiaccount_app_id', 'wx_offiaccount'),
+            'client_secret' => $this->container->make(SettingsRepository::class)->get('offiaccount_app_secret', 'wx_offiaccount'),
+            'redirect' => $this->container->make(UrlGenerator::class)->to('wx-login-bd') . '/api/oauth/wechat',
         ];
         return $this->buildProvider(
             WechatProvider::class,

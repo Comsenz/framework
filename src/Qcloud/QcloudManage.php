@@ -9,6 +9,7 @@ namespace Discuz\Qcloud;
 
 use Discuz\Contracts\Qcloud\Factory;
 use Discuz\Contracts\Setting\SettingsRepository;
+use Discuz\Http\UrlGenerator;
 use Discuz\Qcloud\Services\BillingService;
 use Discuz\Qcloud\Services\CheckVersionService;
 use Discuz\Qcloud\Services\CmsService;
@@ -46,13 +47,19 @@ class QcloudManage extends Manager implements Factory
     public function createSmsDriver()
     {
         $config = $this->container->config('sms');
+        $config['gateways']['qcloud'] = [
+            'sdk_app_id' => $this->container->make(SettingsRepository::class)->get('qcloud_sms_app_id', 'qcloud', true), // SDK APP ID
+            'app_key' => $this->container->make(SettingsRepository::class)->get('qcloud_sms_app_key', 'qcloud'), // APP KEY
+            'sign_name' => $this->container->make(SettingsRepository::class)->get('qcloud_sms_sign', 'qcloud'), // 短信签名，如果使用默认签名，该字段可缺省（对应官方文档中的sign）
+        ];
+
         return $this->buildService(SmsService::class, $config);
     }
 
     public function createCheckVersionDriver()
     {
         $config = [
-            'base_uri' => app()->config('site_url') . '/api/',
+            'base_uri' => $this->container->make(UrlGenerator::class)->to('/api/'),
             'timeout'  =>  2
         ];
         return $this->buildService(CheckVersionService::class, $config);
