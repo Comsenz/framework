@@ -7,9 +7,11 @@
 
 namespace Discuz\Http\Middleware;
 
+use App\Models\Group;
 use Discuz\Auth\AssertPermissionTrait;
 use Discuz\Contracts\Setting\SettingsRepository;
 use Discuz\Foundation\Application;
+use Illuminate\Support\Carbon;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -37,16 +39,19 @@ class CheckoutSite implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         // get settings
-        $str = $this->settings->get('site_close');
+        $siteClose = (bool)$this->settings->get('site_close');
+        $siteMode = $this->settings->get('site_mode');
 
         if ($request->getUri()->getPath() == '/api/login') {
             return $handler->handle($request);
         }
+        $actor = $request->getAttribute('actor');
+        $siteClose && $this->assertAdmin($actor);
 
-        if ($str) {
-            $this->assertAdmin($request->getAttribute('actor'));
+        //处理 付费模式 逻辑， 过期之后 加入待付费组
+        if(!$actor->isAdmin() && $siteMode === 'pay' && Carbon::now()->gt($actor->expired_at)) {
+            $actor->groups = Group::where('id',Group::UNPAID)->get();
         }
-
         return $handler->handle($request);
     }
 }
