@@ -10,6 +10,7 @@ namespace Discuz\Socialite\Two;
 use Discuz\Contracts\Socialite\Provider as ProviderInterface;
 use Discuz\Socialite\Exception\SocialiteException;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Zend\Diactoros\Response\RedirectResponse;
 
 class WechatProvider extends AbstractProvider implements ProviderInterface
@@ -130,15 +131,10 @@ class WechatProvider extends AbstractProvider implements ProviderInterface
     {
         $state = null;
         if ($this->usesState()) {
-            $this->request->getAttribute('cache')->put('state', $state = $this->getState());
+            $cacheName = $this->getCacheName();
+            $this->request->getAttribute('cache')->put($cacheName, $state = $this->getState());
         }
         return new RedirectResponse($this->getAuthUrl($state));
-    }
-
-
-    protected function getState()
-    {
-        return ($this->request->getAttribute('actor'))->id;
     }
 
     /**
@@ -148,7 +144,12 @@ class WechatProvider extends AbstractProvider implements ProviderInterface
      */
     protected function hasInvalidState()
     {
-        $state = $this->request->getAttribute('cache')->pull('state');
+        $cacheName = $this->getCacheName();
+        $state = $this->request->getAttribute('cache')->pull($cacheName);
         return !(strlen($state) > 0 && Arr::get($this->request->getQueryParams(), 'state') == $state);
+    }
+
+    protected function getCacheName() {
+        return $this->request->getAttribute('sessionId');
     }
 }
