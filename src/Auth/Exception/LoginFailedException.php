@@ -10,9 +10,9 @@ namespace Discuz\Auth\Exception;
 use Exception;
 use Throwable;
 
-class LoginFailuresTimesToplimitException extends Exception
+class LoginFailedException extends Exception
 {
-    public function __construct($message = 'Login Failures Times Toplimit', $code = 402, Throwable $previous = null)
+    public function __construct($message = 'Login Failed', $code = 403, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

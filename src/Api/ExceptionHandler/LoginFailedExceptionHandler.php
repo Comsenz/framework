@@ -7,19 +7,19 @@
 
 namespace Discuz\Api\ExceptionHandler;
 
-use Discuz\Auth\Exception\LoginFailuresTimesToplimitException;
+use Discuz\Auth\Exception\LoginFailedException;
 use Exception;
 use Tobscure\JsonApi\Exception\Handler\ExceptionHandlerInterface;
 use Tobscure\JsonApi\Exception\Handler\ResponseBag;
 
-class LoginFailuresTimesToplimitExceptionHandler implements ExceptionHandlerInterface
+class LoginFailedExceptionHandler implements ExceptionHandlerInterface
 {
     /**
      * {@inheritdoc}
      */
     public function manages(Exception $e)
     {
-        return $e instanceof LoginFailuresTimesToplimitException;
+        return $e instanceof LoginFailedException;
     }
 
     /**
@@ -27,12 +27,17 @@ class LoginFailuresTimesToplimitExceptionHandler implements ExceptionHandlerInte
      */
     public function handle(Exception $e)
     {
-        $status = 402;
+        $status = $e->getCode();
 
         $error = [
             'status' => (string) $status,
-            'code' => 'login_failures_times_toplimit'
+            'code' => 'login_failed',
+            'detail' => ''
         ];
+
+        if(is_numeric($e->getMessage())){
+            $error['detail'] = ['count' => $e->getMessage()];
+        }
 
         return new ResponseBag($status, [$error]);
     }
