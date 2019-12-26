@@ -54,6 +54,8 @@ trait AssertPermissionTrait
      */
     protected function assertAdmin(User $actor)
     {
-        $this->assertCan($actor, 'administrate');
+        $this->assertPermission(
+            $actor->isAdmin()
+        );
     }
 }
