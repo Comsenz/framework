@@ -57,7 +57,7 @@ class SocialiteManage extends Manager implements Factory
         $config = [
             'client_id' => $this->container->make(SettingsRepository::class)->get('app_id', 'wx_offiaccount'),
             'client_secret' => $this->container->make(SettingsRepository::class)->get('app_secret', 'wx_offiaccount'),
-            'redirect' => $this->container->make(UrlGenerator::class)->to('wx-login-bd') . '/api/oauth/wechat',
+            'redirect' => $this->container->make(UrlGenerator::class)->to('/wx-login-bd')
         ];
 
         if($sessionId = $this->request->getAttribute('sessionId')) {

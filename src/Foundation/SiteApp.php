@@ -13,7 +13,6 @@ use Discuz\Cache\CacheServiceProvider;
 use Discuz\Database\DatabaseServiceProvider;
 use Discuz\Database\MigrationServiceProvider;
 use Discuz\Filesystem\FilesystemServiceProvider;
-use Discuz\Http\Exception\NotConfig;
 use Discuz\Http\HttpServiceProvider;
 use Discuz\Qcloud\QcloudServiceProvider;
 use Discuz\Queue\QueueServiceProvider;
