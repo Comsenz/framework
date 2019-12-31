@@ -32,7 +32,6 @@ class LoginFailedExceptionHandler implements ExceptionHandlerInterface
         $error = [
             'status' => (string) $status,
             'code' => 'login_failed',
-            'detail' => ''
         ];
 
         if(is_numeric($e->getMessage())){
