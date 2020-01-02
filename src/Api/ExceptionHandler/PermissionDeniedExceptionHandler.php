@@ -32,13 +32,16 @@ class PermissionDeniedExceptionHandler implements ExceptionHandlerInterface
 
         $error = [
             'status' => (string) $status,
-            'code' => 'permission_denied'
         ];
 
+        // 站点是否关闭
         $settings = app()->make(SettingsRepository::class);
-        $str = $settings->get('site_close');
-        if ($str) {
+
+        if ($settings->get('site_close')) {
+            $error['code'] = 'site_closed';
             $error['detail'] = $settings->get('site_close_msg');
+        } else {
+            $error['code'] = 'permission_denied';
         }
 
         return new ResponseBag($status, [$error]);
