@@ -78,7 +78,7 @@ abstract class AbstractUploadTool implements UploadTool
     {
         $this->file = $file;
 
-        $this->extension = pathinfo($this->file->getClientFilename(), PATHINFO_EXTENSION);
+        $this->extension = Str::lower(pathinfo($this->file->getClientFilename(), PATHINFO_EXTENSION));
 
         $this->uploadPath = $uploadPath?:$this->uploadPath;
 
@@ -131,7 +131,7 @@ abstract class AbstractUploadTool implements UploadTool
             $this->file->getSize(),
             $this->file->getError(),
             true
-                ) : false;
+        ) : false;
     }
 
     /**
