@@ -8,6 +8,7 @@
 namespace Discuz\Api;
 
 use Discuz\Api\Controller\AbstractSerializeController;
+use Discuz\Api\Events\ApiExceptionRegisterHandler;
 use Discuz\Api\ExceptionHandler\FallbackExceptionHandler;
 use Discuz\Api\ExceptionHandler\LoginFailedExceptionHandler;
 use Discuz\Api\ExceptionHandler\LoginFailuresTimesToplimitExceptionHandler;
@@ -19,18 +20,18 @@ use Discuz\Api\ExceptionHandler\TencentCloudSDKExceptionHandler;
 use Discuz\Api\ExceptionHandler\ValidationExceptionHandler;
 use Discuz\Api\Listeners\AutoResisterApiExceptionRegisterHandler;
 use Discuz\Api\Middleware\HandlerErrors;
-use Discuz\Api\Events\ApiExceptionRegisterHandler;
 use Discuz\Api\Middleware\InstallMiddle;
 use Discuz\Foundation\Application;
 use Discuz\Http\Middleware\AuthenticateWithHeader;
 use Discuz\Http\Middleware\CheckoutSite;
+use Discuz\Http\Middleware\CheckUserStatus;
 use Discuz\Http\Middleware\DispatchRoute;
 use Discuz\Http\Middleware\EnableCrossRequest;
 use Discuz\Http\Middleware\ParseJsonBody;
 use Discuz\Http\RouteCollection;
 use Illuminate\Support\ServiceProvider;
-use Zend\Stratigility\MiddlewarePipe;
 use Tobscure\JsonApi\ErrorHandler;
+use Zend\Stratigility\MiddlewarePipe;
 
 class ApiServiceProvider extends ServiceProvider
 {
@@ -39,7 +40,7 @@ class ApiServiceProvider extends ServiceProvider
         $this->app->singleton('discuz.api.middleware', function (Application $app) {
             $pipe = new MiddlewarePipe();
 
-            if(!$this->app->isInstall()) {
+            if (!$this->app->isInstall()) {
                 $pipe->pipe($app->make(InstallMiddle::class));
                 return $pipe;
             }
@@ -49,6 +50,7 @@ class ApiServiceProvider extends ServiceProvider
             $pipe->pipe($app->make(AuthenticateWithHeader::class));
             $pipe->pipe($app->make(EnableCrossRequest::class));
             $pipe->pipe($app->make(CheckoutSite::class));
+            $pipe->pipe($app->make(CheckUserStatus::class));
             return $pipe;
         });
 
@@ -69,7 +71,7 @@ class ApiServiceProvider extends ServiceProvider
             return $errorHandler;
         });
 
-        //保证路由中间件最后执行
+        // 保证路由中间件最后执行
         $this->app->afterResolving('discuz.api.middleware', function (MiddlewarePipe $pipe) {
             $pipe->pipe($this->app->make(DispatchRoute::class));
         });

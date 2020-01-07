@@ -40,6 +40,8 @@ class PermissionDeniedExceptionHandler implements ExceptionHandlerInterface
         if ($settings->get('site_close')) {
             $error['code'] = 'site_closed';
             $error['detail'] = $settings->get('site_close_msg');
+        } elseif ($e->getMessage() == 'ban_user') {
+            $error['code'] = 'ban_user';
         } else {
             $error['code'] = 'permission_denied';
         }
