@@ -31,11 +31,10 @@ class EnableCrossRequest implements MiddlewareInterface
         $response = $handler->handle($request);
 
         if (in_array($origin, self::ALLOW_ORIGIN)) {
-            $response = $response->withAddedHeader('Access-Control-Allow-Origin', $origin);
-            $response = $response->withAddedHeader('Access-Control-Allow-Headers', 'Origin, Content-Type, Cookie, X-CSRF-TOKEN, Accept, Authorization, X-XSRF-TOKEN');
-            $response = $response->withAddedHeader('Access-Control-Expose-Headers', 'Authorization, authenticated');
-            $response = $response->withAddedHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, OPTIONS, DELETE');
-            $response = $response->withAddedHeader('Access-Control-Allow-Credentials', 'true');
+            $response = $response->withAddedHeader('Access-Control-Allow-Origin', $origin)->withAddedHeader('Access-Control-Allow-Headers', 'Origin, Content-Type, Cookie, X-CSRF-TOKEN, Accept, Authorization, X-XSRF-TOKEN')
+            ->withAddedHeader('Access-Control-Expose-Headers', 'Authorization, authenticated')
+            ->withAddedHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, OPTIONS, DELETE')
+            ->withAddedHeader('Access-Control-Allow-Credentials', 'true');
         }
 
         return $response;
