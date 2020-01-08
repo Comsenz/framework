@@ -10,7 +10,6 @@ namespace Discuz\Socialite\Two;
 use Discuz\Contracts\Socialite\Provider as ProviderInterface;
 use Discuz\Socialite\Exception\SocialiteException;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Zend\Diactoros\Response\RedirectResponse;
 
 class WechatProvider extends AbstractProvider implements ProviderInterface

@@ -12,6 +12,7 @@ use Discuz\Contracts\Socialite\Factory;
 use Discuz\Http\UrlGenerator;
 use Discuz\Socialite\Two\GithubProvider;
 use Discuz\Socialite\Two\WechatProvider;
+use Discuz\Socialite\Two\WechatWebProvider;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Manager;
@@ -66,6 +67,25 @@ class SocialiteManage extends Manager implements Factory
 
         return $this->buildProvider(
             WechatProvider::class,
+            $config
+        );
+    }
+
+    protected function createWechatWebDriver()
+    {
+        // 微信PC登录
+        $config = [
+            'client_id' => $this->container->make(SettingsRepository::class)->get('app_id', 'wx_oplatform'),
+            'client_secret' => $this->container->make(SettingsRepository::class)->get('app_secret', 'wx_oplatform'),
+            'redirect' => $this->container->make(UrlGenerator::class)->to('/wx-login-bd')
+        ];
+
+        if($sessionId = $this->request->getAttribute('sessionId')) {
+            $config['redirect'] = $config['redirect'].'?'.http_build_query(['sessionId' => $sessionId]);
+        }
+
+        return $this->buildProvider(
+            WechatWebProvider::class,
             $config
         );
     }
