@@ -10,7 +10,7 @@ namespace Discuz\Api\Controller;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\Response\EmptyResponse;
+use Laminas\Diactoros\Response\EmptyResponse;
 
 abstract class AbstractDeleteController implements RequestHandlerInterface
 {

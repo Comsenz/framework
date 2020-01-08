@@ -14,7 +14,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Discuz\Contracts\Socialite\Provider as ProviderContract;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response\RedirectResponse;
+use Laminas\Diactoros\Response\RedirectResponse;
 
 abstract class AbstractProvider implements ProviderContract
 {

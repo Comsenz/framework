@@ -9,7 +9,7 @@ namespace Discuz\Http;
 
 use Illuminate\Http\File;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Zend\Diactoros\Response;
+use Laminas\Diactoros\Response;
 
 class FileResponse extends Response
 {

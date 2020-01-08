@@ -9,7 +9,7 @@ namespace Discuz\Api;
 
 use Discuz\Foundation\Application;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\ServerRequestFactory;
 
 class Client
 {

@@ -14,7 +14,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
-use Zend\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\Response\HtmlResponse;
 
 class HandleErrorsWithView implements MiddlewareInterface
 {

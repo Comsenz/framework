@@ -16,7 +16,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
-use Zend\Diactoros\Response\EmptyResponse;
+use Laminas\Diactoros\Response\EmptyResponse;
 
 class RequestHandler implements MiddlewareInterface
 {

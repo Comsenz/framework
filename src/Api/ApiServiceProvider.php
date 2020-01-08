@@ -31,7 +31,7 @@ use Discuz\Http\Middleware\ParseJsonBody;
 use Discuz\Http\RouteCollection;
 use Illuminate\Support\ServiceProvider;
 use Tobscure\JsonApi\ErrorHandler;
-use Zend\Stratigility\MiddlewarePipe;
+use Laminas\Stratigility\MiddlewarePipe;
 
 class ApiServiceProvider extends ServiceProvider
 {
