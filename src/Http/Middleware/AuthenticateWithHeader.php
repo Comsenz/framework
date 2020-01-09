@@ -33,7 +33,10 @@ class AuthenticateWithHeader implements MiddlewareInterface
         // 允许 get 携带 Token
         if (! $headerLine) {
             $headerLine = Arr::get($request->getQueryParams(), 'token');
-            $request = $request->withHeader('authorization', $headerLine);
+
+            if ($headerLine) {
+                $request = $request->withHeader('authorization', $headerLine);
+            }
         }
 
         $request = $request->withAttribute('actor', new Guest());
