@@ -15,6 +15,8 @@ abstract class AbstractValidator
 {
     protected $validator;
 
+    protected $data;
+
     public function __construct(Factory $validator)
     {
         $this->validator = $validator;
@@ -26,6 +28,8 @@ abstract class AbstractValidator
      */
     public function valid(array $attributes)
     {
+        $this->data = $attributes;
+
         $validator = $this->make($attributes);
 
         if ($validator->fails()) {

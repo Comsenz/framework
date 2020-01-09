@@ -111,3 +111,24 @@ if (! function_exists('config')) {
         return app('config')->get($key, $default);
     }
 }
+
+if (! function_exists('trans')) {
+    /**
+     * Translate the given message.
+     *
+     * @param  string  $key
+     * @param  array   $replace
+     * @param  string  $locale
+     * @property \Illuminate\Translation\TranslationServiceProvider
+     * @return \Illuminate\Translation\Translator
+     */
+    function trans($key = null, $replace = [], $locale = null)
+    {
+        if (is_null($key)) {
+            return app('translator');
+        }
+
+//        return app('translator')->trans($key, $replace, $locale);
+        return app('translator')->get($key);
+    }
+}
