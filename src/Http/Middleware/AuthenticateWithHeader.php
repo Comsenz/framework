@@ -10,7 +10,7 @@ namespace Discuz\Http\Middleware;
 use App\Models\User;
 use App\Passport\Repositories\AccessTokenRepository;
 use Discuz\Auth\Guest;
-use Discuz\Foundation\Application;
+use Illuminate\Support\Arr;
 use League\OAuth2\Server\ResourceServer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,6 +30,12 @@ class AuthenticateWithHeader implements MiddlewareInterface
     {
         $headerLine = $request->getHeaderLine('authorization');
 
+        // 允许 get 携带 Token
+        if (! $headerLine) {
+            $headerLine = Arr::get($request->getQueryParams(), 'token');
+            $request = $request->withHeader('authorization', $headerLine);
+        }
+
         $request = $request->withAttribute('actor', new Guest());
 
         if ($headerLine) {
@@ -41,7 +47,7 @@ class AuthenticateWithHeader implements MiddlewareInterface
 
             $request = $server->validateAuthenticatedRequest($request);
 
-            // toedo 获取Token位置，根据Token解析用户并查询到当前用户
+            // 获取Token位置，根据 Token 解析用户并查询到当前用户
             $actor = $this->getActor($request);
 
             if (!is_null($actor) && $actor->exists) {
