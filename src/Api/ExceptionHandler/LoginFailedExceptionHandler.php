@@ -35,8 +35,8 @@ class LoginFailedExceptionHandler implements ExceptionHandlerInterface
             'code' => 'login_failed',
         ];
 
-        if(is_numeric($e->getMessage())){
-            $error['detail'] = [Str::replaceFirst(':values',$e->getMessage(),app('translator')->get('login.residue_degree'))];
+        if (is_numeric($e->getMessage())) {
+            $error['detail'] = [Str::replaceFirst(':values', $e->getMessage(), app('translator')->get('login.residue_degree'))];
         }
 
         return new ResponseBag($status, [$error]);
