@@ -16,6 +16,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use League\OAuth2\Server\CryptKey;
 
 class AuthenticateWithHeader implements MiddlewareInterface
 {
@@ -44,7 +45,7 @@ class AuthenticateWithHeader implements MiddlewareInterface
         if ($headerLine) {
             $accessTokenRepository = new AccessTokenRepository();
 
-            $publickey = storage_path('cert/public.key');
+            $publickey = new CryptKey(storage_path('cert/public.key'),'',false);
 
             $server = new ResourceServer($accessTokenRepository, $publickey);
 
