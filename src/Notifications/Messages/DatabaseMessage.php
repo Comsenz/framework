@@ -2,15 +2,29 @@
 
 namespace Discuz\Notifications\Messages;
 
-class DatabaseMessage
+use Illuminate\Support\Arr;
+
+abstract class DatabaseMessage
 {
-    /**
-     * The data that should be stored with the notification.
-     *
-     * @var array
-     */
-    public $data = [];
 
+    public $data;
 
+    protected $notifiable;
 
+    public function template($data) {
+        return [
+            'title' => $this->getTitle(),
+            'content' => $this->getContent($data),
+            'raw' => Arr::get($data, 'raw')
+        ];
+    }
+
+    public function notifiable($notifiable)
+    {
+        $this->notifiable = $notifiable;
+        return $this;
+    }
+
+    abstract protected function getTitle();
+    abstract protected function getContent($data);
 }
