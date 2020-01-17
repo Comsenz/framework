@@ -13,6 +13,7 @@ use Discuz\Http\UrlGenerator;
 use Discuz\Qcloud\Services\BillingService;
 use Discuz\Qcloud\Services\CheckVersionService;
 use Discuz\Qcloud\Services\CmsService;
+use Discuz\Qcloud\Services\FaceidService;
 use Discuz\Qcloud\Services\SmsService;
 use Discuz\Qcloud\Services\YunsouService;
 use Illuminate\Contracts\Container\Container;
@@ -68,6 +69,11 @@ class QcloudManage extends Manager implements Factory
     public function createYunsouDriver()
     {
         return $this->buildService(YunsouService::class, $this->qcloudConfig);
+    }
+
+    public function createFaceidDriver()
+    {
+        return $this->buildService(FaceidService::class, $this->qcloudConfig);
     }
 
     /**

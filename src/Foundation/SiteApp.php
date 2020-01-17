@@ -14,6 +14,7 @@ use Discuz\Database\DatabaseServiceProvider;
 use Discuz\Database\MigrationServiceProvider;
 use Discuz\Filesystem\FilesystemServiceProvider;
 use Discuz\Http\HttpServiceProvider;
+use Discuz\Notifications\NotificationServiceProvider;
 use Discuz\Qcloud\QcloudServiceProvider;
 use Discuz\Queue\QueueServiceProvider;
 use Discuz\Search\SearchServiceProvider;
@@ -67,6 +68,7 @@ class SiteApp
         $this->app->register(QcloudServiceProvider::class);
         $this->app->register(QueueServiceProvider::class);
         $this->app->register(SocialiteServiceProvider::class);
+        $this->app->register(NotificationServiceProvider::class);
 
         $this->registerServiceProvider();
 

@@ -10,6 +10,7 @@ namespace Discuz\Socialite\Two;
 use Discuz\Socialite\Exception\InvalidStateException;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Discuz\Contracts\Socialite\Provider as ProviderContract;
@@ -252,10 +253,9 @@ abstract class AbstractProvider implements ProviderContract
      */
     public function getAccessTokenResponse($code)
     {
-        $postKey = (version_compare(ClientInterface::VERSION, '6') === 1) ? 'form_params' : 'body';
         $response = $this->getHttpClient()->post($this->getTokenUrl(), [
             'headers' => ['Accept' => 'application/json'],
-            $postKey => $this->getTokenFields($code),
+            RequestOptions::FORM_PARAMS => $this->getTokenFields($code),
         ]);
         return json_decode($response->getBody(), true);
     }
