@@ -10,9 +10,10 @@ namespace Discuz\Foundation;
 use Discuz\Contracts\Tool\UploadTool;
 use Discuz\Http\Exception\UploadVerifyException;
 use Illuminate\Contracts\Filesystem\Factory as FileFactory;
+use Illuminate\Contracts\Filesystem\FileExistsException;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 use Psr\Http\Message\UploadedFileInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 abstract class AbstractUploadTool implements UploadTool
 {
@@ -22,7 +23,7 @@ abstract class AbstractUploadTool implements UploadTool
     protected $driver;
 
     /**
-     * @model UploadedFileInterface
+     * @var UploadedFileInterface
      */
     protected $file;
 
@@ -59,14 +60,16 @@ abstract class AbstractUploadTool implements UploadTool
     /**
      * @var array
      */
-    protected $options = ['visibility' => 'public'];
+    protected $options = [
+        'visibility' => 'public'
+    ];
 
     /**
      * @var int
      */
     protected $error = 0;
 
-    public function __construct(FileFactory $driver)
+    public function __construct(Filesystem $driver)
     {
         $this->driver = $driver;
     }
@@ -86,7 +89,7 @@ abstract class AbstractUploadTool implements UploadTool
 
         $this->options = is_string($options)
             ? ['visibility' => $options]
-            : $options?:$this->options;
+            : ($options?:$this->options);
 
         $this->fullPath = trim($this->uploadPath.'/'.$this->uploadName, '/');
 
@@ -96,7 +99,11 @@ abstract class AbstractUploadTool implements UploadTool
     /**
      * {@inheritdoc}
      *
+     * @param array $type
+     * @param int $size
+     * @return bool|array
      * @throws UploadVerifyException
+     * @throws FileExistsException
      */
     public function save(array $type = [], int $size = 0)
     {
@@ -112,8 +119,7 @@ abstract class AbstractUploadTool implements UploadTool
 
         if ($this->file->getSize() > 10*1024*1024) {
             $resource = $stream->detach();
-
-            $result = $this->driver->putStream($this->fullPath, $resource, $this->options);
+            $result = $this->driver->writeStream($this->fullPath, $resource, $this->options);
 
             if (is_resource($resource)) {
                 fclose($resource);
@@ -124,14 +130,19 @@ abstract class AbstractUploadTool implements UploadTool
             $stream->close();
         }
 
-        return $result ? new UploadedFile(
-            $this->driver->path($this->fullPath),
-            $this->file->getClientFilename(),
-            $this->file->getClientMediaType(),
-            $this->file->getSize(),
-            $this->file->getError(),
-            true
-        ) : false;
+        return $result ? [
+            'url' => $this->driver->url($this->fullPath),
+            'path' => $this->driver->path($this->fullPath)
+        ] : false;
+
+//        return $result ? new UploadedFile(
+//            $this->driver->path($this->fullPath),
+//            $this->file->getClientFilename(),
+//            $this->file->getClientMediaType(),
+//            $this->file->getSize(),
+//            $this->file->getError(),
+//            true
+//        ) : false;
     }
 
     /**

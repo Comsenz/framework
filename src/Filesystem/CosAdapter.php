@@ -9,6 +9,7 @@ namespace Discuz\Filesystem;
 
 use Exception;
 use GuzzleHttp\Client as HttpClient;
+use Illuminate\Support\Arr;
 use League\Flysystem\Adapter\AbstractAdapter;
 use League\Flysystem\Adapter\CanOverwriteFiles;
 use League\Flysystem\AdapterInterface;
@@ -101,7 +102,7 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
         }
 
         $options = [
-            'Scheme' => $this->config['scheme'] ?? 'http',
+            'Schema' => $this->config['schema'] ?? 'https',
         ];
 
         return $this->getClient()->getObjectUrl(
@@ -121,7 +122,7 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
      */
     public function getTemporaryUrl($path, $expiration, array $options = [])
     {
-        $options = array_merge($options, ['Scheme' => $this->config['scheme'] ?? 'http']);
+        $options = array_merge($options, ['Schema' => $this->config['schema'] ?? 'https']);
 
         $expiration = date('c', !\is_numeric($expiration) ? \strtotime($expiration) : \intval($expiration));
 
@@ -320,7 +321,7 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
     public function read($path)
     {
         try {
-            if ($this->config['read_from_cdn']) {
+            if (Arr::get($this->config, 'read_from_cdn')) {
                 $response = $this->getHttpClient()
                     ->get($this->getTemporaryUrl($path, date('+5 min')))
                     ->getBody()
@@ -535,11 +536,10 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
         $options = [];
 
         if ($config->has('params')) {
-            $options['params'] = $config['params'];
+            $options['params'] = $config->get('params');
         }
-
         if ($config->has('visibility')) {
-            $options['params']['ACL'] = $this->normalizeVisibility($config['visibility']);
+            $options['params']['ACL'] = $this->normalizeVisibility($config->get('visibility'));
         }
 
         return $options;
