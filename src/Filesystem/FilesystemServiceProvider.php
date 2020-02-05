@@ -7,13 +7,13 @@
 
 namespace Discuz\Filesystem;
 
-use App\Api\Controller\Users\ListUsersController;
 use App\Api\Serializer\AttachmentSerializer;
 use App\Tools\AttachmentUploadTool;
 use App\Tools\ImageUploadTool;
 use Discuz\Contracts\Setting\SettingsRepository;
 use Discuz\Foundation\Application;
 use Illuminate\Contracts\Filesystem\Factory;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Filesystem\FilesystemServiceProvider as ServiceProvider;
 use Illuminate\Support\Arr;
 use League\Flysystem\Filesystem;
@@ -26,10 +26,10 @@ class FilesystemServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $settings = $this->app->make(SettingsRepository::class);
-        $qcloud = $settings->tag('qcloud');
 
-        $this->app->make('filesystem')->extend('cos', function ($app, $config) use ($qcloud) {
+        $this->app->make('filesystem')->extend('cos', function ($app, $config) {
+            $settings = $this->app->make(SettingsRepository::class);
+            $qcloud = $settings->tag('qcloud');
 
             $config = array_merge($config, $app->config('filesystems.disks.cos'));
 
@@ -44,12 +44,5 @@ class FilesystemServiceProvider extends ServiceProvider
 
             return new Filesystem(new CosAdapter($config));
         });
-
-        if(Arr::get($qcloud, 'qcloud_cos', false)) {
-            $this->app->when([AttachmentUploadTool::class, ImageUploadTool::class, AttachmentSerializer::class])->needs(ContractsFilesystem::class)->give(function (Application $app) {
-                return $app->make(Factory::class)->disk('attachment');
-            });
-        }
-
     }
 }
