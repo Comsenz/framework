@@ -90,6 +90,14 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
         );
     }
 
+    /*
+     *
+     */
+    public function getPicUrl($path) {
+        $schema = $this->config['schema'] ?? 'https';
+        return $this->config['ciurl'] ? $schema.'://'.$this->config['ciurl'].'/'.$path : '';
+    }
+
     /**
      * @param string $path
      *
