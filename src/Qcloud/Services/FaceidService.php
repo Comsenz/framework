@@ -4,7 +4,7 @@
 namespace Discuz\Qcloud\Services;
 
 
-use TencentCloud\Cms\V20190321\Models\ImageModerationRequest;
+use Illuminate\Support\Arr;
 use TencentCloud\Faceid\V20180301\FaceidClient;
 use TencentCloud\Faceid\V20180301\Models\IdCardVerificationRequest;
 
@@ -13,7 +13,7 @@ class FaceidService extends AbstractService
 
     protected function getClient()
     {
-        return new FaceidClient($this->cred, '', $this->clientProfile);
+        return new FaceidClient($this->cred, Arr::get($this->config, 'qcloud_facdid_region'), $this->clientProfile);
     }
 
     protected function setEndpoint()

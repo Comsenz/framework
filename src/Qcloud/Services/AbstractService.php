@@ -7,6 +7,7 @@
 
 namespace Discuz\Qcloud\Services;
 
+use Illuminate\Support\Arr;
 use TencentCloud\Common\Credential;
 use TencentCloud\Common\Profile\ClientProfile;
 use TencentCloud\Common\Profile\HttpProfile;
@@ -17,7 +18,9 @@ abstract class AbstractService
 
     const REGION = '';
 
-    protected $cred;
+    protected $region;
+
+    protected $config;
 
     protected $httpProfile;
 
@@ -27,7 +30,9 @@ abstract class AbstractService
 
     public function __construct($config)
     {
-        $this->cred = new Credential($config['qcloud_secret_id'], $config['qcloud_secret_key'], '');
+        $this->config = $config;
+
+        $this->cred = new Credential(Arr::get($config, 'qcloud_secret_id'), Arr::get($config, 'qcloud_secret_key'), '');
 
         $this->httpProfile = new HttpProfile();
         $this->setEndpoint();
