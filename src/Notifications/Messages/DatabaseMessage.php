@@ -2,12 +2,10 @@
 
 namespace Discuz\Notifications\Messages;
 
-use App\Models\NotificationTpl;
 use Illuminate\Support\Arr;
 
 abstract class DatabaseMessage
 {
-
     public $data;
 
     protected $notifiable;
@@ -16,14 +14,12 @@ abstract class DatabaseMessage
 
     protected $tplData;
 
-    public function template($data) {
-
-        $this->tplData = $this->getTplData();
-
+    public function template($data)
+    {
         return [
             'title' => $this->getTitle(),
             'content' => $this->getContent($data),
-            'raw' => Arr::get($data, 'raw')
+            'raw' => Arr::get($data, 'raw'),
         ];
     }
 
@@ -33,9 +29,13 @@ abstract class DatabaseMessage
         return $this;
     }
 
-    protected function getTplData()
+    public function getTplId() {
+        return $this->tplId;
+    }
+
+    public function setTplData($tplData)
     {
-        return NotificationTpl::find($this->tplId);
+        $this->tplData = $tplData;
     }
 
     protected function getTitle()

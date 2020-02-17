@@ -13,7 +13,7 @@ use Discuz\Http\Middleware\HandleErrorsWithWhoops;
 use Discuz\Http\RouteCollection;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\ViewServiceProvider;
-use Zend\Stratigility\MiddlewarePipe;
+use Laminas\Stratigility\MiddlewarePipe;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -22,11 +22,11 @@ class WebServiceProvider extends ServiceProvider
         $this->app->singleton('discuz.web.middleware', function ($app) {
             $app->register(ViewServiceProvider::class);
             $pipe = new MiddlewarePipe();
-            if ($app->config('debug')) {
+//            if ($app->config('debug')) {
                 $pipe->pipe($app->make(HandleErrorsWithWhoops::class));
-            } else {
-                $pipe->pipe($app->make(HandleErrorsWithView::class));
-            }
+//            } else {
+//                $pipe->pipe($app->make(HandleErrorsWithView::class));
+//            }
             return $pipe;
         });
 
