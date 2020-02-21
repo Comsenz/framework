@@ -13,7 +13,7 @@ class FaceidService extends AbstractService
 
     protected function getClient()
     {
-        return new FaceidClient($this->cred, Arr::get($this->config, 'qcloud_facdid_region', 'ap-beijing'), $this->clientProfile);
+        return new FaceidClient($this->cred, Arr::get($this->config, 'qcloud_faceid_region', 'ap-beijing'), $this->clientProfile);
     }
 
     protected function setEndpoint()
