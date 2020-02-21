@@ -116,11 +116,10 @@ if (! function_exists('trans')) {
     /**
      * Translate the given message.
      *
-     * @param  string  $key
-     * @param  array   $replace
-     * @param  string  $locale
-     * @property \Illuminate\Translation\TranslationServiceProvider
-     * @return \Illuminate\Translation\Translator
+     * @param  string|null  $key
+     * @param  array  $replace
+     * @param  string|null  $locale
+     * @return \Illuminate\Contracts\Translation\Translator|string|array|null
      */
     function trans($key = null, $replace = [], $locale = null)
     {
@@ -128,7 +127,6 @@ if (! function_exists('trans')) {
             return app('translator');
         }
 
-//        return app('translator')->trans($key, $replace, $locale);
-        return app('translator')->get($key);
+        return app('translator')->get($key, $replace, $locale);
     }
 }
