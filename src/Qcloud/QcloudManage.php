@@ -11,8 +11,8 @@ use Discuz\Contracts\Qcloud\Factory;
 use Discuz\Contracts\Setting\SettingsRepository;
 use Discuz\Http\UrlGenerator;
 use Discuz\Qcloud\Services\BillingService;
-use Discuz\Qcloud\Services\CheckVersionService;
 use Discuz\Qcloud\Services\CmsService;
+use Discuz\Qcloud\Services\DiscuzCloudService;
 use Discuz\Qcloud\Services\FaceidService;
 use Discuz\Qcloud\Services\SmsService;
 use Discuz\Qcloud\Services\YunsouService;
@@ -28,11 +28,15 @@ class QcloudManage extends Manager implements Factory
     {
         parent::__construct($container);
 
-        $settings = $container->make(SettingsRepository::class);
+        $this->qcloudConfig = [];
 
-        $this->qcloudConfig = collect($settings->tag('qcloud'))->map(function ($value) {
-            return $value ? $value : null;
-        });
+        if ($container->has(SettingsRepository::class)) {
+            $settings = $container->make(SettingsRepository::class);
+
+            $this->qcloudConfig = collect($settings->tag('qcloud'))->map(function ($value) {
+                return $value ? $value : null;
+            });
+        }
     }
 
     public function createBillingDriver()
@@ -57,13 +61,13 @@ class QcloudManage extends Manager implements Factory
         return $this->buildService(SmsService::class, $config);
     }
 
-    public function createCheckVersionDriver()
+    public function createDiscuzCloudDriver()
     {
         $config = [
-            'base_uri' => $this->container->make(UrlGenerator::class)->to('/api/'),
-            'timeout'  =>  2
+            'base_uri' => 'http://cloud.comsenz-service.com/api/',
+            'timeout'  =>  15
         ];
-        return $this->buildService(CheckVersionService::class, $config);
+        return $this->buildService(DiscuzCloudService::class, $config);
     }
 
     public function createYunsouDriver()

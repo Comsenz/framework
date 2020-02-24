@@ -640,6 +640,6 @@ class Application extends Container implements ContainerContract
 
     public function isInstall()
     {
-        return file_exists($this->configPath('config.php'));
+        return file_exists($this->storagePath().'/install.lock');
     }
 }

@@ -33,7 +33,12 @@ trait QcloudTrait
 
     public function checkVersion($params = [])
     {
-        return $this->getQcloud()->service('checkversion')->checkVersion($params);
+        return $this->getQcloud()->service('discuzcloud')->checkVersion($params);
+    }
+
+    public function report($params = [])
+    {
+        return $this->getQcloud()->service('discuzcloud')->report($params);
     }
 
     private function getQcloud()
