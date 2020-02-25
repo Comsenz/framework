@@ -27,9 +27,7 @@ class DiscuzCloudService
      */
     public function checkVersion($body = '')
     {
-        return $this->getHttpClient()->request('POST', 'cloud/version', [
-            'json' => $body
-        ]);
+        return $this->getHttpClient()->request('GET', 'cloud/version');
     }
 
     /**
