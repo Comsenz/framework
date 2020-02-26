@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
+
 namespace Discuz\Notifications\Messages;
 
 use Illuminate\Support\Arr;
@@ -29,7 +34,8 @@ abstract class DatabaseMessage
         return $this;
     }
 
-    public function getTplId() {
+    public function getTplId()
+    {
         return $this->tplId;
     }
 
@@ -43,6 +49,7 @@ abstract class DatabaseMessage
         $replaceVars = $this->titleReplaceVars();
         return str_replace($this->getVars(), $replaceVars, $this->tplData->title);
     }
+
     protected function getContent($data)
     {
         $replaceVars = $this->contentReplaceVars($data);
@@ -55,5 +62,6 @@ abstract class DatabaseMessage
     }
 
     abstract protected function titleReplaceVars();
+
     abstract protected function contentReplaceVars($data);
 }
