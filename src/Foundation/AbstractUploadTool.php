@@ -8,6 +8,7 @@
 namespace Discuz\Foundation;
 
 use Discuz\Contracts\Tool\UploadTool;
+use Discuz\Filesystem\CosAdapter;
 use Discuz\Http\Exception\UploadVerifyException;
 use Illuminate\Contracts\Filesystem\Factory as FileFactory;
 use Illuminate\Contracts\Filesystem\FileExistsException;
@@ -130,8 +131,18 @@ abstract class AbstractUploadTool implements UploadTool
             $stream->close();
         }
 
+        $isRemote = $this->driver->getAdapter() instanceof CosAdapter;
+
+        if ($isRemote) {
+            $url = $this->driver->url($this->fullPath);
+            $url = $url->getScheme() . '://' . $url->getHost() . $url->getPath();
+        } else {
+            $url = $this->driver->url($this->fullPath);
+        }
+
         return $result ? [
-            'url' => $this->driver->url($this->fullPath),
+            'isRemote' => $isRemote,
+            'url' => $url,
             'path' => $this->driver->path($this->fullPath)
         ] : false;
 

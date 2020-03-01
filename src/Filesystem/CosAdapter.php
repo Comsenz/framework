@@ -90,10 +90,12 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
         );
     }
 
-    /*
-     *
+    /**
+     * @param $path
+     * @return string
      */
-    public function getPicUrl($path) {
+    public function getPicUrl($path)
+    {
         $schema = $this->config['schema'] ?? 'https';
         return $this->config['ciurl'] ? $schema.'://'.$this->config['ciurl'].'/'.$path : '';
     }
@@ -111,14 +113,18 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
 
         $options = [
             'Schema' => $this->config['schema'] ?? 'https',
+            'Bucket' => $this->getBucket(),
+            'Key' => $path,
         ];
 
-        return $this->getClient()->getObjectUrl(
-            $this->getBucket(),
-            $path,
-            null,
-            $options
-        );
+        return $this->getClient()->getPresignetUrl('GetObject', $options);
+
+        // return $this->getClient()->getObjectUrl(
+        //     $this->getBucket(),
+        //     $path,
+        //     null,
+        //     $options
+        // );
     }
 
     /**
