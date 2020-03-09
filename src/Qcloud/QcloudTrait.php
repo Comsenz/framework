@@ -31,6 +31,11 @@ trait QcloudTrait
         return $this->getQcloud()->service('billing')->DescribeAccountBalance();
     }
 
+    public function describeCaptchaResult($ticket, $randStr, $ip = '')
+    {
+        return $this->getQcloud()->service('captcha')->describeCaptchaResult($ticket, $randStr, $ip);
+    }
+
     public function checkVersion($params = [])
     {
         return $this->getQcloud()->service('discuzcloud')->checkVersion($params);

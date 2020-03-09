@@ -9,8 +9,8 @@ namespace Discuz\Qcloud;
 
 use Discuz\Contracts\Qcloud\Factory;
 use Discuz\Contracts\Setting\SettingsRepository;
-use Discuz\Http\UrlGenerator;
 use Discuz\Qcloud\Services\BillingService;
+use Discuz\Qcloud\Services\CaptchaService;
 use Discuz\Qcloud\Services\CmsService;
 use Discuz\Qcloud\Services\DiscuzCloudService;
 use Discuz\Qcloud\Services\FaceidService;
@@ -42,6 +42,11 @@ class QcloudManage extends Manager implements Factory
     public function createBillingDriver()
     {
         return $this->buildService(BillingService::class, $this->qcloudConfig);
+    }
+
+    public function createCaptchaDriver()
+    {
+        return $this->buildService(CaptchaService::class, $this->qcloudConfig);
     }
 
     public function createCmsDriver()
