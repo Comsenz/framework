@@ -11,7 +11,7 @@ interface SettingsRepository
 {
     public function all();
 
-    public function get($key, $tag = '', $default = null);
+    public function get($key, $tag = '', $default = '');
 
     public function set($key, $value, $tag = 'default');
 
