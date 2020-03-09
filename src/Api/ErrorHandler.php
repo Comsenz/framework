@@ -7,6 +7,7 @@
 
 namespace Discuz\Api;
 
+use Discuz\Http\DiscuzResponseFactory;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -36,6 +37,6 @@ class ErrorHandler
         $document = new Document;
         $document->setErrors($response->getErrors());
 
-        return new JsonApiResponse($document, $response->getStatus());
+        return DiscuzResponseFactory::JsonApiResponse($document, $response->getStatus());
     }
 }

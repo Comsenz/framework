@@ -5,9 +5,11 @@ namespace Discuz\Http;
 
 
 use Illuminate\Http\File;
+use InvalidArgumentException;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 
 class DiscuzResponseFactory
 {
@@ -44,7 +46,7 @@ class DiscuzResponseFactory
 
     public static function EmptyResponse(int $code = 204, array $headers = []): ResponseInterface
     {
-        return static::createResponse(static::getPsr17Factory()->createStream(), $code, $headers);
+        return static::createResponse(null, $code, $headers);
     }
 
     public static function XmlResponse(string $xml, int $code = 200, array $headers = []): ResponseInterface
@@ -53,13 +55,29 @@ class DiscuzResponseFactory
         return static::createResponse(static::getPsr17Factory()->createStream($xml), $code, $headers);
     }
 
+    public static function RedirectResponse(string $uri, int $code = 302, array $headers = []): ResponseInterface
+    {
+        if (! is_string($uri)) {
+            throw new InvalidArgumentException(sprintf(
+                'Uri provided to %s MUST be a string or Psr\Http\Message\UriInterface instance; received "%s"',
+                __CLASS__,
+                (is_object($uri) ? get_class($uri) : gettype($uri))
+            ));
+        }
+        $headers['location'] = $uri;
+        return static::createResponse(null, $code, $headers);
+    }
+
     protected static function getPsr17Factory() {
         return static::$psr17Factory ?: new Psr17Factory();
     }
 
     protected static function createResponse(StreamInterface $stream, int $code, array $headers)
     {
-        $response = static::getPsr17Factory()->createResponse($code)->withBody($stream);
+        $response = static::getPsr17Factory()->createResponse($code);
+        if(!is_null($stream)) {
+            $response = $response->withBody($stream);
+        }
         foreach($headers as $key => $value) {
             $response = $response->withHeader($key, $value);
         }

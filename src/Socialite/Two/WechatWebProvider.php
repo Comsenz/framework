@@ -4,9 +4,9 @@
 namespace Discuz\Socialite\Two;
 
 use Discuz\Contracts\Socialite\Provider as ProviderInterface;
+use Discuz\Http\DiscuzResponseFactory;
 use Discuz\Socialite\Exception\SocialiteException;
 use Illuminate\Support\Arr;
-use Laminas\Diactoros\Response\RedirectResponse;
 
 class WechatWebProvider extends AbstractProvider implements ProviderInterface
 {
@@ -55,7 +55,7 @@ class WechatWebProvider extends AbstractProvider implements ProviderInterface
             $cacheName = $this->getCacheName();
             $this->request->getAttribute('cache')->put($cacheName, $state = $this->getState());
         }
-        return new RedirectResponse($this->getAuthUrl($state));
+        return DiscuzResponseFactory::RedirectResponse($this->getAuthUrl($state));
     }
 
     /**

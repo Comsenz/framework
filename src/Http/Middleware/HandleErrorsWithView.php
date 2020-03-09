@@ -7,6 +7,7 @@
 
 namespace Discuz\Http\Middleware;
 
+use Discuz\Http\DiscuzResponseFactory;
 use Illuminate\View\Factory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,7 +15,6 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
-use Laminas\Diactoros\Response\HtmlResponse;
 
 class HandleErrorsWithView implements MiddlewareInterface
 {
@@ -59,6 +59,6 @@ class HandleErrorsWithView implements MiddlewareInterface
 
         $view = $this->view->make($name);
 
-        return new HtmlResponse($view->render(), $code);
+        return DiscuzResponseFactory::HtmlResponse($view->render(), $code);
     }
 }

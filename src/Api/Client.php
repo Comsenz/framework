@@ -8,8 +8,9 @@
 namespace Discuz\Api;
 
 use Discuz\Foundation\Application;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ResponseInterface;
-use Laminas\Diactoros\ServerRequestFactory;
 
 class Client
 {
@@ -23,7 +24,10 @@ class Client
     public function send($controller, $actor, $query, $body) : ResponseInterface
     {
         $controller = $this->app->make($controller);
-        $request = ServerRequestFactory::fromGlobals(null, $query, $body);
+
+        $psr17Factory = new Psr17Factory();
+        $request = (new ServerRequestCreator($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory))->fromArrays($_SERVER, [], [], $query, $body);
+
         $request = $request->withAttribute('actor', $actor);
 
         return $controller->handle($request);

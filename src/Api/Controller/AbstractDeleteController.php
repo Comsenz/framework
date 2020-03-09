@@ -7,10 +7,10 @@
 
 namespace Discuz\Api\Controller;
 
+use Discuz\Http\DiscuzResponseFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Laminas\Diactoros\Response\EmptyResponse;
 
 abstract class AbstractDeleteController implements RequestHandlerInterface
 {
@@ -21,7 +21,7 @@ abstract class AbstractDeleteController implements RequestHandlerInterface
     {
         $this->delete($request);
 
-        return new EmptyResponse(204);
+        return DiscuzResponseFactory::EmptyResponse(204);
     }
 
     /**

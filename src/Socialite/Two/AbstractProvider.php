@@ -7,15 +7,14 @@
 
 namespace Discuz\Socialite\Two;
 
+use Discuz\Http\DiscuzResponseFactory;
 use Discuz\Socialite\Exception\InvalidStateException;
 use GuzzleHttp\Client;
-use GuzzleHttp\ClientInterface;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Discuz\Contracts\Socialite\Provider as ProviderContract;
 use Psr\Http\Message\ServerRequestInterface;
-use Laminas\Diactoros\Response\RedirectResponse;
 
 abstract class AbstractProvider implements ProviderContract
 {
@@ -143,11 +142,7 @@ abstract class AbstractProvider implements ProviderContract
      */
     abstract protected function mapUserToObject(array $user);
 
-    /**
-     * Redirect the user of the application to the provider's authentication screen.
-     *
-     * @return RedirectResponse
-     */
+
     public function redirect()
     {
         $state = null;
@@ -155,7 +150,7 @@ abstract class AbstractProvider implements ProviderContract
 //            $this->request->session()->put('state', $state = $this->getState());
         }
 
-        return new RedirectResponse($this->getAuthUrl($state));
+        return DiscuzResponseFactory::RedirectResponse($this->getAuthUrl($state));
     }
 
     /**
