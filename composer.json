@@ -42,7 +42,9 @@
         "overtrue/easy-sms": "^1.1",
         "dragonmantank/cron-expression": "^2.3",
         "ramsey/uuid": "^3.9",
-        "phpoffice/phpspreadsheet": "^1.10"
+        "phpoffice/phpspreadsheet": "^1.10",
+        "nyholm/psr7": "^1.2",
+        "nyholm/psr7-server": "^0.4"
     },
     "autoload": {
         "files": [
