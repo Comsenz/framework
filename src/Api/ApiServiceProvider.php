@@ -9,6 +9,7 @@ namespace Discuz\Api;
 
 use Discuz\Api\Controller\AbstractSerializeController;
 use Discuz\Api\Events\ApiExceptionRegisterHandler;
+use Discuz\Api\Events\ConfigMiddleware;
 use Discuz\Api\ExceptionHandler\FallbackExceptionHandler;
 use Discuz\Api\ExceptionHandler\LoginFailedExceptionHandler;
 use Discuz\Api\ExceptionHandler\LoginFailuresTimesToplimitExceptionHandler;
@@ -51,6 +52,9 @@ class ApiServiceProvider extends ServiceProvider
             $pipe->pipe($app->make(EnableCrossRequest::class));
             $pipe->pipe($app->make(CheckoutSite::class));
             $pipe->pipe($app->make(CheckUserStatus::class));
+
+            $app->make('events')->dispatch(new ConfigMiddleware($pipe));
+
             return $pipe;
         });
 
