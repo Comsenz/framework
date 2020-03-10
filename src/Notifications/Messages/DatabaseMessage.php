@@ -21,11 +21,15 @@ abstract class DatabaseMessage
 
     public function template($data)
     {
-        return [
+        $build =  [
             'title' => $this->getTitle(),
             'content' => $this->getContent($data),
             'raw' => Arr::get($data, 'raw'),
         ];
+
+        Arr::set($build, 'raw.tpl_id', $this->tplId);
+
+        return $build;
     }
 
     public function notifiable($notifiable)

@@ -40,7 +40,13 @@ class WechatChannel
     {
         if (!empty($notifiable->wechat)) {
 
-            $templateID = $this->settings->get('offiaccount_template_id', 'wx_offiaccount');
+            // wechat post json
+            $build = $notification->toWechat($notifiable);
+            $build['content'] = json_decode(Arr::get($build, 'content'), true);
+
+            $notificationData = $notification->getTplData(Arr::get($build, 'raw.tpl_id'));
+            $templateID = $notificationData->template_id;
+
             $appID = $this->settings->get('offiaccount_app_id', 'wx_offiaccount');
             $secret = $this->settings->get('offiaccount_app_secret', 'wx_offiaccount');
 
@@ -51,12 +57,8 @@ class WechatChannel
             // to user
             $toUser = $notifiable->wechat->mp_openid;
 
-            // wechat post json
-            $message = $notification->toWechat($notifiable);
-            $message['content'] = json_decode($message['content'], true);
-
             // redirect
-            $url = Arr::pull($message, 'content.redirect_url');
+            $url = Arr::pull($build, 'content.redirect_url');
 
             $app = Factory::officialAccount([
                 'app_id' => $appID,
@@ -68,7 +70,7 @@ class WechatChannel
                 'touser' => $toUser,
                 'template_id' => $templateID,
                 'url' => $url,
-                'data' => $message['content']['data'],
+                'data' => $build['content']['data'],
             ]);
         }
     }
