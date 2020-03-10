@@ -9,7 +9,6 @@ use InvalidArgumentException;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-use Psr\Http\Message\UriInterface;
 
 class DiscuzResponseFactory
 {
@@ -17,9 +16,10 @@ class DiscuzResponseFactory
 
     protected static $psr17Factory;
 
-    public static function JsonApiResponse(string $payload, int $code = 200, array $headers = []): ResponseInterface
+    public static function JsonApiResponse($payload, int $code = 200, array $headers = []): ResponseInterface
     {
         $headers['content-type'] = 'application/vnd.api+json';
+        $payload = is_array($payload) ? json_encode($payload) : $payload;
         return static::createResponse(static::getPsr17Factory()->createStream($payload), $code, $headers);
     }
 

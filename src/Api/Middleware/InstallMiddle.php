@@ -4,7 +4,7 @@
 namespace Discuz\Api\Middleware;
 
 
-use Discuz\Api\JsonApiResponse;
+use Discuz\Http\DiscuzResponseFactory;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -28,7 +28,7 @@ class InstallMiddle implements MiddlewareInterface
     {
         $status = 500;
 
-        return new JsonApiResponse([
+        return DiscuzResponseFactory::JsonApiResponse([
             'errors' => [
                 [
                     'status' => $status,
