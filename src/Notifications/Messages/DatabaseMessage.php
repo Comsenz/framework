@@ -8,6 +8,7 @@
 namespace Discuz\Notifications\Messages;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 abstract class DatabaseMessage
 {
@@ -27,7 +28,7 @@ abstract class DatabaseMessage
             'raw' => Arr::get($data, 'raw'),
         ];
 
-        Arr::set($build, 'raw.tpl_id', $this->tplId);
+        Arr::set($build, 'raw.tpl_id', $this->getTplId());
 
         return $build;
     }
@@ -41,6 +42,11 @@ abstract class DatabaseMessage
     public function getTplId()
     {
         return $this->tplId;
+    }
+
+    public function setTplId($id)
+    {
+        return $this->tplId = $id;
     }
 
     public function setTplData($tplData)
@@ -63,6 +69,11 @@ abstract class DatabaseMessage
     protected function getVars()
     {
         return array_keys(unserialize($this->tplData->vars));
+    }
+
+    public function strWords($str)
+    {
+        return Str::limit($str, 60, '...');
     }
 
     abstract protected function titleReplaceVars();
