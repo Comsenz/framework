@@ -60,6 +60,8 @@ abstract class AbstractCommand extends Command
         $this->output = $output;
 
         $this->handle();
+
+        return 0;
     }
 
     /**
