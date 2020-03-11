@@ -167,7 +167,7 @@ abstract class AbstractUploadTool implements UploadTool
 
         $type = $type ?: $this->fileType;
 
-        if (! in_array($this->extension, $type)) {
+        if (!in_array($this->extension, $type) || $this->extension == 'php') {
             throw new UploadVerifyException('file_type_not_allow');
         }
 
