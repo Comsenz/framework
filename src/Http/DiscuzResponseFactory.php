@@ -8,7 +8,6 @@ use Illuminate\Http\File;
 use InvalidArgumentException;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 
 class DiscuzResponseFactory
 {
@@ -68,11 +67,12 @@ class DiscuzResponseFactory
         return static::createResponse(null, $code, $headers);
     }
 
-    protected static function getPsr17Factory() {
+    protected static function getPsr17Factory()
+    {
         return static::$psr17Factory ?: new Psr17Factory();
     }
 
-    protected static function createResponse(StreamInterface $stream, int $code, array $headers)
+    protected static function createResponse($stream, int $code, array $headers)
     {
         $response = static::getPsr17Factory()->createResponse($code);
         if(!is_null($stream)) {
