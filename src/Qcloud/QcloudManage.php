@@ -15,6 +15,7 @@ use Discuz\Qcloud\Services\CmsService;
 use Discuz\Qcloud\Services\DiscuzCloudService;
 use Discuz\Qcloud\Services\FaceidService;
 use Discuz\Qcloud\Services\SmsService;
+use Discuz\Qcloud\Services\VodService;
 use Discuz\Qcloud\Services\YunsouService;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Manager;
@@ -47,6 +48,11 @@ class QcloudManage extends Manager implements Factory
     public function createCaptchaDriver()
     {
         return $this->buildService(CaptchaService::class, $this->qcloudConfig);
+    }
+
+    public function createVodDriver()
+    {
+        return $this->buildService(VodService::class, $this->qcloudConfig);
     }
 
     public function createCmsDriver()
