@@ -75,7 +75,7 @@ class QcloudManage extends Manager implements Factory
     public function createDiscuzCloudDriver()
     {
         $config = [
-            'base_uri' => 'http://cloud.comsenz-service.com/api/',
+            'base_uri' => 'https://discuz.chat/api/',
             'timeout'  =>  15
         ];
         return $this->buildService(DiscuzCloudService::class, $config);
