@@ -33,7 +33,7 @@ class VodService extends AbstractService
         $this->qcloudAppId  = $config->get('qcloud_app_id');
         $this->qcloudSecretId  = $config->get('qcloud_secret_id');
         $this->qcloudSecretKey = $config->get('qcloud_secret_key');
-        $this->qcloudVodTranscode = $config->get('qcloud_vod_transcode');
+        $this->qcloudVodTranscode = (int) $config->get('qcloud_vod_transcode');
     }
 
     /**
@@ -51,6 +51,30 @@ class VodService extends AbstractService
         $clientRequest->fromJsonString(json_encode($params));
 
         return $this->client->DeleteMedia($clientRequest);
+    }
+
+    /**
+     * @param $FileId
+     * @return mixed
+     */
+    public function transcodeVideo($FileId)
+    {
+        $clientRequest = new ProcessMediaRequest();
+
+        $params = [
+            'MediaProcessTask' => [
+                'TranscodeTaskSet' => [
+                    ['Definition'=>$this->qcloudVodTranscode]
+                ],
+                'CoverBySnapshotTaskSet' => [
+                    ['Definition'=>10,'PositionType'=>'Time','PositionValue'=>0]
+                ],
+            ],
+            'FileId' => $FileId,
+        ];
+        $clientRequest->fromJsonString(json_encode($params));
+
+        return $this->client->ProcessMedia($clientRequest);
     }
 
     protected function getClient()
