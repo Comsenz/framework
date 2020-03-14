@@ -15,7 +15,6 @@ use Illuminate\Support\ServiceProvider;
 
 class ConsoleServiceProvider extends ServiceProvider
 {
-
     protected $commands = [
         SeederMakeCommand::class,
         ScheduleRunCommand::class,
@@ -26,7 +25,7 @@ class ConsoleServiceProvider extends ServiceProvider
     {
         $events = $this->app['events'];
         $events->listen(Configuring::class, function (Configuring $event) {
-            foreach($this->commands as $command) {
+            foreach ($this->commands as $command) {
                 $event->addCommand($command);
             }
         });

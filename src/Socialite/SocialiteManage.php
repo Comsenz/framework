@@ -13,7 +13,6 @@ use Discuz\Http\UrlGenerator;
 use Discuz\Socialite\Two\GithubProvider;
 use Discuz\Socialite\Two\WechatProvider;
 use Discuz\Socialite\Two\WechatWebProvider;
-use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Manager;
 use Illuminate\Support\Str;
@@ -58,10 +57,10 @@ class SocialiteManage extends Manager implements Factory
         $config = [
             'client_id' => $this->container->make(SettingsRepository::class)->get('app_id', 'wx_offiaccount'),
             'client_secret' => $this->container->make(SettingsRepository::class)->get('app_secret', 'wx_offiaccount'),
-            'redirect' => $this->container->make(UrlGenerator::class)->to('/wx-login-bd')
+            'redirect' => $this->container->make(UrlGenerator::class)->to('/wx-sign-up-bd')
         ];
 
-        if($sessionId = $this->request->getAttribute('sessionId')) {
+        if ($sessionId = $this->request->getAttribute('sessionId')) {
             $config['redirect'] = $config['redirect'].'?'.http_build_query(['sessionId' => $sessionId]);
         }
 
@@ -77,10 +76,10 @@ class SocialiteManage extends Manager implements Factory
         $config = [
             'client_id' => $this->container->make(SettingsRepository::class)->get('app_id', 'wx_oplatform'),
             'client_secret' => $this->container->make(SettingsRepository::class)->get('app_secret', 'wx_oplatform'),
-            'redirect' => $this->container->make(UrlGenerator::class)->to('/wx-login-bd')
+            'redirect' => $this->container->make(UrlGenerator::class)->to('/wx-sign-up-bd')
         ];
 
-        if($sessionId = $this->request->getAttribute('sessionId')) {
+        if ($sessionId = $this->request->getAttribute('sessionId')) {
             $config['redirect'] = $config['redirect'].'?'.http_build_query(['sessionId' => $sessionId]);
         }
 

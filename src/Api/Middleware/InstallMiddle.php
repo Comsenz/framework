@@ -1,10 +1,13 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Api\Middleware;
 
-
-use Discuz\Api\JsonApiResponse;
+use Discuz\Http\DiscuzResponseFactory;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,7 +16,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class InstallMiddle implements MiddlewareInterface
 {
-
     protected $url;
 
     public function __construct(UrlGenerator $url)
@@ -28,7 +30,7 @@ class InstallMiddle implements MiddlewareInterface
     {
         $status = 500;
 
-        return new JsonApiResponse([
+        return DiscuzResponseFactory::JsonApiResponse([
             'errors' => [
                 [
                     'status' => $status,

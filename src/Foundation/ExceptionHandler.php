@@ -10,6 +10,7 @@ namespace Discuz\Foundation;
 use Exception;
 use Illuminate\Contracts\Debug\ExceptionHandler as ContractsExceptionHandler;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class ExceptionHandler implements ContractsExceptionHandler
 {
@@ -23,10 +24,10 @@ class ExceptionHandler implements ContractsExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param \Exception $e
+     * @param Throwable $e
      * @return void
      */
-    public function report(Exception $e)
+    public function report(Throwable $e)
     {
         // TODO: Implement report() method.
         $this->logger->error($e->getMessage());
@@ -35,10 +36,10 @@ class ExceptionHandler implements ContractsExceptionHandler
     /**
      * Determine if the exception should be reported.
      *
-     * @param \Exception $e
-     * @return bool
+     * @param Throwable $e
+     * @return void
      */
-    public function shouldReport(Exception $e)
+    public function shouldReport(Throwable $e)
     {
         // TODO: Implement shouldReport() method.
         $this->logger->error($e->getMessage());
@@ -48,10 +49,10 @@ class ExceptionHandler implements ContractsExceptionHandler
      * Render an exception into an HTTP response.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Exception $e
+     * @param Throwable $e
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function render($request, Exception $e)
+    public function render($request, Throwable $e)
     {
         // TODO: Implement render() method.
     }
@@ -60,10 +61,10 @@ class ExceptionHandler implements ContractsExceptionHandler
      * Render an exception to the console.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
-     * @param \Exception $e
+     * @param Throwable $e
      * @return void
      */
-    public function renderForConsole($output, Exception $e)
+    public function renderForConsole($output, Throwable $e)
     {
         // TODO: Implement renderForConsole() method.
     }

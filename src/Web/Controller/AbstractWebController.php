@@ -8,12 +8,12 @@
 namespace Discuz\Web\Controller;
 
 use Discuz\Foundation\Application;
+use Discuz\Http\DiscuzResponseFactory;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\View\Factory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Laminas\Diactoros\Response\HtmlResponse;
 
 abstract class AbstractWebController implements RequestHandlerInterface
 {
@@ -38,7 +38,7 @@ abstract class AbstractWebController implements RequestHandlerInterface
         if ($view instanceof Renderable) {
             $view = $view->render();
         }
-        return new HtmlResponse($view);
+        return DiscuzResponseFactory::HtmlResponse($view);
     }
 
     abstract public function render(ServerRequestInterface $request, Factory $view);

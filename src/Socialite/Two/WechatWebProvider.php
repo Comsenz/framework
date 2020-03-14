@@ -1,12 +1,16 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Socialite\Two;
 
 use Discuz\Contracts\Socialite\Provider as ProviderInterface;
+use Discuz\Http\DiscuzResponseFactory;
 use Discuz\Socialite\Exception\SocialiteException;
 use Illuminate\Support\Arr;
-use Laminas\Diactoros\Response\RedirectResponse;
 
 class WechatWebProvider extends AbstractProvider implements ProviderInterface
 {
@@ -14,8 +18,8 @@ class WechatWebProvider extends AbstractProvider implements ProviderInterface
      * {@inheritdoc}
      */
     protected $scopes = ['snsapi_login'];
-    private $openId;
 
+    private $openId;
 
     /**
      * {@inheritdoc}
@@ -24,6 +28,7 @@ class WechatWebProvider extends AbstractProvider implements ProviderInterface
     {
         return $this->buildAuthUrlFromBase('https://open.weixin.qq.com/connect/qrconnect', $state);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -55,7 +60,7 @@ class WechatWebProvider extends AbstractProvider implements ProviderInterface
             $cacheName = $this->getCacheName();
             $this->request->getAttribute('cache')->put($cacheName, $state = $this->getState());
         }
-        return new RedirectResponse($this->getAuthUrl($state));
+        return DiscuzResponseFactory::RedirectResponse($this->getAuthUrl($state));
     }
 
     /**
@@ -73,6 +78,7 @@ class WechatWebProvider extends AbstractProvider implements ProviderInterface
         ]);
         return json_decode($response->getBody(), true);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -93,6 +99,7 @@ class WechatWebProvider extends AbstractProvider implements ProviderInterface
             'avatar'   => isset($user['headimgurl']) ? $user['headimgurl'] : null,
         ]);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -141,8 +148,8 @@ class WechatWebProvider extends AbstractProvider implements ProviderInterface
         return !(strlen($state) > 0 && Arr::get($this->request->getQueryParams(), 'state') == $state);
     }
 
-    protected function getCacheName() {
+    protected function getCacheName()
+    {
         return $this->request->getAttribute('sessionId');
     }
-
 }

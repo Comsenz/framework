@@ -8,6 +8,7 @@
 namespace Discuz\Http\Middleware;
 
 use Discuz\Foundation\Application;
+use Discuz\Http\DiscuzResponseFactory;
 use Discuz\Http\Exception\NotConfig;
 use Discuz\Http\UrlGenerator;
 use Illuminate\Support\Arr;
@@ -16,7 +17,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
-use Laminas\Diactoros\Response\EmptyResponse;
 
 class RequestHandler implements MiddlewareInterface
 {
@@ -30,7 +30,6 @@ class RequestHandler implements MiddlewareInterface
         $this->app = $app;
         krsort($this->middlewares);
     }
-
 
     /**
      * @param ServerRequestInterface $request
@@ -61,7 +60,7 @@ class RequestHandler implements MiddlewareInterface
             }
         }
 
-        return new EmptyResponse(500);
+        return DiscuzResponseFactory::EmptyResponse(500);
     }
 
     private function getNormalizedPath(ServerRequestInterface $request): ServerRequestInterface

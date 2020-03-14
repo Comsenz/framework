@@ -31,6 +31,11 @@ trait QcloudTrait
         return $this->getQcloud()->service('billing')->DescribeAccountBalance();
     }
 
+    public function describeCaptchaResult($ticket, $randStr, $ip = '')
+    {
+        return $this->getQcloud()->service('captcha')->describeCaptchaResult($ticket, $randStr, $ip);
+    }
+
     public function checkVersion($params = [])
     {
         return $this->getQcloud()->service('discuzcloud')->checkVersion($params);
@@ -39,6 +44,16 @@ trait QcloudTrait
     public function report($params = [])
     {
         return $this->getQcloud()->service('discuzcloud')->report($params);
+    }
+
+    public function deleteVodMedia($file_id)
+    {
+        return $this->getQcloud()->service('vod')->deleteMedia($file_id);
+    }
+
+    public function transcodeVideo($file_id)
+    {
+        return $this->getQcloud()->service('vod')->transcodeVideo($file_id);
     }
 
     private function getQcloud()

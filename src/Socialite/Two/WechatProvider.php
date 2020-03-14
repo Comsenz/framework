@@ -8,9 +8,9 @@
 namespace Discuz\Socialite\Two;
 
 use Discuz\Contracts\Socialite\Provider as ProviderInterface;
+use Discuz\Http\DiscuzResponseFactory;
 use Discuz\Socialite\Exception\SocialiteException;
 use Illuminate\Support\Arr;
-use Laminas\Diactoros\Response\RedirectResponse;
 
 class WechatProvider extends AbstractProvider implements ProviderInterface
 {
@@ -133,7 +133,7 @@ class WechatProvider extends AbstractProvider implements ProviderInterface
             $cacheName = $this->getCacheName();
             $this->request->getAttribute('cache')->put($cacheName, $state = $this->getState());
         }
-        return new RedirectResponse($this->getAuthUrl($state));
+        return DiscuzResponseFactory::RedirectResponse($this->getAuthUrl($state));
     }
 
     /**
@@ -148,7 +148,8 @@ class WechatProvider extends AbstractProvider implements ProviderInterface
         return !(strlen($state) > 0 && Arr::get($this->request->getQueryParams(), 'state') == $state);
     }
 
-    protected function getCacheName() {
+    protected function getCacheName()
+    {
         return $this->request->getAttribute('sessionId');
     }
 }

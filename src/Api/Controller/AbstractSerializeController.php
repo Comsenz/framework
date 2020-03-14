@@ -7,7 +7,7 @@
 
 namespace Discuz\Api\Controller;
 
-use Discuz\Api\JsonApiResponse;
+use Discuz\Http\DiscuzResponseFactory;
 use Illuminate\Contracts\Container\Container;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -93,7 +93,7 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
 
         $document->setData($element);
 
-        return new JsonApiResponse($document);
+        return DiscuzResponseFactory::JsonApiResponse($document);
     }
 
     protected function setSiteRequest(ServerRequestInterface $request)

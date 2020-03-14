@@ -20,7 +20,6 @@ use League\OAuth2\Server\CryptKey;
 
 class AuthenticateWithHeader implements MiddlewareInterface
 {
-
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
@@ -45,7 +44,7 @@ class AuthenticateWithHeader implements MiddlewareInterface
         if ($headerLine) {
             $accessTokenRepository = new AccessTokenRepository();
 
-            $publickey = new CryptKey(storage_path('cert/public.key'),'',false);
+            $publickey = new CryptKey(storage_path('cert/public.key'), '', false);
 
             $server = new ResourceServer($accessTokenRepository, $publickey);
 

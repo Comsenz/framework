@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
+
 namespace Discuz\Notifications;
 
 use Illuminate\Contracts\Bus\Dispatcher as Bus;
@@ -28,14 +33,19 @@ class ChannelManager extends Manager implements DispatcherContract, FactoryContr
     /**
      * Send the given notification to the given notifiable entities.
      *
-     * @param  \Illuminate\Support\Collection|array|mixed  $notifiables
-     * @param  mixed  $notification
+     * @param \Illuminate\Support\Collection|array|mixed $notifiables
+     * @param mixed $notification
      * @return void
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function send($notifiables, $notification)
     {
         return (new NotificationSender(
-            $this, $this->container->make(Bus::class), $this->container->make(Dispatcher::class), $this->locale)
+            $this,
+            $this->container->make(Bus::class),
+            $this->container->make(Dispatcher::class),
+            $this->locale
+        )
         )->send($notifiables, $notification);
     }
 
@@ -51,7 +61,11 @@ class ChannelManager extends Manager implements DispatcherContract, FactoryContr
     public function sendNow($notifiables, $notification, array $channels = null)
     {
         return (new NotificationSender(
-            $this, $this->container->make(Bus::class), $this->container->make(Dispatcher::class), $this->locale)
+            $this,
+            $this->container->make(Bus::class),
+            $this->container->make(Dispatcher::class),
+            $this->locale
+        )
         )->sendNow($notifiables, $notification, $channels);
     }
 
@@ -70,6 +84,7 @@ class ChannelManager extends Manager implements DispatcherContract, FactoryContr
      * Create an instance of the database driver.
      *
      * @return \Illuminate\Notifications\Channels\DatabaseChannel
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     protected function createDatabaseDriver()
     {
@@ -77,12 +92,23 @@ class ChannelManager extends Manager implements DispatcherContract, FactoryContr
     }
 
     /**
+     * Create an instance of the wechat driver.
+     *
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    protected function createWechatDriver()
+    {
+        return $this->container->make(Channels\WechatChannel::class);
+    }
+
+    /**
      * Create a new driver instance.
      *
-     * @param  string  $driver
+     * @param string $driver
      * @return mixed
      *
-     * @throws \InvalidArgumentException
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     protected function createDriver($driver)
     {

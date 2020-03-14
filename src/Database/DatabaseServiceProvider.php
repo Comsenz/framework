@@ -18,7 +18,6 @@ use Illuminate\Support\ServiceProvider;
 
 class DatabaseServiceProvider extends ServiceProvider
 {
-
     protected $commands = [
 //        MigrateCommand::class,
         MigrateMakeCommand::class
@@ -29,7 +28,6 @@ class DatabaseServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
         $this->registerConnectionServices();
     }
 

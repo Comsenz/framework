@@ -9,12 +9,13 @@ namespace Discuz\Qcloud;
 
 use Discuz\Contracts\Qcloud\Factory;
 use Discuz\Contracts\Setting\SettingsRepository;
-use Discuz\Http\UrlGenerator;
 use Discuz\Qcloud\Services\BillingService;
+use Discuz\Qcloud\Services\CaptchaService;
 use Discuz\Qcloud\Services\CmsService;
 use Discuz\Qcloud\Services\DiscuzCloudService;
 use Discuz\Qcloud\Services\FaceidService;
 use Discuz\Qcloud\Services\SmsService;
+use Discuz\Qcloud\Services\VodService;
 use Discuz\Qcloud\Services\YunsouService;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Manager;
@@ -44,6 +45,16 @@ class QcloudManage extends Manager implements Factory
         return $this->buildService(BillingService::class, $this->qcloudConfig);
     }
 
+    public function createCaptchaDriver()
+    {
+        return $this->buildService(CaptchaService::class, $this->qcloudConfig);
+    }
+
+    public function createVodDriver()
+    {
+        return $this->buildService(VodService::class, $this->qcloudConfig);
+    }
+
     public function createCmsDriver()
     {
         return $this->buildService(CmsService::class, $this->qcloudConfig);
@@ -64,7 +75,7 @@ class QcloudManage extends Manager implements Factory
     public function createDiscuzCloudDriver()
     {
         $config = [
-            'base_uri' => 'http://cloud.comsenz-service.com/api/',
+            'base_uri' => 'https://discuz.chat/api/',
             'timeout'  =>  15
         ];
         return $this->buildService(DiscuzCloudService::class, $config);

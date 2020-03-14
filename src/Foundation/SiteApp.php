@@ -85,7 +85,7 @@ class SiteApp
 
     private function loadConfig()
     {
-        if(file_exists($path = $this->app->basePath('config/config.php'))) {
+        if (file_exists($path = $this->app->basePath('config/config.php'))) {
             return include $path;
         }
 
@@ -94,7 +94,6 @@ class SiteApp
 
     private function getIlluminateConfig()
     {
-
         $discuzConfig = [
             'queue' => $this->app->config('queue'),
             'filesystems' => $this->app->config('filesystems'),
@@ -106,20 +105,19 @@ class SiteApp
             ]
         ];
 
-        if($this->app->config('cache')) {
+        if ($this->app->config('cache')) {
             $discuzConfig['cache'] = $this->app->config('cache');
         }
 
         $config = new ConfigRepository(
             array_merge(
-            [
+                [
                     'database' => [
                         'default' => 'mysql',
                         'migrations' => 'migrations',
                         'redis' => $this->app->config('redis'),
                         'connections' => [
-                            'mysql' => $this->app->config('database'),
-                            'discuz_mysql' => $this->app->config('database')
+                            'mysql' => $this->app->config('database')
                         ]
                     ],
                     'cache' => [

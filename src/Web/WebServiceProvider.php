@@ -23,7 +23,7 @@ class WebServiceProvider extends ServiceProvider
             $app->register(ViewServiceProvider::class);
             $pipe = new MiddlewarePipe();
 //            if ($app->config('debug')) {
-                $pipe->pipe($app->make(HandleErrorsWithWhoops::class));
+            $pipe->pipe($app->make(HandleErrorsWithWhoops::class));
 //            } else {
 //                $pipe->pipe($app->make(HandleErrorsWithView::class));
 //            }
