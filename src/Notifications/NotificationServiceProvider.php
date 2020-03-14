@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
+
 namespace Discuz\Notifications;
 
 use Illuminate\Contracts\Notifications\Dispatcher as DispatcherContract;
@@ -29,11 +34,13 @@ class NotificationServiceProvider extends ServiceProvider
         });
 
         $this->app->alias(
-            ChannelManager::class, DispatcherContract::class
+            ChannelManager::class,
+            DispatcherContract::class
         );
 
         $this->app->alias(
-            ChannelManager::class, FactoryContract::class
+            ChannelManager::class,
+            FactoryContract::class
         );
     }
 }

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
+
 namespace Discuz\Notifications;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -9,7 +14,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Events\NotificationSending;
 use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Localizable;
 
 class NotificationSender
@@ -118,10 +122,10 @@ class NotificationSender
     protected function preferredLocale($notifiable, $notification)
     {
         return $notification->locale ?? $this->locale ?? value(function () use ($notifiable) {
-                if ($notifiable instanceof HasLocalePreference) {
-                    return $notifiable->preferredLocale();
-                }
-            });
+            if ($notifiable instanceof HasLocalePreference) {
+                return $notifiable->preferredLocale();
+            }
+        });
     }
 
     /**
@@ -161,8 +165,8 @@ class NotificationSender
     protected function shouldSendNotification($notifiable, $notification, $channel)
     {
         return $this->events->until(
-                new NotificationSending($notifiable, $notification, $channel)
-            ) !== false;
+            new NotificationSending($notifiable, $notification, $channel)
+        ) !== false;
     }
 
     /**

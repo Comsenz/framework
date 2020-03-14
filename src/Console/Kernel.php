@@ -8,7 +8,6 @@
 namespace Discuz\Console;
 
 use Discuz\Console\Event\Configuring;
-use Discuz\Database\MigrationServiceProvider;
 use Discuz\Foundation\SiteApp;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Arr;
@@ -26,7 +25,6 @@ use Symfony\Component\Finder\Finder;
 
 class Kernel extends SiteApp implements KernelContract
 {
-
     /**
      * The output from the previous command.
      *
@@ -104,7 +102,6 @@ EOF;
     {
         // TODO: Implement handle() method.
     }
-
 
     public function call($command, array $parameters = [], $outputBuffer = null)
     {
@@ -188,7 +185,7 @@ EOF;
                 ['/', '.php'],
                 ['\\', ''],
                 Str::after($command->getPathname(), realpath(app_path()).DIRECTORY_SEPARATOR)
-                );
+            );
             if (is_subclass_of($command, Command::class) &&
                 ! (new ReflectionClass($command))->isAbstract()) {
                 $console->add($this->app->make($command));

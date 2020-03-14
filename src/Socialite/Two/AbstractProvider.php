@@ -142,7 +142,6 @@ abstract class AbstractProvider implements ProviderContract
      */
     abstract protected function mapUserToObject(array $user);
 
-
     public function redirect()
     {
         $state = null;

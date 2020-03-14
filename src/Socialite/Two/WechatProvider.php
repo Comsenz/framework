@@ -148,7 +148,8 @@ class WechatProvider extends AbstractProvider implements ProviderInterface
         return !(strlen($state) > 0 && Arr::get($this->request->getQueryParams(), 'state') == $state);
     }
 
-    protected function getCacheName() {
+    protected function getCacheName()
+    {
         return $this->request->getAttribute('sessionId');
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Socialite\Two;
 
@@ -14,8 +18,8 @@ class WechatWebProvider extends AbstractProvider implements ProviderInterface
      * {@inheritdoc}
      */
     protected $scopes = ['snsapi_login'];
-    private $openId;
 
+    private $openId;
 
     /**
      * {@inheritdoc}
@@ -24,6 +28,7 @@ class WechatWebProvider extends AbstractProvider implements ProviderInterface
     {
         return $this->buildAuthUrlFromBase('https://open.weixin.qq.com/connect/qrconnect', $state);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -73,6 +78,7 @@ class WechatWebProvider extends AbstractProvider implements ProviderInterface
         ]);
         return json_decode($response->getBody(), true);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -93,6 +99,7 @@ class WechatWebProvider extends AbstractProvider implements ProviderInterface
             'avatar'   => isset($user['headimgurl']) ? $user['headimgurl'] : null,
         ]);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -141,8 +148,8 @@ class WechatWebProvider extends AbstractProvider implements ProviderInterface
         return !(strlen($state) > 0 && Arr::get($this->request->getQueryParams(), 'state') == $state);
     }
 
-    protected function getCacheName() {
+    protected function getCacheName()
+    {
         return $this->request->getAttribute('sessionId');
     }
-
 }

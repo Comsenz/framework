@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
+
 namespace Discuz\Notifications\Channels;
 
 use Discuz\Contracts\Setting\SettingsRepository;
@@ -74,5 +79,4 @@ class WechatChannel
             ]);
         }
     }
-
 }

@@ -1,8 +1,11 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Http;
-
 
 use Illuminate\Http\File;
 use InvalidArgumentException;
@@ -75,10 +78,10 @@ class DiscuzResponseFactory
     protected static function createResponse($stream, int $code, array $headers)
     {
         $response = static::getPsr17Factory()->createResponse($code);
-        if(!is_null($stream)) {
+        if (!is_null($stream)) {
             $response = $response->withBody($stream);
         }
-        foreach($headers as $key => $value) {
+        foreach ($headers as $key => $value) {
             $response = $response->withHeader($key, $value);
         }
         return $response;

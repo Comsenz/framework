@@ -15,7 +15,7 @@ use Illuminate\Support\ServiceProvider;
 
 class Application extends Container implements ContainerContract
 {
-    const VERSION = '1.0.0';
+    const VERSION = '0.3.200315';
 
     /**
      * The base path for the Laravel installation.
@@ -223,7 +223,6 @@ class Application extends Container implements ContainerContract
         return $this->basePath.DIRECTORY_SEPARATOR.'public';
     }
 
-
     /**
      * Get the path to the storage directory.
      *
@@ -254,7 +253,8 @@ class Application extends Container implements ContainerContract
         return $this->storagePath ?: $this->basePath.DIRECTORY_SEPARATOR.'resources';
     }
 
-    public function databasePath() {
+    public function databasePath()
+    {
         return $this->basePath.DIRECTORY_SEPARATOR.'database';
     }
 

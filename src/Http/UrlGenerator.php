@@ -7,7 +7,6 @@
 
 namespace Discuz\Http;
 
-use Discuz\Contracts\Setting\SettingsRepository;
 use Discuz\Foundation\Application;
 use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContracts;
 

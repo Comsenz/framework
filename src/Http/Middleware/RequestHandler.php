@@ -31,7 +31,6 @@ class RequestHandler implements MiddlewareInterface
         krsort($this->middlewares);
     }
 
-
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler

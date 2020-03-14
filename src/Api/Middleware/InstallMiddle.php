@@ -1,8 +1,11 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\Api\Middleware;
-
 
 use Discuz\Http\DiscuzResponseFactory;
 use Illuminate\Contracts\Routing\UrlGenerator;
@@ -13,7 +16,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class InstallMiddle implements MiddlewareInterface
 {
-
     protected $url;
 
     public function __construct(UrlGenerator $url)

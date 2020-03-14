@@ -7,7 +7,6 @@
 
 namespace Discuz\Qcloud\Services;
 
-
 use TencentCloud\Vod\V20180717\Models\DeleteMediaRequest;
 use TencentCloud\Vod\V20180717\Models\ProcessMediaRequest;
 use TencentCloud\Vod\V20180717\VodClient;

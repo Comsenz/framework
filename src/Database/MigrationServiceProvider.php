@@ -44,7 +44,6 @@ class MigrationServiceProvider extends IlluminateMigrationServiceProvider
 
         $this->app->alias('migration.repository', MigrationRepositoryInterface::class);
         $this->app->alias('migration.creator', MigrationCreator::class);
-
     }
 
     /**
@@ -55,15 +54,12 @@ class MigrationServiceProvider extends IlluminateMigrationServiceProvider
      */
     protected function registerCommands(array $commands)
     {
-
         $this->app['events']->listen(Configuring::class, function (Configuring $event) {
             foreach ($this->commands as $command) {
                 $event->addCommand($command);
             }
         });
-
     }
-
 
     /**
      * Register the command.
