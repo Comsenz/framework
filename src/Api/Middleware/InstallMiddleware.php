@@ -14,7 +14,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class InstallMiddle implements MiddlewareInterface
+class InstallMiddleware implements MiddlewareInterface
 {
     protected $url;
 
@@ -34,7 +34,7 @@ class InstallMiddle implements MiddlewareInterface
             'errors' => [
                 [
                     'status' => $status,
-                    'code' => 'not install',
+                    'code' => 'not_install',
                     'detail' => [
                         'installUrl' => $this->url->route('install.index')
                     ]

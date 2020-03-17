@@ -21,7 +21,7 @@ use Discuz\Api\ExceptionHandler\TencentCloudSDKExceptionHandler;
 use Discuz\Api\ExceptionHandler\ValidationExceptionHandler;
 use Discuz\Api\Listeners\AutoResisterApiExceptionRegisterHandler;
 use Discuz\Api\Middleware\HandlerErrors;
-use Discuz\Api\Middleware\InstallMiddle;
+use Discuz\Api\Middleware\InstallMiddleware;
 use Discuz\Foundation\Application;
 use Discuz\Http\Middleware\AuthenticateWithHeader;
 use Discuz\Http\Middleware\CheckoutSite;
@@ -42,7 +42,7 @@ class ApiServiceProvider extends ServiceProvider
             $pipe = new MiddlewarePipe();
 
             if (!$this->app->isInstall()) {
-                $pipe->pipe($app->make(InstallMiddle::class));
+                $pipe->pipe($app->make(InstallMiddleware::class));
                 return $pipe;
             }
 
