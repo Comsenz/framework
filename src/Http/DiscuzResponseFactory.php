@@ -66,7 +66,7 @@ class DiscuzResponseFactory
                 (is_object($uri) ? get_class($uri) : gettype($uri))
             ));
         }
-        $headers['location'] = $uri;
+        $headers['Location'] = $uri;
         return static::createResponse(null, $code, $headers);
     }
 
