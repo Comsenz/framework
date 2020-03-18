@@ -56,7 +56,7 @@ class WechatChannel
             $secret = $this->settings->get('offiaccount_app_secret', 'wx_offiaccount');
 
             if (blank($templateID) || blank($appID) || blank($secret)) {
-                throw new RuntimeException('Notification is missing template_config');
+                throw new RuntimeException('notification_is_missing_template_config');
             }
 
             // to user
