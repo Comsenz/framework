@@ -210,7 +210,7 @@ EOF;
      */
     protected function scheduleCache()
     {
-        return Env::get('SCHEDULE_CACHE_DRIVER');
+        return ;
     }
 
     /**
