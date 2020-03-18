@@ -22,11 +22,11 @@ class WebServiceProvider extends ServiceProvider
         $this->app->singleton('discuz.web.middleware', function ($app) {
             $app->register(ViewServiceProvider::class);
             $pipe = new MiddlewarePipe();
-//            if ($app->config('debug')) {
-            $pipe->pipe($app->make(HandleErrorsWithWhoops::class));
-//            } else {
-//                $pipe->pipe($app->make(HandleErrorsWithView::class));
-//            }
+            if ($app->config('debug')) {
+                $pipe->pipe($app->make(HandleErrorsWithWhoops::class));
+            } else {
+                $pipe->pipe($app->make(HandleErrorsWithView::class));
+            }
             return $pipe;
         });
 
