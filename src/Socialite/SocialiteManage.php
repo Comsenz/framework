@@ -55,8 +55,8 @@ class SocialiteManage extends Manager implements Factory
     {
         // 公众号接口(微信H5) 配置
         $config = [
-            'client_id' => $this->container->make(SettingsRepository::class)->get('app_id', 'wx_offiaccount'),
-            'client_secret' => $this->container->make(SettingsRepository::class)->get('app_secret', 'wx_offiaccount'),
+            'client_id' => $this->container->make(SettingsRepository::class)->get('offiaccount_app_id', 'wx_offiaccount'),
+            'client_secret' => $this->container->make(SettingsRepository::class)->get('offiaccount_app_secret', 'wx_offiaccount'),
             'redirect' => $this->container->make(UrlGenerator::class)->to('/wx-sign-up-bd')
         ];
 
@@ -74,8 +74,8 @@ class SocialiteManage extends Manager implements Factory
     {
         // 微信PC登录
         $config = [
-            'client_id' => $this->container->make(SettingsRepository::class)->get('app_id', 'wx_oplatform'),
-            'client_secret' => $this->container->make(SettingsRepository::class)->get('app_secret', 'wx_oplatform'),
+            'client_id' => $this->container->make(SettingsRepository::class)->get('oplatform_app_id', 'wx_oplatform'),
+            'client_secret' => $this->container->make(SettingsRepository::class)->get('oplatform_app_secret', 'wx_oplatform'),
             'redirect' => $this->container->make(UrlGenerator::class)->to('/wx-sign-up-bd')
         ];
 
