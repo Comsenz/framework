@@ -15,7 +15,7 @@ use Illuminate\Support\ServiceProvider;
 
 class Application extends Container implements ContainerContract
 {
-    const VERSION = '0.3.200318';
+    const VERSION = '0.3.200319';
 
     /**
      * The base path for the Laravel installation.
