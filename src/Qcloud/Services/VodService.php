@@ -25,6 +25,8 @@ class VodService extends AbstractService
 
     protected $qcloudVodTranscode;
 
+    protected $qcloudVodSubAppId;
+
     public function __construct($config)
     {
         parent::__construct($config);
@@ -33,6 +35,7 @@ class VodService extends AbstractService
         $this->qcloudSecretId  = $config->get('qcloud_secret_id');
         $this->qcloudSecretKey = $config->get('qcloud_secret_key');
         $this->qcloudVodTranscode = (int) $config->get('qcloud_vod_transcode');
+        $this->qcloudVodSubAppId = (int) $config->get('qcloud_vod_sub_app_id');
     }
 
     /**
@@ -70,6 +73,7 @@ class VodService extends AbstractService
                 ],
             ],
             'FileId' => $FileId,
+            'SubAppId' => $this->qcloudVodSubAppId,
         ];
         $clientRequest->fromJsonString(json_encode($params));
 
