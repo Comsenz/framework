@@ -48,6 +48,7 @@ class VodService extends AbstractService
 
         $params = [
             'FileId' => $FileId,
+            'SubAppId' => $this->qcloudVodSubAppId,
         ];
 
         $clientRequest->fromJsonString(json_encode($params));
