@@ -14,6 +14,8 @@ use Illuminate\Support\Arr;
 
 class WechatProvider extends AbstractProvider implements ProviderInterface
 {
+    const IDENTIFIER = 'WECHAT_SERVICE_ACCOUNT';
+
     /**
      * @var string
      */
@@ -124,32 +126,5 @@ class WechatProvider extends AbstractProvider implements ProviderInterface
             $this->openId = $this->credentialsResponseBody['openid'];
         }
         return $this->credentialsResponseBody;
-    }
-
-    public function redirect()
-    {
-        $state = null;
-        if ($this->usesState()) {
-            $cacheName = $this->getCacheName();
-            $this->request->getAttribute('cache')->put($cacheName, $state = $this->getState());
-        }
-        return DiscuzResponseFactory::RedirectResponse($this->getAuthUrl($state));
-    }
-
-    /**
-     * Determine if the current request / session has a mismatching "state".
-     *
-     * @return bool
-     */
-    protected function hasInvalidState()
-    {
-        $cacheName = $this->getCacheName();
-        $state = $this->request->getAttribute('cache')->pull($cacheName);
-        return !(strlen($state) > 0 && Arr::get($this->request->getQueryParams(), 'state') == $state);
-    }
-
-    protected function getCacheName()
-    {
-        return $this->request->getAttribute('sessionId');
     }
 }

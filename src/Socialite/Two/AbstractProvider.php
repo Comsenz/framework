@@ -7,6 +7,7 @@
 
 namespace Discuz\Socialite\Two;
 
+use App\Models\SessionToken;
 use Discuz\Http\DiscuzResponseFactory;
 use Discuz\Socialite\Exception\InvalidStateException;
 use GuzzleHttp\Client;
@@ -18,6 +19,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 abstract class AbstractProvider implements ProviderContract
 {
+    const IDENTIFIER = null;
+
     protected $credentialsResponseBody;
 
     protected $request;
@@ -83,7 +86,7 @@ abstract class AbstractProvider implements ProviderContract
      *
      * @var bool
      */
-    protected $stateless = true;
+    protected $stateless = false;
 
     /**
      * The custom Guzzle configuration options.
@@ -95,12 +98,11 @@ abstract class AbstractProvider implements ProviderContract
     /**
      * Create a new provider instance.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $clientId
-     * @param  string  $clientSecret
-     * @param  string  $redirectUrl
-     * @param  array  $guzzle
-     * @return void
+     * @param ServerRequestInterface $request
+     * @param string $clientId
+     * @param string $clientSecret
+     * @param string $redirectUrl
+     * @param array $guzzle
      */
     public function __construct(ServerRequestInterface $request, $clientId, $clientSecret, $redirectUrl, $guzzle = [])
     {
@@ -145,8 +147,17 @@ abstract class AbstractProvider implements ProviderContract
     public function redirect()
     {
         $state = null;
-        if ($this->usesState()) {
-//            $this->request->session()->put('state', $state = $this->getState());
+
+        if ($this->usesState() && $session = $this->request->getAttribute('session')) {
+            $state = $this->getState();
+            $token = $session::generate(static::IDENTIFIER, compact('state'));
+            $token->save();
+            $sessionId = http_build_query(['sessionId' => $token->token]);
+            $this->redirectUrl = $this->redirectUrl.(strpos('?', $this->redirectUrl) ? '&'.$sessionId : '?'.$sessionId);
+        }
+
+        if($redirectUrl = $this->request->getAttribute('redirect')) {
+            $this->redirectUrl($redirectUrl);
         }
 
         return DiscuzResponseFactory::RedirectResponse($this->getAuthUrl($state));
@@ -232,11 +243,9 @@ abstract class AbstractProvider implements ProviderContract
      */
     protected function hasInvalidState()
     {
-        if ($this->isStateless()) {
-            return false;
-        }
-//        $state = $this->request->session()->pull('state');
-        return false;//! (strlen($state) > 0 && $this->request->input('state') === $state);
+        $token = SessionToken::get($this->request->getAttribute('sessionId'), static::IDENTIFIER);
+        $state = Arr::get($token->payload, 'state');
+        return !(strlen($state) > 0 && Arr::get($this->request->getQueryParams(), 'state') === $state);
     }
 
     /**
@@ -368,7 +377,7 @@ abstract class AbstractProvider implements ProviderContract
      */
     protected function usesState()
     {
-        return $this->stateless;
+        return ! $this->stateless;
     }
 
     /**

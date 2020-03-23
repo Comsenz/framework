@@ -41,9 +41,9 @@ class SocialiteManage extends Manager implements Factory
     protected function createGithubDriver()
     {
         $config = [
-            'client_id' => '20f568b9a248dbcd8d8e',
-            'client_secret' => '582fe4e9fa3218251df6229f73cf73035c27402d',
-            'redirect' => 'http://dev.discuss.com/github',
+            'client_id' => '',
+            'client_secret' => '',
+            'redirect' => '',
         ];
         return $this->buildProvider(
             GithubProvider::class,
@@ -59,10 +59,6 @@ class SocialiteManage extends Manager implements Factory
             'client_secret' => $this->container->make(SettingsRepository::class)->get('offiaccount_app_secret', 'wx_offiaccount'),
             'redirect' => $this->container->make(UrlGenerator::class)->to('/wx-sign-up-bd')
         ];
-
-        if ($sessionId = $this->request->getAttribute('sessionId')) {
-            $config['redirect'] = $config['redirect'].'?'.http_build_query(['sessionId' => $sessionId]);
-        }
 
         return $this->buildProvider(
             WechatProvider::class,
