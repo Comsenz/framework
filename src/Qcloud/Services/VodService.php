@@ -8,6 +8,7 @@
 namespace Discuz\Qcloud\Services;
 
 use TencentCloud\Vod\V20180717\Models\DeleteMediaRequest;
+use TencentCloud\Vod\V20180717\Models\DescribeStorageDataRequest;
 use TencentCloud\Vod\V20180717\Models\ModifyMediaInfoRequest;
 use TencentCloud\Vod\V20180717\Models\ProcessMediaRequest;
 use TencentCloud\Vod\V20180717\VodClient;
@@ -101,6 +102,19 @@ class VodService extends AbstractService
         $clientRequest->fromJsonString(json_encode($params));
 
         return $this->client->ModifyMediaInfo($clientRequest);
+    }
+
+    public function describeStorageData()
+    {
+        $clientRequest = new DescribeStorageDataRequest();
+
+        $params = [
+            'SubAppId' => $this->qcloudVodSubAppId,
+        ];
+
+        $clientRequest->fromJsonString(json_encode($params));
+
+        return $this->client->DescribeStorageData($clientRequest);
     }
 
     protected function getClient()
