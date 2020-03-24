@@ -8,6 +8,8 @@
 namespace Discuz\Qcloud\Services;
 
 use TencentCloud\Vod\V20180717\Models\DeleteMediaRequest;
+use TencentCloud\Vod\V20180717\Models\DescribeStorageDataRequest;
+use TencentCloud\Vod\V20180717\Models\ModifyMediaInfoRequest;
 use TencentCloud\Vod\V20180717\Models\ProcessMediaRequest;
 use TencentCloud\Vod\V20180717\VodClient;
 
@@ -79,6 +81,40 @@ class VodService extends AbstractService
         $clientRequest->fromJsonString(json_encode($params));
 
         return $this->client->ProcessMedia($clientRequest);
+    }
+
+    /**
+     * 修改视频过期时间（默认不过期）
+     * @param $FileId
+     * @param string $ExpireTime
+     * @return mixed
+     */
+    public function modifyMedia($FileId, $ExpireTime = '9999-12-31T23:59:59Z')
+    {
+        $clientRequest = new ModifyMediaInfoRequest();
+
+        $params = [
+            'FileId' => $FileId,
+            'ExpireTime' => $ExpireTime,
+            'SubAppId' => $this->qcloudVodSubAppId,
+        ];
+
+        $clientRequest->fromJsonString(json_encode($params));
+
+        return $this->client->ModifyMediaInfo($clientRequest);
+    }
+
+    public function describeStorageData()
+    {
+        $clientRequest = new DescribeStorageDataRequest();
+
+        $params = [
+            'SubAppId' => $this->qcloudVodSubAppId,
+        ];
+
+        $clientRequest->fromJsonString(json_encode($params));
+
+        return $this->client->DescribeStorageData($clientRequest);
     }
 
     protected function getClient()

@@ -56,6 +56,12 @@ trait QcloudTrait
         return $this->getQcloud()->service('vod')->transcodeVideo($file_id);
     }
 
+    public function describeStorageData()
+    {
+        return $this->getQcloud()->service('vod')->describeStorageData();
+    }
+
+
     private function getQcloud()
     {
         return $this->qcloud ?? $this->qcloud = app('qcloud');
