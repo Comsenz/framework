@@ -104,14 +104,13 @@ class VodService extends AbstractService
         return $this->client->ModifyMediaInfo($clientRequest);
     }
 
-    public function describeStorageData()
+    public function describeStorageData($sub_app_id)
     {
         $clientRequest = new DescribeStorageDataRequest();
 
         $params = [
-            'SubAppId' => $this->qcloudVodSubAppId,
+            'SubAppId' => $sub_app_id?:$this->qcloudVodSubAppId,
         ];
-
         $clientRequest->fromJsonString(json_encode($params));
 
         return $this->client->DescribeStorageData($clientRequest);
