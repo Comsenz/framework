@@ -7,7 +7,6 @@
 
 use Illuminate\Container\Container;
 use Illuminate\Support\Arr;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 
 if (! function_exists('app')) {
     /**
@@ -151,13 +150,13 @@ if (! function_exists('ip')) {
     function ip($server)
     {
         $ip = '';
-        if(Arr::get($server,'HTTP_CLIENT_IP') && strcasecmp(Arr::get($server,'HTTP_CLIENT_IP'), 'unknown')) {
-            $ip = Arr::get($server,'HTTP_CLIENT_IP');
-        } elseif(Arr::get($server,'HTTP_X_FORWARDED_FOR') && strcasecmp(Arr::get($server,'HTTP_X_FORWARDED_FOR'), 'unknown')) {
-            $ip = Arr::get($server,'HTTP_X_FORWARDED_FOR');
-        } elseif(Arr::get($server,'REMOTE_ADDR') && strcasecmp(Arr::get($server,'REMOTE_ADDR'), 'unknown')) {
-            $ip = Arr::get($server,'REMOTE_ADDR');
-        } elseif(Arr::has($server,'REMOTE_ADDR') && strcasecmp(Arr::get($server,'REMOTE_ADDR'), 'unknown')) {
+        if (Arr::get($server, 'HTTP_CLIENT_IP') && strcasecmp(Arr::get($server, 'HTTP_CLIENT_IP'), 'unknown')) {
+            $ip = Arr::get($server, 'HTTP_CLIENT_IP');
+        } elseif (Arr::get($server, 'HTTP_X_FORWARDED_FOR') && strcasecmp(Arr::get($server, 'HTTP_X_FORWARDED_FOR'), 'unknown')) {
+            $ip = Arr::get($server, 'HTTP_X_FORWARDED_FOR');
+        } elseif (Arr::get($server, 'REMOTE_ADDR') && strcasecmp(Arr::get($server, 'REMOTE_ADDR'), 'unknown')) {
+            $ip = Arr::get($server, 'REMOTE_ADDR');
+        } elseif (Arr::has($server, 'REMOTE_ADDR') && strcasecmp(Arr::get($server, 'REMOTE_ADDR'), 'unknown')) {
             $ip = Arr::get($server, 'REMOTE_ADDR');
         }
         return $ip;
