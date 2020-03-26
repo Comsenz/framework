@@ -59,12 +59,16 @@ abstract class DatabaseMessage
     protected function getTitle()
     {
         $replaceVars = $this->titleReplaceVars();
+
         return str_replace($this->getVars(), $replaceVars, $this->tplData->title);
     }
 
     protected function getContent($data)
     {
-        $replaceVars = $this->contentReplaceVars($data);
+        $replaceVars = array_map(function ($var) {
+            return is_string($var) ? htmlspecialchars($var) : '';
+        }, $this->contentReplaceVars($data));
+
         return str_replace($this->getVars(), $replaceVars, $this->tplData->content);
     }
 
