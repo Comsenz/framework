@@ -63,6 +63,11 @@ class AuthenticateWithHeader implements MiddlewareInterface
 
     private function getActor(ServerRequestInterface $request)
     {
-        return User::find($request->getAttribute('oauth_user_id'));
+        $actor = User::find($request->getAttribute('oauth_user_id'));
+        if ($actor->exists) {
+            $actor->changeUpdateAt()->save();
+        }
+
+        return $actor;
     }
 }
