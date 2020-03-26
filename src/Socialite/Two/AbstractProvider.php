@@ -244,6 +244,9 @@ abstract class AbstractProvider implements ProviderContract
     protected function hasInvalidState()
     {
         $token = SessionToken::get($this->request->getAttribute('sessionId'), static::IDENTIFIER);
+        if(!$token) {
+            return true;
+        }
         $state = Arr::get($token->payload, 'state');
         return !(strlen($state) > 0 && Arr::get($this->request->getQueryParams(), 'state') === $state);
     }
