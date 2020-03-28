@@ -109,7 +109,7 @@ class VodService extends AbstractService
         $clientRequest = new DescribeStorageDataRequest();
 
         $params = [
-            'SubAppId' => $sub_app_id?:$this->qcloudVodSubAppId,
+            'SubAppId' => (int) $sub_app_id?:$this->qcloudVodSubAppId,
         ];
         $clientRequest->fromJsonString(json_encode($params));
 
