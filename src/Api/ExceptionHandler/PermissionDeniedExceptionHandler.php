@@ -38,7 +38,7 @@ class PermissionDeniedExceptionHandler implements ExceptionHandlerInterface
         $settings = app()->make(SettingsRepository::class);
         if ($settings->get('site_close')) {
             $error['code'] = 'site_closed';
-            $error['detail'][] = $settings->get('site_close_msg');
+            $error['detail'][] = $settings->get('site_close_msg')?:'';
         } elseif ($e->getMessage() == 'ban_user') {
             $error['code'] = 'ban_user';
         } elseif ($e->getMessage() == 'register_validate') {
