@@ -25,8 +25,12 @@ class CheckUserStatus implements MiddlewareInterface
         $actor = $request->getAttribute('actor');
 
         // 被禁用的用户
-        if ($actor->status) {
+        if ($actor->status == 1) {
             throw new PermissionDeniedException('ban_user');
+        }
+        // 审核中的用户
+        if ($actor->status == 2) {
+            throw new PermissionDeniedException('register_validate');
         }
 
         return $handler->handle($request);
