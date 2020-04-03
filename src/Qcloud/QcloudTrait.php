@@ -60,6 +60,10 @@ trait QcloudTrait
     {
         return $this->getQcloud()->service('vod')->describeStorageData($sub_app_id);
     }
+    public function describeTaskDetail($task_id)
+    {
+        return $this->getQcloud()->service('vod')->describeTaskDetail($task_id);
+    }
 
 
     private function getQcloud()

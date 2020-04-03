@@ -9,6 +9,7 @@ namespace Discuz\Qcloud\Services;
 
 use TencentCloud\Vod\V20180717\Models\DeleteMediaRequest;
 use TencentCloud\Vod\V20180717\Models\DescribeStorageDataRequest;
+use TencentCloud\Vod\V20180717\Models\DescribeTaskDetailRequest;
 use TencentCloud\Vod\V20180717\Models\ModifyMediaInfoRequest;
 use TencentCloud\Vod\V20180717\Models\ProcessMediaRequest;
 use TencentCloud\Vod\V20180717\VodClient;
@@ -104,6 +105,11 @@ class VodService extends AbstractService
         return $this->client->ModifyMediaInfo($clientRequest);
     }
 
+    /**
+     * 获取云点播存储情况
+     * @param $sub_app_id
+     * @return mixed
+     */
     public function describeStorageData($sub_app_id)
     {
         $clientRequest = new DescribeStorageDataRequest();
@@ -114,6 +120,24 @@ class VodService extends AbstractService
         $clientRequest->fromJsonString(json_encode($params));
 
         return $this->client->DescribeStorageData($clientRequest);
+    }
+
+    /**
+     * 查询通知的任务
+     * @param $task_id
+     * @return mixed
+     */
+    public function describeTaskDetail($task_id)
+    {
+        $clientRequest = new DescribeTaskDetailRequest();
+
+        $params = [
+            'TaskId' => $task_id,
+            'SubAppId' => $this->qcloudVodSubAppId,
+        ];
+        $clientRequest->fromJsonString(json_encode($params));
+
+        return $this->client->DescribeTaskDetail($clientRequest);
     }
 
     protected function getClient()
