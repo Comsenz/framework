@@ -8,6 +8,7 @@
 namespace Discuz\Qcloud\Services;
 
 use TencentCloud\Vod\V20180717\Models\DeleteMediaRequest;
+use TencentCloud\Vod\V20180717\Models\DescribeSnapshotByTimeOffsetTemplatesRequest;
 use TencentCloud\Vod\V20180717\Models\DescribeStorageDataRequest;
 use TencentCloud\Vod\V20180717\Models\DescribeTaskDetailRequest;
 use TencentCloud\Vod\V20180717\Models\ModifyMediaInfoRequest;
@@ -30,6 +31,8 @@ class VodService extends AbstractService
 
     protected $qcloudVodSubAppId;
 
+    protected $qcloudVodCoverTemplate;
+
     public function __construct($config)
     {
         parent::__construct($config);
@@ -39,6 +42,7 @@ class VodService extends AbstractService
         $this->qcloudSecretKey = $config->get('qcloud_secret_key');
         $this->qcloudVodTranscode = (int) $config->get('qcloud_vod_transcode');
         $this->qcloudVodSubAppId = (int) $config->get('qcloud_vod_sub_app_id');
+        $this->qcloudVodCoverTemplate = (int) $config->get('qcloud_vod_cover_template') ?: 10;
     }
 
     /**
@@ -73,7 +77,7 @@ class VodService extends AbstractService
                     ['Definition'=>$this->qcloudVodTranscode]
                 ],
                 'CoverBySnapshotTaskSet' => [
-                    ['Definition'=>10,'PositionType'=>'Time','PositionValue'=>0]
+                    ['Definition'=>$this->qcloudVodCoverTemplate,'PositionType'=>'Time','PositionValue'=>0]
                 ],
             ],
             'FileId' => $FileId,
@@ -138,6 +142,25 @@ class VodService extends AbstractService
         $clientRequest->fromJsonString(json_encode($params));
 
         return $this->client->DescribeTaskDetail($clientRequest);
+    }
+
+    /**
+     * 获取自定义时间截图模板数据
+     * @param $template_id
+     * @return mixed
+     */
+    public function DescribeSnapshotByTimeOffsetTemplates($template_id)
+    {
+
+        $clientRequest = new DescribeSnapshotByTimeOffsetTemplatesRequest();
+
+        $params = [
+            'Definitions' => [(int)$template_id],
+            'SubAppId' => $this->qcloudVodSubAppId,
+        ];
+        $clientRequest->fromJsonString(json_encode($params));
+
+        return $this->client->DescribeSnapshotByTimeOffsetTemplates($clientRequest);
     }
 
     protected function getClient()
