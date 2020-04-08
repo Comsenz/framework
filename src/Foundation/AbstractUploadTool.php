@@ -131,18 +131,9 @@ abstract class AbstractUploadTool implements UploadTool
             $stream->close();
         }
 
-        $isRemote = $this->driver->getAdapter() instanceof CosAdapter;
-
-        if ($isRemote) {
-            $url = $this->driver->url($this->fullPath);
-            $url = $url->getScheme() . '://' . $url->getHost() . $url->getPath();
-        } else {
-            $url = $this->driver->url($this->fullPath);
-        }
-
         return $result ? [
-            'isRemote' => $isRemote,
-            'url' => $url,
+            'isRemote' => $this->driver->getAdapter() instanceof CosAdapter,
+            'url' => $this->driver->url($this->fullPath),
             'path' => $this->driver->path($this->fullPath)
         ] : false;
 
