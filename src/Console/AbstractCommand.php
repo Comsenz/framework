@@ -8,6 +8,7 @@
 namespace Discuz\Console;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
@@ -81,6 +82,21 @@ abstract class AbstractCommand extends Command
     }
 
     /**
+     * Write a string as standard output.
+     *
+     * @param  string  $string
+     * @param  string  $style
+     * @param  null|int|string  $verbosity
+     * @return void
+     */
+    public function line($string, $style = null, $verbosity = null)
+    {
+        $styled = $style ? "<$style>$string</$style>" : $string;
+
+        $this->output->writeln($styled);
+    }
+
+    /**
      * Send an info message to the user.
      *
      * @param string $message
@@ -88,6 +104,30 @@ abstract class AbstractCommand extends Command
     protected function info($message)
     {
         $this->output->writeln("<info>$message</info>");
+    }
+
+    /**
+     * Write a string as comment output.
+     *
+     * @param  string  $string
+     * @param  null|int|string  $verbosity
+     * @return void
+     */
+    public function comment($string, $verbosity = null)
+    {
+        $this->line($string, 'comment', $verbosity);
+    }
+
+    /**
+     * Write a string as question output.
+     *
+     * @param  string  $string
+     * @param  null|int|string  $verbosity
+     * @return void
+     */
+    public function question($string, $verbosity = null)
+    {
+        $this->line($string, 'question', $verbosity);
     }
 
     /**
@@ -104,6 +144,15 @@ abstract class AbstractCommand extends Command
         } else {
             $this->output->writeln("<error>$message</error>");
         }
+    }
+
+    /**
+     * @param int $max
+     * @return ProgressBar
+     */
+    public function createProgressBar(int $max = 0)
+    {
+        return new ProgressBar($this->output, $max);
     }
 
     /**
