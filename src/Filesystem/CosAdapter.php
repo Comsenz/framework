@@ -10,6 +10,7 @@ namespace Discuz\Filesystem;
 use Exception;
 use GuzzleHttp\Client as HttpClient;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use League\Flysystem\Adapter\AbstractAdapter;
 use League\Flysystem\Adapter\CanOverwriteFiles;
 use League\Flysystem\AdapterInterface;
@@ -91,33 +92,29 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
     }
 
     /**
-     * @param $path
-     * @return string
-     */
-    public function getPicUrl($path)
-    {
-        $schema = $this->config['schema'] ?? 'https';
-        return $this->config['ciurl'] ? $schema.'://'.$this->config['ciurl'].'/'.$path : '';
-    }
-
-    /**
      * @param string $path
      *
      * @return string
      */
     public function getUrl($path)
     {
-        if (!empty($this->config['cdn'])) {
-            return $this->applyPathPrefix($path);
-        }
+        $schema = ($this->config['schema'] ?? 'https') . '://';
 
-        $options = [
-            'Schema' => $this->config['schema'] ?? 'https',
-            'Bucket' => $this->getBucket(),
-            'Key' => $path,
-        ];
+        $url = $this->config['ciurl'] ? $this->config['ciurl'] . '/' . $path : '';
 
-        return $this->getClient()->getPresignetUrl('GetObject', $options);
+        return Str::start($url, $schema);
+
+        // if (!empty($this->config['cdn'])) {
+        //     return $this->applyPathPrefix($path);
+        // }
+
+        // $options = [
+        //     'Schema' => $this->config['schema'] ?? 'https',
+        //     'Bucket' => $this->getBucket(),
+        //     'Key' => $path,
+        // ];
+
+        // return $this->getClient()->getPresignetUrl('GetObject', $options);
 
         // return $this->getClient()->getObjectUrl(
         //     $this->getBucket(),
