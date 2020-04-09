@@ -68,6 +68,10 @@ trait QcloudTrait
     {
         return $this->getQcloud()->service('vod')->DescribeSnapshotByTimeOffsetTemplates($template_id);
     }
+    public function DescribeTranscodeTemplates($template_id)
+    {
+        return $this->getQcloud()->service('vod')->DescribeTranscodeTemplates($template_id);
+    }
 
 
     private function getQcloud()

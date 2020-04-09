@@ -7,6 +7,7 @@
 
 namespace Discuz\Qcloud\Services;
 
+use TencentCloud\Mps\V20190612\Models\DescribeTranscodeTemplatesRequest;
 use TencentCloud\Vod\V20180717\Models\DeleteMediaRequest;
 use TencentCloud\Vod\V20180717\Models\DescribeSnapshotByTimeOffsetTemplatesRequest;
 use TencentCloud\Vod\V20180717\Models\DescribeStorageDataRequest;
@@ -161,6 +162,25 @@ class VodService extends AbstractService
         $clientRequest->fromJsonString(json_encode($params));
 
         return $this->client->DescribeSnapshotByTimeOffsetTemplates($clientRequest);
+    }
+
+    /**
+     * 获取转码模板数据
+     * @param $template_id
+     * @return mixed
+     */
+    public function DescribeTranscodeTemplates($template_id)
+    {
+
+        $clientRequest = new DescribeTranscodeTemplatesRequest();
+
+        $params = [
+            'Definitions' => [(int)$template_id],
+            'SubAppId' => $this->qcloudVodSubAppId,
+        ];
+        $clientRequest->fromJsonString(json_encode($params));
+
+        return $this->client->DescribeTranscodeTemplates($clientRequest);
     }
 
     protected function getClient()
