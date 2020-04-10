@@ -19,6 +19,10 @@ class FilesystemServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->app->make('filesystem')->extend('local', function ($app, $config) {
+            return new Filesystem(new LocalAdapter($config));
+        });
+
         $this->app->make('filesystem')->extend('cos', function ($app, $config) {
             $settings = $this->app->make(SettingsRepository::class);
             $qcloud = $settings->tag('qcloud');

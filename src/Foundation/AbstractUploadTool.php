@@ -21,7 +21,7 @@ abstract class AbstractUploadTool implements UploadTool
     /**
      * @var FileFactory
      */
-    protected $driver;
+    protected $filesystem;
 
     /**
      * @var UploadedFileInterface
@@ -70,9 +70,9 @@ abstract class AbstractUploadTool implements UploadTool
      */
     protected $error = 0;
 
-    public function __construct(Filesystem $driver)
+    public function __construct(Filesystem $filesystem)
     {
-        $this->driver = $driver;
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -120,25 +120,25 @@ abstract class AbstractUploadTool implements UploadTool
 
         if ($this->file->getSize() > 10*1024*1024) {
             $resource = $stream->detach();
-            $result = $this->driver->writeStream($this->fullPath, $resource, $this->options);
+            $result = $this->filesystem->writeStream($this->fullPath, $resource, $this->options);
 
             if (is_resource($resource)) {
                 fclose($resource);
             }
         } else {
-            $result = $this->driver->put($this->fullPath, $stream->getContents(), $this->options);
+            $result = $this->filesystem->put($this->fullPath, $stream->getContents(), $this->options);
 
             $stream->close();
         }
 
         return $result ? [
-            'isRemote' => $this->driver->getAdapter() instanceof CosAdapter,
-            'url' => $this->driver->url($this->fullPath),
-            'path' => $this->driver->path($this->fullPath)
+            'isRemote' => $this->filesystem->getAdapter() instanceof CosAdapter,
+            'url' => $this->filesystem->url($this->fullPath),
+            'path' => $this->filesystem->path($this->fullPath)
         ] : false;
 
 //        return $result ? new UploadedFile(
-//            $this->driver->path($this->fullPath),
+//            $this->filesystem->path($this->fullPath),
 //            $this->file->getClientFilename(),
 //            $this->file->getClientMediaType(),
 //            $this->file->getSize(),
