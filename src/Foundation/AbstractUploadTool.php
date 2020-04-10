@@ -41,6 +41,11 @@ abstract class AbstractUploadTool implements UploadTool
     /**
      * @var string
      */
+    protected $isRemote = '';
+
+    /**
+     * @var string
+     */
     protected $uploadPath = 'attachment';
 
     /**
@@ -56,7 +61,7 @@ abstract class AbstractUploadTool implements UploadTool
     /**
      * @var int
      */
-    protected $fileSize = 5*1024*1024;
+    protected $fileSize = 5 * 1024 * 1024;
 
     /**
      * @var array
@@ -82,17 +87,25 @@ abstract class AbstractUploadTool implements UploadTool
     {
         $this->file = $file;
 
+        $timeDir = date('/Y/m/d');
+
+        $uploadPath = $uploadPath . $timeDir;
+
         $this->extension = Str::lower(pathinfo($this->file->getClientFilename(), PATHINFO_EXTENSION));
 
-        $this->uploadPath = $uploadPath?:$this->uploadPath;
+        $this->uploadPath = $uploadPath ?: $this->uploadPath;
 
-        $this->uploadName = $uploadName?:Str::random().'.'.$this->extension;
+        $this->uploadName = $uploadName ?: Str::random() . '.' . $this->extension;
 
         $this->options = is_string($options)
             ? ['visibility' => $options]
-            : ($options?:$this->options);
+            : ($options ?: $this->options);
 
-        $this->fullPath = trim($this->uploadPath.'/'.$this->uploadName, '/');
+        if ($this->getIsRemote()) {
+            $this->fullPath = trim($this->uploadPath . '/' . $this->uploadName, '/');
+        } else {
+            $this->fullPath = trim($timeDir . '/' . $this->uploadName, '/');
+        }
 
         return $this;
     }
@@ -118,7 +131,7 @@ abstract class AbstractUploadTool implements UploadTool
 
         $stream = $this->file->getStream();
 
-        if ($this->file->getSize() > 10*1024*1024) {
+        if ($this->file->getSize() > 10 * 1024 * 1024) {
             $resource = $stream->detach();
             $result = $this->filesystem->writeStream($this->fullPath, $resource, $this->options);
 
@@ -132,19 +145,10 @@ abstract class AbstractUploadTool implements UploadTool
         }
 
         return $result ? [
-            'isRemote' => $this->filesystem->getAdapter() instanceof CosAdapter,
+            'isRemote' => $this->getIsRemote(),
             'url' => $this->filesystem->url($this->fullPath),
             'path' => $this->filesystem->path($this->fullPath)
         ] : false;
-
-//        return $result ? new UploadedFile(
-//            $this->filesystem->path($this->fullPath),
-//            $this->file->getClientFilename(),
-//            $this->file->getClientMediaType(),
-//            $this->file->getSize(),
-//            $this->file->getError(),
-//            true
-//        ) : false;
     }
 
     /**
@@ -205,5 +209,14 @@ abstract class AbstractUploadTool implements UploadTool
     public function getUploadFullPath()
     {
         return $this->fullPath;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsRemote()
+    {
+        $this->isRemote = $this->isRemote ?: $this->filesystem->getAdapter() instanceof CosAdapter;
+        return $this->isRemote;
     }
 }
