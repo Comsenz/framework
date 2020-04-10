@@ -7,12 +7,14 @@
 
 namespace Discuz\Foundation;
 
+use App\Models\Attachment;
 use Discuz\Contracts\Tool\UploadTool;
 use Discuz\Filesystem\CosAdapter;
 use Discuz\Http\Exception\UploadVerifyException;
 use Illuminate\Contracts\Filesystem\Factory as FileFactory;
 use Illuminate\Contracts\Filesystem\FileExistsException;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Contracts\Filesystem\Factory as ContractsFilesystem;
 use Illuminate\Support\Str;
 use Psr\Http\Message\UploadedFileInterface;
 
@@ -22,6 +24,11 @@ abstract class AbstractUploadTool implements UploadTool
      * @var FileFactory
      */
     protected $filesystem;
+
+    /**
+     * @var ContractsFilesystem
+     */
+    protected $contractsFilesystem;
 
     /**
      * @var UploadedFileInterface
@@ -75,9 +82,10 @@ abstract class AbstractUploadTool implements UploadTool
      */
     protected $error = 0;
 
-    public function __construct(Filesystem $filesystem)
+    public function __construct(Filesystem $filesystem, ContractsFilesystem $contractsFilesystem)
     {
         $this->filesystem = $filesystem;
+        $this->contractsFilesystem = $contractsFilesystem;
     }
 
     /**
@@ -87,9 +95,7 @@ abstract class AbstractUploadTool implements UploadTool
     {
         $this->file = $file;
 
-        $timeDir = date('/Y/m/d');
-
-        $uploadPath = $uploadPath . $timeDir;
+        $uploadPath = $uploadPath . date('/Y/m/d');
 
         $this->extension = Str::lower(pathinfo($this->file->getClientFilename(), PATHINFO_EXTENSION));
 
@@ -101,11 +107,7 @@ abstract class AbstractUploadTool implements UploadTool
             ? ['visibility' => $options]
             : ($options ?: $this->options);
 
-        if ($this->getIsRemote()) {
-            $this->fullPath = trim($this->uploadPath . '/' . $this->uploadName, '/');
-        } else {
-            $this->fullPath = trim($timeDir . '/' . $this->uploadName, '/');
-        }
+        $this->fullPath = trim($this->uploadPath . '/' . $this->uploadName, '/');
 
         return $this;
     }
@@ -149,6 +151,29 @@ abstract class AbstractUploadTool implements UploadTool
             'url' => $this->filesystem->url($this->fullPath),
             'path' => $this->filesystem->path($this->fullPath)
         ] : false;
+    }
+
+    /**
+     * 删除附件
+     *
+     * @param Attachment $attachment
+     * @return bool
+     */
+    public function delete(Attachment $attachment)
+    {
+        $path = $attachment->file_path . '/' . $attachment->attachment;
+
+        $remote = $attachment->is_remote;
+
+        $result = $this->contractsFilesystem->disk($remote ? 'attachment_cos' : 'attachment')->delete($path);
+
+        // 如果是帖子图片,删除本地缩略图
+        if ($attachment->is_gallery) {
+            $thumb = $attachment::replaceThumb($path);
+            $this->contractsFilesystem->disk('attachment')->delete($thumb);
+        }
+
+        return $result;
     }
 
     /**
