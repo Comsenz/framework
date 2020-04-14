@@ -38,6 +38,13 @@ abstract class AbstractLocaleException extends Exception
     abstract protected function getDetail() : array ;
 
     /**
+     * 错误信息
+     *
+     * @return string
+     */
+    abstract protected function getMessageInfo() : string ;
+
+    /**
      * 获取文件名
      *
      * @return mixed

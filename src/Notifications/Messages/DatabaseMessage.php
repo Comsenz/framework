@@ -85,22 +85,6 @@ abstract class DatabaseMessage
      */
     public function strWords($str)
     {
-        // // 生成配置对象
-        // $config = HTMLPurifier_Config::createDefault();
-        // // 设置字符集
-        // $config->set('Core.Encoding', 'UTF-8');
-        // // 设置允许使用的HTML标签
-        // $config->set('HTML.Allowed', '');
-        // // 设置允许出现的CSS样式属性 用 , 分割
-        // $config->set('CSS.AllowedProperties', '');
-        // // 清除空标签
-        // $config->set('AutoFormat.RemoveEmpty', true);
-        // // 使用配置生成过滤用的对象
-        // $purifier = new HTMLPurifier($config);
-        // // 过滤字符串
-        // $clean_html = $purifier->purify($str);
-
-        // return Str::limit($clean_html, 60, '...');
         return Str::limit($str, 60, '...');
     }
 
