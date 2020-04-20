@@ -101,11 +101,31 @@ abstract class AbstractUploadTool implements UploadTool
 
         $this->uploadPath = $uploadPath ?: $this->uploadPath;
 
-        $this->uploadName = $uploadName ?: Str::random() . '.' . $this->extension;
+        $fileName = Str::random();
+
+        $this->uploadName = $uploadName ?: $fileName . '.' . $this->extension;
 
         $this->options = is_string($options)
             ? ['visibility' => $options]
             : ($options ?: $this->options);
+
+        /**
+         * @see 云上数据处理 https://cloud.tencent.com/document/product/460/18147#.E4.BA.91.E4.B8.8A.E6.95.B0.E6.8D.AE.E5.A4.84.E7.90.86
+         */
+        if ($this->file->isGallery && $this->getIsRemote()) {
+            $this->options = array_merge($this->options, [
+                'header' => [
+                    'PicOperations' => json_encode([
+                        'rules' => [
+                            [
+                                'fileid' => md5($fileName) . '_blur.' . $this->extension,
+                                'rule' => 'imageMogr2/thumbnail/500x500/blur/35x15',
+                            ]
+                        ],
+                    ]),
+                ]
+            ]);
+        }
 
         $this->fullPath = trim($this->uploadPath . '/' . $this->uploadName, '/');
 
