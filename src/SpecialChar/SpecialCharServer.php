@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Discuz & Tencent Cloud
+ * This is NOT a freeware, use is subject to license terms
+ */
 
 namespace Discuz\SpecialChar;
 
@@ -11,5 +15,9 @@ namespace Discuz\SpecialChar;
  */
 interface SpecialCharServer
 {
+    /**
+     * @param $string
+     * @return string
+     */
     public function purify($string);
 }

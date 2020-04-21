@@ -7,8 +7,6 @@
 
 namespace Discuz\Notifications\Messages;
 
-use HTMLPurifier;
-use HTMLPurifier_Config;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 

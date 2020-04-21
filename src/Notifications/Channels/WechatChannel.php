@@ -49,6 +49,7 @@ class WechatChannel
             $build = $notification->toWechat($notifiable);
             $build['content'] = json_decode(Arr::get($build, 'content'), true);
 
+            // get Wechat Template ID
             $notificationData = $notification->getTplData(Arr::get($build, 'raw.tpl_id'));
             $templateID = $notificationData->template_id;
 
