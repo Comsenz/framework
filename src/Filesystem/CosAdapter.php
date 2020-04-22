@@ -529,6 +529,9 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
     {
         $options = [];
 
+        if ($config->has('header')) {
+            $options += $config->get('header');
+        }
         if ($config->has('params')) {
             $options['params'] = $config->get('params');
         }
