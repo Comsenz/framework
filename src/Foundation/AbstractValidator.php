@@ -24,10 +24,13 @@ abstract class AbstractValidator
 
     /**
      * @param array $attributes
+     * @param array $required
      * @throws ValidationException
      */
-    public function valid(array $attributes)
+    public function valid(array $attributes, $required = [])
     {
+        $attributes = $this->existsValue($attributes, $required);
+
         $this->data = $attributes;
 
         $validator = $this->make($attributes);
@@ -44,6 +47,24 @@ abstract class AbstractValidator
         $validator = $this->validator->make($attributes, $rules, $this->getMessages());
 
         return $validator;
+    }
+
+    /**
+     * 循环必传值(当required为空时不循环)
+     *
+     * @param $attributes
+     * @param $required
+     * @return mixed
+     */
+    public function existsValue($attributes, $required)
+    {
+        collect($required)->map(function ($item) use (&$attributes) {
+            if (!array_key_exists($item, $attributes)) {
+                $attributes[$item] = '';
+            }
+        });
+
+        return $attributes;
     }
 
     /**
