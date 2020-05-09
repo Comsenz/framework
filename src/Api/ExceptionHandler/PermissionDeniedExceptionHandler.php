@@ -43,6 +43,8 @@ class PermissionDeniedExceptionHandler implements ExceptionHandlerInterface
             $error['code'] = 'ban_user';
         } elseif ($e->getMessage() == 'register_validate') {
             $error['code'] = 'register_validate';
+        } elseif ($e->getMessage() == 'user_deny') {
+            $error['code'] = 'user_deny';
         } else {
             $error['code'] = 'permission_denied';
         }
