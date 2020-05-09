@@ -51,9 +51,9 @@ trait QcloudTrait
         return $this->getQcloud()->service('vod')->deleteMedia($file_id);
     }
 
-    public function transcodeVideo($file_id)
+    public function transcodeVideo($file_id, $taskType)
     {
-        return $this->getQcloud()->service('vod')->transcodeVideo($file_id);
+        return $this->getQcloud()->service('vod')->transcodeVideo($file_id, $taskType);
     }
 
     public function describeStorageData($sub_app_id)

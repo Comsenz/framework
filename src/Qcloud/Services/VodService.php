@@ -66,15 +66,16 @@ class VodService extends AbstractService
 
     /**
      * @param $FileId
+     * @param $taskType (TranscodeTaskSet | AdaptiveDynamicStreamingTaskSet)
      * @return mixed
      */
-    public function transcodeVideo($FileId)
+    public function transcodeVideo($FileId, $taskType)
     {
         $clientRequest = new ProcessMediaRequest();
 
         $params = [
             'MediaProcessTask' => [
-                'TranscodeTaskSet' => [
+                $taskType => [
                     ['Definition'=>$this->qcloudVodTranscode]
                 ],
                 'CoverBySnapshotTaskSet' => [
