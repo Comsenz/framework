@@ -66,11 +66,15 @@ trait QcloudTrait
     }
     public function describeSnapshotByTimeOffsetTemplates($template_id)
     {
-        return $this->getQcloud()->service('vod')->DescribeSnapshotByTimeOffsetTemplates($template_id);
+        return $this->getQcloud()->service('vod')->describeSnapshotByTimeOffsetTemplates($template_id);
     }
     public function DescribeTranscodeTemplates($template_id)
     {
-        return $this->getQcloud()->service('vod')->DescribeTranscodeTemplates($template_id);
+        return $this->getQcloud()->service('vod')->describeTranscodeTemplates($template_id);
+    }
+    public function processMediaByProcedure($file_id, $template_name)
+    {
+        return $this->getQcloud()->service('vod')->processMediaByProcedure($file_id, $template_name);
     }
 
 

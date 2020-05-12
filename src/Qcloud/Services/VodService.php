@@ -34,6 +34,8 @@ class VodService extends AbstractService
 
     protected $qcloudVodCoverTemplate;
 
+    protected $qcloudVodTaskflowGif;
+
     public function __construct($config)
     {
         parent::__construct($config);
@@ -44,6 +46,7 @@ class VodService extends AbstractService
         $this->qcloudVodTranscode = (int) $config->get('qcloud_vod_transcode');
         $this->qcloudVodSubAppId = (int) $config->get('qcloud_vod_sub_app_id');
         $this->qcloudVodCoverTemplate = (int) $config->get('qcloud_vod_cover_template') ?: 10;
+        $this->qcloudVodTaskflowGif = $config->get('qcloud_vod_taskflow_gif', 'qcloud');
     }
 
     /**
@@ -78,13 +81,20 @@ class VodService extends AbstractService
                 $taskType => [
                     ['Definition'=>$this->qcloudVodTranscode]
                 ],
-                'CoverBySnapshotTaskSet' => [
-                    ['Definition'=>$this->qcloudVodCoverTemplate,'PositionType'=>'Time','PositionValue'=>0]
-                ],
             ],
             'FileId' => $FileId,
             'SubAppId' => $this->qcloudVodSubAppId,
         ];
+
+        //设置了动图后不需要截图
+        if (!$this->qcloudVodTaskflowGif) {
+            $cover = [
+                'CoverBySnapshotTaskSet' => [
+                    ['Definition'=>$this->qcloudVodCoverTemplate,'PositionType'=>'Time','PositionValue'=>0],
+                ]
+            ];
+            array_push($params['MediaProcessTask'], $cover);
+        }
         $clientRequest->fromJsonString(json_encode($params));
 
         return $this->client->ProcessMedia($clientRequest);
@@ -151,9 +161,8 @@ class VodService extends AbstractService
      * @param $template_id
      * @return mixed
      */
-    public function DescribeSnapshotByTimeOffsetTemplates($template_id)
+    public function describeSnapshotByTimeOffsetTemplates($template_id)
     {
-
         $clientRequest = new DescribeSnapshotByTimeOffsetTemplatesRequest();
 
         $params = [
@@ -170,13 +179,32 @@ class VodService extends AbstractService
      * @param $template_id
      * @return mixed
      */
-    public function DescribeTranscodeTemplates($template_id)
+    public function describeTranscodeTemplates($template_id)
     {
-
         $clientRequest = new DescribeTranscodeTemplatesRequest();
 
         $params = [
             'Definitions' => [(int)$template_id],
+            'SubAppId' => $this->qcloudVodSubAppId,
+        ];
+        $clientRequest->fromJsonString(json_encode($params));
+
+        return $this->client->DescribeTranscodeTemplates($clientRequest);
+    }
+
+    /**
+     * 对媒体文件进行任务流处理
+     * @param $FileId
+     * @param $template_name
+     * @return mixed
+     */
+    public function processMediaByProcedure($FileId, $template_name)
+    {
+        $clientRequest = new DescribeTranscodeTemplatesRequest();
+
+        $params = [
+            'FileId' => (int)$FileId,
+            'ProcedureName' => $template_name,
             'SubAppId' => $this->qcloudVodSubAppId,
         ];
         $clientRequest->fromJsonString(json_encode($params));
