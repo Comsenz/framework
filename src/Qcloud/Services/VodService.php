@@ -13,6 +13,7 @@ use TencentCloud\Vod\V20180717\Models\DescribeSnapshotByTimeOffsetTemplatesReque
 use TencentCloud\Vod\V20180717\Models\DescribeStorageDataRequest;
 use TencentCloud\Vod\V20180717\Models\DescribeTaskDetailRequest;
 use TencentCloud\Vod\V20180717\Models\ModifyMediaInfoRequest;
+use TencentCloud\Vod\V20180717\Models\ProcessMediaByProcedureRequest;
 use TencentCloud\Vod\V20180717\Models\ProcessMediaRequest;
 use TencentCloud\Vod\V20180717\VodClient;
 
@@ -200,7 +201,7 @@ class VodService extends AbstractService
      */
     public function processMediaByProcedure($FileId, $template_name)
     {
-        $clientRequest = new DescribeTranscodeTemplatesRequest();
+        $clientRequest = new ProcessMediaByProcedureRequest();
 
         $params = [
             'FileId' => (int)$FileId,
@@ -209,7 +210,7 @@ class VodService extends AbstractService
         ];
         $clientRequest->fromJsonString(json_encode($params));
 
-        return $this->client->DescribeTranscodeTemplates($clientRequest);
+        return $this->client->ProcessMediaByProcedure($clientRequest);
     }
 
     protected function getClient()
