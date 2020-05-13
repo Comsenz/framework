@@ -204,7 +204,7 @@ class VodService extends AbstractService
         $clientRequest = new ProcessMediaByProcedureRequest();
 
         $params = [
-            'FileId' => (int)$FileId,
+            'FileId' => $FileId,
             'ProcedureName' => $template_name,
             'SubAppId' => $this->qcloudVodSubAppId,
         ];
