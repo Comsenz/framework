@@ -10,7 +10,6 @@ namespace Discuz\Filesystem;
 use Exception;
 use GuzzleHttp\Client as HttpClient;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use League\Flysystem\Adapter\AbstractAdapter;
 use League\Flysystem\Adapter\CanOverwriteFiles;
 use League\Flysystem\AdapterInterface;
