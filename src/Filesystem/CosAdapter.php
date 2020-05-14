@@ -98,11 +98,20 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
      */
     public function getUrl($path)
     {
-        $schema = ($this->config['schema'] ?? 'https') . '://';
+        if (!empty($this->config['cdn'])) {
+            return $this->applyPathPrefix($path);
+        }
 
-        $url = $this->config['ciurl'] ? $this->config['ciurl'] . '/' . $path : '';
+        $options = [
+            'Schema' => $this->config['schema'] ?? 'https',
+        ];
 
-        return Str::start($url, $schema);
+        return $this->getClient()->getObjectUrl(
+            $this->getBucket(),
+            $path,
+            null,
+            $options
+        );
     }
 
     /**

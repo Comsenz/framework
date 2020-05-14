@@ -31,7 +31,7 @@ class FilesystemServiceProvider extends ServiceProvider
 
             $config['region'] = Arr::get($qcloud, 'qcloud_cos_bucket_area');
             $config['bucket'] = Arr::get($qcloud, 'qcloud_cos_bucket_name');
-            $config['ciurl'] = Arr::get($qcloud, 'qcloud_ci_url', '');
+            $config['cdn'] = Arr::get($qcloud, 'qcloud_cos_cdn_url', '');
 
             $config['credentials'] = [
                 'secretId'  => Arr::get($qcloud, 'qcloud_secret_id'),  //"云 API 密钥 SecretId";
