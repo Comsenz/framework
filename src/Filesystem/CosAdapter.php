@@ -82,8 +82,9 @@ class CosAdapter extends AbstractAdapter implements CanOverwriteFiles
      */
     public function getSourcePath($path)
     {
-        return sprintf(
-            '%s.cos.%s.myqcloud.com/%s',
+        $schema = $this->config['schema'] ?  $this->config['schema'] . '://' : 'https://';
+        return  sprintf(
+            $schema . '%s.cos.%s.myqcloud.com/%s',
             $this->getBucket(),
             $this->getRegion(),
             $path

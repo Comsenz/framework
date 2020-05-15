@@ -15,6 +15,7 @@ use Illuminate\Contracts\Filesystem\Factory as FileFactory;
 use Illuminate\Contracts\Filesystem\FileExistsException;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Filesystem\Factory as ContractsFilesystem;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Psr\Http\Message\UploadedFileInterface;
 
@@ -166,11 +167,23 @@ abstract class AbstractUploadTool implements UploadTool
             $stream->close();
         }
 
-        return $result ? [
-            'isRemote' => $this->getIsRemote(),
-            'url' => $this->filesystem->url($this->fullPath),
-            'path' => $this->filesystem->path($this->fullPath)
-        ] : false;
+        $resultArr = [
+            'isRemote' => $this->getIsRemote()
+        ];
+        if ($this->getIsRemote()) {
+            $fileInfo = [
+                'url' =>  $this->filesystem->getAdapter()->getSourcePath($this->fullPath),
+                'path' => $this->fullPath
+            ];
+        } else {
+            $fileInfo = [
+                'url' => $this->filesystem->url($this->fullPath),
+                'path' => $this->filesystem->path($this->fullPath)
+            ];
+        }
+        array_push($resultArr, $fileInfo);
+        return $result ? $resultArr : false;
+
     }
 
     /**
