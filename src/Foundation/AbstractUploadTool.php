@@ -167,7 +167,7 @@ abstract class AbstractUploadTool implements UploadTool
             $stream->close();
         }
 
-        $resultArr = [
+        $isRemote = [
             'isRemote' => $this->getIsRemote()
         ];
         if ($this->getIsRemote()) {
@@ -181,8 +181,7 @@ abstract class AbstractUploadTool implements UploadTool
                 'path' => $this->filesystem->path($this->fullPath)
             ];
         }
-        array_push($resultArr, $fileInfo);
-        return $result ? $resultArr : false;
+        return $result ? Arr::collapse([$isRemote, $fileInfo]) : false;
 
     }
 
