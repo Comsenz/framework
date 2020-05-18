@@ -12,28 +12,26 @@ if (! function_exists('app')) {
     /**
      * Get the available container instance.
      *
-     * @param string|null $abstract
-     * @param array $parameters
+     * @param  string|null  $abstract
+     * @param  array  $parameters
      * @return mixed|\Illuminate\Contracts\Foundation\Application
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     function app($abstract = null, array $parameters = [])
     {
         if (is_null($abstract)) {
             return Container::getInstance();
         }
+
         return Container::getInstance()->make($abstract, $parameters);
     }
 }
-
 
 if (! function_exists('base_path')) {
     /**
      * Get the path to the base of the install.
      *
-     * @param string $path
+     * @param  string  $path
      * @return string
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     function base_path($path = '')
     {
@@ -45,9 +43,8 @@ if (! function_exists('app_path')) {
     /**
      * Get the path to the application folder.
      *
-     * @param string $path
+     * @param  string  $path
      * @return string
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     function app_path($path = '')
     {
@@ -59,9 +56,8 @@ if (! function_exists('storage_path')) {
     /**
      * Get the path to the storage folder.
      *
-     * @param string $path
+     * @param  string  $path
      * @return string
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     function storage_path($path = '')
     {
@@ -71,11 +67,10 @@ if (! function_exists('storage_path')) {
 
 if (! function_exists('resource_path')) {
     /**
-     * Get the path to the storage folder.
+     * Get the path to the resources folder.
      *
-     * @param string $path
+     * @param  string  $path
      * @return string
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     function resource_path($path = '')
     {
@@ -87,9 +82,8 @@ if (! function_exists('public_path')) {
     /**
      * Get the path to the public folder.
      *
-     * @param string $path
+     * @param  string  $path
      * @return string
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     function public_path($path = '')
     {
@@ -103,19 +97,20 @@ if (! function_exists('config')) {
      *
      * If an array is passed as the key, we will assume you want to set an array of values.
      *
-     * @param array|string|null $key
-     * @param mixed $default
+     * @param  array|string|null  $key
+     * @param  mixed  $default
      * @return mixed|\Illuminate\Config\Repository
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     function config($key = null, $default = null)
     {
         if (is_null($key)) {
             return app('config');
         }
+
         if (is_array($key)) {
             return app('config')->set($key);
         }
+
         return app('config')->get($key, $default);
     }
 }
@@ -124,11 +119,10 @@ if (! function_exists('trans')) {
     /**
      * Translate the given message.
      *
-     * @param string|null $key
-     * @param array $replace
-     * @param string|null $locale
+     * @param  string|null  $key
+     * @param  array  $replace
+     * @param  string|null  $locale
      * @return \Illuminate\Contracts\Translation\Translator|string|array|null
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     function trans($key = null, $replace = [], $locale = null)
     {
