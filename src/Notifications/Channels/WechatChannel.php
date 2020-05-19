@@ -43,7 +43,7 @@ class WechatChannel
      */
     public function send($notifiable, Notification $notification)
     {
-        if (!empty($notifiable->wechat)) {
+        if (!empty($notifiable->wechat) && !empty($notifiable->wechat->mp_openid)) {
 
             // wechat post json
             $build = $notification->toWechat($notifiable);
