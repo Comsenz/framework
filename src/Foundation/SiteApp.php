@@ -25,6 +25,7 @@ use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Encryption\EncryptionServiceProvider;
 use Illuminate\Hashing\HashServiceProvider;
 use Illuminate\Redis\RedisServiceProvider;
+use Illuminate\Support\Arr;
 use Illuminate\Translation\TranslationServiceProvider;
 use Illuminate\Validation\ValidationServiceProvider;
 use Monolog\Formatter\LineFormatter;
@@ -153,12 +154,21 @@ class SiteApp
 
     private function registerLogger()
     {
-        $logPath = storage_path('logs/discuss.log');
-        $handler = new RotatingFileHandler($logPath, Logger::INFO);
-        $handler->setFormatter(new LineFormatter(null, null, true, true));
-
-        $this->app->instance('log', new Logger($this->app->environment(), [$handler]));
-        $this->app->alias('log', LoggerInterface::class);
+        $logs = [
+            ['name'=>'payLog',    'level'=>Logger::INFO],
+            ['name'=>'qcloudLog', 'level'=>Logger::INFO],
+            ['name'=>'discuss',   'level'=>Logger::INFO],
+        ];
+        foreach ($logs as $log) {
+            $handler = new RotatingFileHandler(
+                storage_path('logs/' . Arr::get($log, 'name') . '.log'),
+                200,
+                Arr::get($log, 'level')
+            );
+            $handler->setFormatter(new LineFormatter(null, null, true, true));
+            $this->app->instance(Arr::get($log, 'name'), new Logger(Arr::get($log, 'name'), [$handler]));
+            $this->app->alias(Arr::get($log, 'name'), LoggerInterface::class);
+        }
     }
 
     protected function registerBaseEnv()
