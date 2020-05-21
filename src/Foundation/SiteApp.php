@@ -155,19 +155,19 @@ class SiteApp
     private function registerLogger()
     {
         $logs = [
-            ['name'=>'payLog',    'level'=>Logger::INFO],
-            ['name'=>'qcloudLog', 'level'=>Logger::INFO],
-            ['name'=>'discuss',   'level'=>Logger::INFO],
+            ['alias'=>'payLog',     'path'=>'logs/payLog.log',    'level'=>Logger::INFO],
+            ['alias'=>'qcloudLog',  'path'=>'logs/qcloudLog.log', 'level'=>Logger::INFO],
+            ['alias'=>'log',        'path'=>'logs/log.log',       'level'=>Logger::INFO],
         ];
         foreach ($logs as $log) {
             $handler = new RotatingFileHandler(
-                storage_path('logs/' . Arr::get($log, 'name') . '.log'),
+                storage_path(Arr::get($log, 'path')),
                 200,
                 Arr::get($log, 'level')
             );
             $handler->setFormatter(new LineFormatter(null, null, true, true));
-            $this->app->instance(Arr::get($log, 'name'), new Logger(Arr::get($log, 'name'), [$handler]));
-            $this->app->alias(Arr::get($log, 'name'), LoggerInterface::class);
+            $this->app->instance(Arr::get($log, 'alias'), new Logger(Arr::get($log, 'alias'), [$handler]));
+            $this->app->alias(Arr::get($log, 'alias'), LoggerInterface::class);
         }
     }
 
