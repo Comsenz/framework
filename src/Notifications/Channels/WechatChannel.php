@@ -47,7 +47,10 @@ class WechatChannel
 
             // wechat post json
             $build = $notification->toWechat($notifiable);
-            $build['content'] = json_decode(Arr::get($build, 'content'), true);
+
+            // 替换掉内容中的换行符
+            $content = str_replace(PHP_EOL, '', Arr::get($build, 'content'));
+            $build['content'] = json_decode($content, true);
 
             // get Wechat Template ID
             $notificationData = $notification->getTplData(Arr::get($build, 'raw.tpl_id'));
