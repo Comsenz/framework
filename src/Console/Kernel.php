@@ -165,6 +165,12 @@ EOF;
         return $this->disco ?? $this->disco = new ConsoleApplication($this->getName(), Application::VERSION);
     }
 
+    public function setDisco(ConsoleApplication $application)
+    {
+        $this->disco = $application;
+    }
+
+
     /**
      * @param ConsoleApplication $console
      * @throws \ReflectionException
