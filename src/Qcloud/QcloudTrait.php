@@ -76,6 +76,10 @@ trait QcloudTrait
     {
         return $this->getQcloud()->service('vod')->processMediaByProcedure($file_id, $template_name);
     }
+    public function describeMediaInfos($file_ids, $filters)
+    {
+        return $this->getQcloud()->service('vod')->describeMediaInfos($file_ids, $filters);
+    }
 
 
     private function getQcloud()
