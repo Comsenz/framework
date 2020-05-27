@@ -44,7 +44,7 @@ class CheckoutSite implements MiddlewareInterface
         $siteClose = (bool)$this->settings->get('site_close');
         $siteMode = $this->settings->get('site_mode');
 
-        if ($request->getUri()->getPath() == '/api/login') {
+        if (in_array($request->getUri()->getPath(), ['/api/login', '/api/oauth/wechat/miniprogram'])) {
             return $handler->handle($request);
         }
         $actor = $request->getAttribute('actor');
