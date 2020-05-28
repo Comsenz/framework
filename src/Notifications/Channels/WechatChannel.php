@@ -8,6 +8,9 @@
 namespace Discuz\Notifications\Channels;
 
 use Discuz\Contracts\Setting\SettingsRepository;
+use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
+use EasyWeChat\Kernel\Exceptions\InvalidConfigException;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Notifications\Notification;
 use EasyWeChat\Factory;
 use Illuminate\Support\Arr;
@@ -37,9 +40,9 @@ class WechatChannel
      *
      * @param $notifiable
      * @param Notification $notification
-     * @throws \EasyWeChat\Kernel\Exceptions\InvalidArgumentException
-     * @throws \EasyWeChat\Kernel\Exceptions\InvalidConfigException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws InvalidArgumentException
+     * @throws InvalidConfigException
+     * @throws GuzzleException
      */
     public function send($notifiable, Notification $notification)
     {
