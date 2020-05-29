@@ -38,6 +38,8 @@ class VodService extends AbstractService
 
     protected $qcloudVodTaskflowGif;
 
+    protected $qcloudVodWatermark;
+
     public function __construct($config)
     {
         parent::__construct($config);
@@ -49,6 +51,8 @@ class VodService extends AbstractService
         $this->qcloudVodSubAppId = (int) $config->get('qcloud_vod_sub_app_id');
         $this->qcloudVodCoverTemplate = (int) $config->get('qcloud_vod_cover_template') ?: 10;
         $this->qcloudVodTaskflowGif = $config->get('qcloud_vod_taskflow_gif', 'qcloud');
+        $this->qcloudVodWatermark = $config->get('qcloud_vod_watermark', 'qcloud');
+
     }
 
     /**
@@ -71,7 +75,7 @@ class VodService extends AbstractService
 
     /**
      * @param $fileId
-     * @param $taskType (TranscodeTaskSet | AdaptiveDynamicStreamingTaskSet)
+     * @param $taskType (TranscodeTaskSet | ...)
      * @return mixed
      */
     public function transcodeVideo($fileId, $taskType)
@@ -81,13 +85,17 @@ class VodService extends AbstractService
         $params = [
             'MediaProcessTask' => [
                 $taskType => [
-                    ['Definition'=>$this->qcloudVodTranscode]
+                    [
+                        'Definition'=>$this->qcloudVodTranscode,
+                    ]
                 ],
             ],
             'FileId' => $fileId,
             'SubAppId' => $this->qcloudVodSubAppId,
         ];
-
+        if ($this->qcloudVodWatermark) {
+            $params['MediaProcessTask'][$taskType]['WatermarkSet'] = ['Definition'=>$this->qcloudVodWatermark];
+        }
         //设置了动图后不需要截图
         if (!$this->qcloudVodTaskflowGif) {
             $cover = [
