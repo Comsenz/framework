@@ -64,7 +64,7 @@ abstract class DatabaseMessage
     protected function getContent($data)
     {
         $replaceVars = array_map(function ($var) {
-            return is_string($var) ? htmlspecialchars($var) : '';
+            return is_string($var) ? htmlspecialchars($var) : $var;
         }, $this->contentReplaceVars($data));
 
         return str_replace($this->getVars(), $replaceVars, $this->tplData->content);
