@@ -51,7 +51,7 @@ class VodService extends AbstractService
         $this->qcloudVodSubAppId = (int) $config->get('qcloud_vod_sub_app_id');
         $this->qcloudVodCoverTemplate = (int) $config->get('qcloud_vod_cover_template') ?: 10;
         $this->qcloudVodTaskflowGif = $config->get('qcloud_vod_taskflow_gif', 'qcloud');
-        $this->qcloudVodWatermark = $config->get('qcloud_vod_watermark', 'qcloud');
+        $this->qcloudVodWatermark = (int)$config->get('qcloud_vod_watermark', 'qcloud');
 
     }
 
@@ -94,7 +94,10 @@ class VodService extends AbstractService
             'SubAppId' => $this->qcloudVodSubAppId,
         ];
         if ($this->qcloudVodWatermark) {
-            $params['MediaProcessTask'][$taskType]['WatermarkSet'] = ['Definition'=>$this->qcloudVodWatermark];
+            $waterMark = [
+                'WatermarkSet' => [['Definition'=>$this->qcloudVodWatermark]]
+            ];
+            array_push($params['MediaProcessTask'][$taskType][0], $waterMark);
         }
         //设置了动图后不需要截图
         if (!$this->qcloudVodTaskflowGif) {
