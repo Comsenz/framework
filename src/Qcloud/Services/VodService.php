@@ -97,7 +97,8 @@ class VodService extends AbstractService
             $waterMark = [
                 'WatermarkSet' => [['Definition'=>$this->qcloudVodWatermark]]
             ];
-            array_push($params['MediaProcessTask'][$taskType][0], $waterMark);
+            $params['MediaProcessTask'][$taskType][0] = array_merge($params['MediaProcessTask'][$taskType][0], $waterMark);
+
         }
         //设置了动图后不需要截图
         if (!$this->qcloudVodTaskflowGif) {
