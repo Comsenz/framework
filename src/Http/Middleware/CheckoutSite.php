@@ -53,10 +53,11 @@ class CheckoutSite implements MiddlewareInterface
 
         // 处理 付费模式 逻辑， 过期之后 加入待付费组
         if (! $actor->isAdmin() && $siteMode === 'pay' && Carbon::now()->gt($actor->expired_at)) {
-            if($order = $actor->orders()
+            $order = $actor->orders()
             ->where('type', Order::ORDER_TYPE_REGISTER)
             ->where('status', Order::ORDER_STATUS_PAID)
-            ->first()) {
+            ->first();
+            if(($actor->exises && !$order) || $actor->isGuest()) {
                 $actor->setRelation('groups', Group::where('id', Group::UNPAID)->get());
             }
         }
