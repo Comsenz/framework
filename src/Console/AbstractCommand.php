@@ -49,7 +49,20 @@ abstract class AbstractCommand extends Command
     {
         $this
             ->setName($this->signature)
-            ->setDescription($this->description);
+            ->setDescription($this->transCmd());
+    }
+
+    protected function transCmd()
+    {
+        $trans = app('translator');
+
+        $des = 'command.' . $this->signature;
+
+        if ($trans->has($des)) {
+            return $trans->get($des);
+        }
+
+        return $this->description;
     }
 
     /**
