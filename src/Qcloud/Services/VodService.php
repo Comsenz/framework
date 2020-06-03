@@ -9,6 +9,7 @@ namespace Discuz\Qcloud\Services;
 
 use TencentCloud\Mps\V20190612\Models\DescribeTranscodeTemplatesRequest;
 use TencentCloud\Vod\V20180717\Models\DeleteMediaRequest;
+use TencentCloud\Vod\V20180717\Models\DescribeMediaInfosRequest;
 use TencentCloud\Vod\V20180717\Models\DescribeSnapshotByTimeOffsetTemplatesRequest;
 use TencentCloud\Vod\V20180717\Models\DescribeStorageDataRequest;
 use TencentCloud\Vod\V20180717\Models\DescribeTaskDetailRequest;
@@ -37,6 +38,8 @@ class VodService extends AbstractService
 
     protected $qcloudVodTaskflowGif;
 
+    protected $qcloudVodWatermark;
+
     public function __construct($config)
     {
         parent::__construct($config);
@@ -48,18 +51,20 @@ class VodService extends AbstractService
         $this->qcloudVodSubAppId = (int) $config->get('qcloud_vod_sub_app_id');
         $this->qcloudVodCoverTemplate = (int) $config->get('qcloud_vod_cover_template') ?: 10;
         $this->qcloudVodTaskflowGif = $config->get('qcloud_vod_taskflow_gif', 'qcloud');
+        $this->qcloudVodWatermark = (int)$config->get('qcloud_vod_watermark', 'qcloud');
+
     }
 
     /**
-     * @param $FileId
+     * @param $fileId
      * @return mixed
      */
-    public function deleteMedia($FileId)
+    public function deleteMedia($fileId)
     {
         $clientRequest = new DeleteMediaRequest();
 
         $params = [
-            'FileId' => $FileId,
+            'FileId' => $fileId,
             'SubAppId' => $this->qcloudVodSubAppId,
         ];
 
@@ -69,24 +74,32 @@ class VodService extends AbstractService
     }
 
     /**
-     * @param $FileId
-     * @param $taskType (TranscodeTaskSet | AdaptiveDynamicStreamingTaskSet)
+     * @param $fileId
+     * @param $taskType (TranscodeTaskSet | ...)
      * @return mixed
      */
-    public function transcodeVideo($FileId, $taskType)
+    public function transcodeVideo($fileId, $taskType)
     {
         $clientRequest = new ProcessMediaRequest();
 
         $params = [
             'MediaProcessTask' => [
                 $taskType => [
-                    ['Definition'=>$this->qcloudVodTranscode]
+                    [
+                        'Definition'=>$this->qcloudVodTranscode,
+                    ]
                 ],
             ],
-            'FileId' => $FileId,
+            'FileId' => $fileId,
             'SubAppId' => $this->qcloudVodSubAppId,
         ];
+        if ($this->qcloudVodWatermark) {
+            $waterMark = [
+                'WatermarkSet' => [['Definition'=>$this->qcloudVodWatermark]]
+            ];
+            $params['MediaProcessTask'][$taskType][0] = array_merge($params['MediaProcessTask'][$taskType][0], $waterMark);
 
+        }
         //设置了动图后不需要截图
         if (!$this->qcloudVodTaskflowGif) {
             $cover = [
@@ -103,16 +116,16 @@ class VodService extends AbstractService
 
     /**
      * 修改视频过期时间（默认不过期）
-     * @param $FileId
+     * @param $fileId
      * @param string $ExpireTime
      * @return mixed
      */
-    public function modifyMedia($FileId, $ExpireTime = '9999-12-31T23:59:59Z')
+    public function modifyMedia($fileId, $ExpireTime = '9999-12-31T23:59:59Z')
     {
         $clientRequest = new ModifyMediaInfoRequest();
 
         $params = [
-            'FileId' => $FileId,
+            'FileId' => $fileId,
             'ExpireTime' => $ExpireTime,
             'SubAppId' => $this->qcloudVodSubAppId,
         ];
@@ -195,22 +208,42 @@ class VodService extends AbstractService
 
     /**
      * 对媒体文件进行任务流处理
-     * @param $FileId
+     * @param $fileId
      * @param $template_name
      * @return mixed
      */
-    public function processMediaByProcedure($FileId, $template_name)
+    public function processMediaByProcedure($fileId, $template_name)
     {
         $clientRequest = new ProcessMediaByProcedureRequest();
 
         $params = [
-            'FileId' => $FileId,
+            'FileId' => $fileId,
             'ProcedureName' => $template_name,
             'SubAppId' => $this->qcloudVodSubAppId,
         ];
         $clientRequest->fromJsonString(json_encode($params));
 
         return $this->client->ProcessMediaByProcedure($clientRequest);
+    }
+
+    /**
+     * @param $fileIds
+     * @param $filters
+     * @return mixed
+     */
+    public function describeMediaInfos($fileIds, $filters)
+    {
+
+        $clientRequest = new DescribeMediaInfosRequest();
+
+        $params = [
+            'FileIds' => $fileIds,
+            'Filters' => $filters,
+            'SubAppId' => $this->qcloudVodSubAppId,
+        ];
+        $clientRequest->fromJsonString(json_encode($params));
+
+        return $this->client->DescribeMediaInfos($clientRequest);
     }
 
     protected function getClient()

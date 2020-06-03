@@ -8,6 +8,7 @@
 namespace Discuz\Http\Middleware;
 
 use App\Models\Group;
+use App\Models\Order;
 use Discuz\Auth\AssertPermissionTrait;
 use Discuz\Auth\Exception\PermissionDeniedException;
 use Discuz\Contracts\Setting\SettingsRepository;
@@ -44,7 +45,7 @@ class CheckoutSite implements MiddlewareInterface
         $siteClose = (bool)$this->settings->get('site_close');
         $siteMode = $this->settings->get('site_mode');
 
-        if ($request->getUri()->getPath() == '/api/login') {
+        if (in_array($request->getUri()->getPath(), ['/api/login', '/api/oauth/wechat/miniprogram'])) {
             return $handler->handle($request);
         }
         $actor = $request->getAttribute('actor');
@@ -52,9 +53,21 @@ class CheckoutSite implements MiddlewareInterface
 
         // 处理 付费模式 逻辑， 过期之后 加入待付费组
         if (! $actor->isAdmin() && $siteMode === 'pay' && Carbon::now()->gt($actor->expired_at)) {
-            $actor->setRelation('groups', Group::where('id', Group::UNPAID)->get());
+            if(!$this->getOrder($actor)) {
+                $actor->setRelation('groups', Group::where('id', Group::UNPAID)->get());
+            }
         }
 
         return $handler->handle($request);
+    }
+
+    private function getOrder($actor) {
+        if($actor->isGuest()) {
+            return false;
+        }
+        return $actor->orders()
+            ->where('type', Order::ORDER_TYPE_REGISTER)
+            ->where('status', Order::ORDER_STATUS_PAID)
+            ->first();
     }
 }

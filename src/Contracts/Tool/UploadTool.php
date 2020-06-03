@@ -14,16 +14,6 @@ interface UploadTool
     /**
      * {@inheritdoc}
      */
-    public function upload(UploadedFileInterface $file);
-
-    /**
-     * {@inheritdoc}
-     */
-    public function save();
-
-    /**
-     * {@inheritdoc}
-     */
     public function verifyFileType(array $type = []);
 
     /**
