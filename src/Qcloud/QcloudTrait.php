@@ -41,6 +41,11 @@ trait QcloudTrait
         return $this->getQcloud()->service('discuzcloud')->checkVersion($params);
     }
 
+    public function qcloudReport($params = [])
+    {
+        return $this->getQcloud()->service('discuzcloud')->qcloudReport($params);
+    }
+
     public function report($params = [])
     {
         return $this->getQcloud()->service('discuzcloud')->report($params);
@@ -77,6 +82,10 @@ trait QcloudTrait
         return $this->getQcloud()->service('vod')->processMediaByProcedure($file_id, $template_name);
     }
 
+    public function MsUserInfo()
+    {
+        return $this->getQcloud()->service('ms')->MsUserInfo();
+    }
 
     private function getQcloud()
     {

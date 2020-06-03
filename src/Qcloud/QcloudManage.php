@@ -17,6 +17,7 @@ use Discuz\Qcloud\Services\FaceidService;
 use Discuz\Qcloud\Services\SmsService;
 use Discuz\Qcloud\Services\VodService;
 use Discuz\Qcloud\Services\YunsouService;
+use Discuz\Qcloud\Services\MsService;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Manager;
 use InvalidArgumentException;
@@ -89,6 +90,11 @@ class QcloudManage extends Manager implements Factory
     public function createFaceidDriver()
     {
         return $this->buildService(FaceidService::class, $this->qcloudConfig);
+    }
+
+    public function createMsDriver()
+    {
+        return $this->buildService(MsService::class, $this->qcloudConfig);
     }
 
     /**

@@ -42,6 +42,19 @@ class DiscuzCloudService
         ]);
     }
 
+    /**
+     * @param string $body
+     * @return mixed|\Psr\Http\Message\ResponseInterface
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function qcloudReport($body = '')
+    {
+        return $this->getHttpClient()->requestAsync('POST', 'cloud/qcloud', [
+            'json' => $body
+        ]);
+    }
+
+
     protected function getHttpClient()
     {
         return $this->httpClient ?? $this->httpClient = new Client($this->config);
