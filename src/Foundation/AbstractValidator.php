@@ -24,12 +24,11 @@ abstract class AbstractValidator
 
     /**
      * @param array $attributes
-     * @param array $required
      * @throws ValidationException
      */
-    public function valid(array $attributes, $required = [])
+    public function valid(array $attributes)
     {
-        $attributes = $this->existsValue($attributes, $required);
+        $attributes = $this->existsValue($attributes, $this->haveToFields());
 
         $this->data = $attributes;
 
@@ -44,9 +43,7 @@ abstract class AbstractValidator
     {
         $rules = Arr::only($this->getRules(), array_keys($attributes));
 
-        $validator = $this->validator->make($attributes, $rules, $this->getMessages());
-
-        return $validator;
+        return $this->validator->make($attributes, $rules, $this->getMessages());
     }
 
     /**
@@ -76,6 +73,16 @@ abstract class AbstractValidator
      * @return array
      */
     protected function getMessages()
+    {
+        return [];
+    }
+
+    /**
+     * 必填字段值
+     *
+     * @return array
+     */
+    protected function haveToFields()
     {
         return [];
     }
