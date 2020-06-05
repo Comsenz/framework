@@ -7,9 +7,8 @@
 
 namespace Discuz\Qcloud\Services;
 
-use Illuminate\Support\Arr;
-use TencentCloud\Ms\v20180408\MsClient;
-use TencentCloud\Ms\v20180408\Models\DescribeUserBaseInfoInstanceRequest;
+use TencentCloud\Ms\V20180408\MsClient;
+use TencentCloud\Ms\V20180408\Models\DescribeUserBaseInfoInstanceRequest;
 
 class MsService extends AbstractService
 {
