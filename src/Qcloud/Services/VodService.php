@@ -24,12 +24,6 @@ class VodService extends AbstractService
 
     const REGION = '';
 
-    protected $qcloudAppId;
-
-    protected $qcloudSecretId;
-
-    protected $qcloudSecretKey;
-
     protected $qcloudVodTranscode;
 
     protected $qcloudVodSubAppId;
@@ -44,9 +38,6 @@ class VodService extends AbstractService
     {
         parent::__construct($config);
 
-        $this->qcloudAppId  = $config->get('qcloud_app_id');
-        $this->qcloudSecretId  = $config->get('qcloud_secret_id');
-        $this->qcloudSecretKey = $config->get('qcloud_secret_key');
         $this->qcloudVodTranscode = (int) $config->get('qcloud_vod_transcode');
         $this->qcloudVodSubAppId = (int) $config->get('qcloud_vod_sub_app_id');
         $this->qcloudVodCoverTemplate = (int) $config->get('qcloud_vod_cover_template') ?: 10;
