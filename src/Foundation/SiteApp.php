@@ -155,10 +155,12 @@ class SiteApp
     private function registerLogger()
     {
         $logs = [
-            ['alias'=>'payLog',     'path'=>'logs/payLog.log',    'level'=>Logger::INFO],
-            ['alias'=>'qcloudLog',  'path'=>'logs/qcloudLog.log', 'level'=>Logger::INFO],
-            ['alias'=>'log',        'path'=>'logs/log.log',       'level'=>Logger::INFO],
+            ['alias' => 'payLog', 'path' => 'logs/payLog.log', 'level' => Logger::INFO],
+            ['alias' => 'qcloudLog', 'path' => 'logs/qcloudLog.log', 'level' => Logger::INFO],
+            ['alias' => 'log', 'path' => 'logs/log.log', 'level' => Logger::INFO],
+            ['alias' => 'wechatOffiaccount', 'path' => 'logs/wechatOffiaccount.log', 'level' => Logger::INFO],
         ];
+
         foreach ($logs as $log) {
             $handler = new RotatingFileHandler(
                 storage_path(Arr::get($log, 'path')),
