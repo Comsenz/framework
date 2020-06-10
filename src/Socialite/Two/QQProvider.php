@@ -109,12 +109,12 @@ class QQProvider extends AbstractProvider implements ProviderInterface
             $token = $session::generate(static::IDENTIFIER, compact('state'));
             $token->save();
             $sessionId = http_build_query(['sessionId' => $token->token]);
-            $this->redirectUrl = $this->redirectUrl.(strpos('?', $this->redirectUrl) ? '&'.$sessionId : '?'.$sessionId);
+            $this->redirectUrl = $this->redirectUrl.(strpos($this->redirectUrl, '?') ? '&'.$sessionId : '?'.$sessionId);
         }
 
         if($display = $this->request->getAttribute('display')) {
             $displayStr = http_build_query(['display' => $display]);
-            $this->redirectUrl = $this->redirectUrl.(strpos('?', $this->redirectUrl) ? '&'.$displayStr : '?'.$displayStr);
+            $this->redirectUrl = $this->redirectUrl.(strpos( $this->redirectUrl, '?') ? '&'.$displayStr : '?'.$displayStr);
         }
         if($redirectUrl = $this->request->getAttribute('redirect')) {
             $this->redirectUrl($redirectUrl);

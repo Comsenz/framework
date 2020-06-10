@@ -153,7 +153,7 @@ abstract class AbstractProvider implements ProviderContract
             $token = $session::generate(static::IDENTIFIER, compact('state'));
             $token->save();
             $sessionId = http_build_query(['sessionId' => $token->token]);
-            $this->redirectUrl = $this->redirectUrl.(strpos('?', $this->redirectUrl) ? '&'.$sessionId : '?'.$sessionId);
+            $this->redirectUrl = $this->redirectUrl.(strpos($this->redirectUrl, '?') ? '&'.$sessionId : '?'.$sessionId);
         }
 
         if($redirectUrl = $this->request->getAttribute('redirect')) {
