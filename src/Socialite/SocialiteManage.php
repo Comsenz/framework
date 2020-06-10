@@ -11,6 +11,9 @@ use Discuz\Contracts\Setting\SettingsRepository;
 use Discuz\Contracts\Socialite\Factory;
 use Discuz\Http\UrlGenerator;
 use Discuz\Socialite\Two\GithubProvider;
+use Discuz\Socialite\Two\QQProvider;
+use Discuz\Socialite\Two\QQWebProvider;
+use Discuz\Socialite\Two\WechatQyProvider;
 use Discuz\Socialite\Two\WechatProvider;
 use Discuz\Socialite\Two\WechatWebProvider;
 use Illuminate\Support\Arr;
@@ -84,6 +87,54 @@ class SocialiteManage extends Manager implements Factory
             $config
         );
     }
+
+    /**
+     * 企业微信登录
+     * @return Two\AbstractProvider
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    protected function createWechatQyDriver()
+    {
+        $config = [
+            'client_id' => $this->container->make(SettingsRepository::class)->get('qy_oplatform_app_id', 'qy_wx_oplatform'),
+            'client_secret' => $this->container->make(SettingsRepository::class)->get('qy_oplatform_app_secret', 'qy_wx_oplatform'),
+            'redirect' => $this->container->make(UrlGenerator::class)->to('/qy-wx-sign-up-bd'),
+        ];
+        if ($sessionId = $this->request->getAttribute('sessionId')) {
+            $config['redirect'] = $config['redirect'].'?'.http_build_query(['sessionId' => $sessionId]);
+        }
+        $config['guzzle'] = ['agentid' => $this->container->make(SettingsRepository::class)->get('qy_oplatform_agent_id', 'qy_wx_oplatform')];
+        return $this->buildProvider(
+            WechatQyProvider::class,
+            $config
+        );
+    }
+
+    /**
+     * qq登录
+     * @return Two\AbstractProvider
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    protected function createQQDriver()
+    {
+        $config = [
+            'client_id' => $this->container->make(SettingsRepository::class)->get('qq_oplatform_app_id', 'qq_oplatform'),
+            'client_secret' => $this->container->make(SettingsRepository::class)->get('qq_oplatform_app_key', 'qq_oplatform'),
+            'redirect'  => $this->container->make(UrlGenerator::class)->to('/qq-sign-up-bd')
+        ];
+        if ($sessionId = $this->request->getAttribute('sessionId')) {
+            $config['redirect'] = $config['redirect'].'?'.http_build_query(['sessionId' => $sessionId]);
+        }
+        $config['guzzle'] = [
+            'display' => $this->request->getAttribute('display'),
+            'redirect_user' => $this->container->make(UrlGenerator::class)->to('/qq-sign-up-user')
+            ];
+        return $this->buildProvider(
+            QQProvider::class,
+            $config
+        );
+    }
+
 
     /**
      * Build an OAuth 2 provider instance.
