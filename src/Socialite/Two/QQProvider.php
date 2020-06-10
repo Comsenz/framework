@@ -10,8 +10,6 @@ use Discuz\Contracts\Socialite\Provider as ProviderInterface;
 use Discuz\Http\DiscuzResponseFactory;
 use Discuz\Socialite\Exception\InvalidStateException;
 use Discuz\Socialite\Exception\SocialiteException;
-use Illuminate\Support\Arr;
-use function MongoDB\BSON\toJSON;
 
 class QQProvider extends AbstractProvider implements ProviderInterface
 {
