@@ -8,9 +8,11 @@
 namespace Discuz\Http;
 
 use Illuminate\Http\File;
+use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class DiscuzResponseFactory
 {
@@ -84,6 +86,38 @@ class DiscuzResponseFactory
         foreach ($headers as $key => $value) {
             $response = $response->withHeader($key, $value);
         }
+        $response = static::addHeader($response);
+
+        return $response;
+    }
+
+    private static function addHeader(ResponseInterface $response): ResponseInterface
+    {
+        $site_url      = app()->config('site_url');
+        $cross         = app()->config('cross');
+        $cross_status  = Arr::get($cross, 'status');
+        $cross_headers = [];
+
+        if (is_bool($cross_status) && $cross_status) {
+            $request       = app(ServerRequestInterface::class);
+            $origin        = Arr::get($request->getServerParams(), 'HTTP_ORIGIN') ?? '';
+            $cross_origins = (array) Arr::get($cross, 'headers.Access-Control-Allow-Origin');
+            array_push($cross_origins, $site_url);
+
+            if (in_array($origin, $cross_origins)) {
+                $cross_headers = Arr::get($cross, 'headers');
+                if (is_array($cross_headers)) {
+                    $cross_headers['Access-Control-Allow-Origin'] = $origin;
+                } else {
+                    $cross_headers = [];
+                }
+            }
+        }
+
+        foreach ($cross_headers as $key => $value) {
+            $response = $response->withHeader($key, $value);
+        }
+
         return $response;
     }
 }
