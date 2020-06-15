@@ -93,29 +93,24 @@ class DiscuzResponseFactory
 
     private static function addHeader(ResponseInterface $response): ResponseInterface
     {
+        $crossConfig = app()->config('cross');
         $site_url      = app()->config('site_url');
-        $cross         = app()->config('cross');
-        $cross_status  = Arr::get($cross, 'status');
-        $cross_headers = [];
-
-        if (is_bool($cross_status) && $cross_status) {
+        if (Arr::get($crossConfig, 'status')) {
             $request       = app(ServerRequestInterface::class);
             $origin        = Arr::get($request->getServerParams(), 'HTTP_ORIGIN') ?? '';
-            $cross_origins = (array) Arr::get($cross, 'headers.Access-Control-Allow-Origin');
+            $cross_origins = Arr::get($crossConfig, 'headers.Access-Control-Allow-Origin');
             array_push($cross_origins, $site_url);
+            array_push($cross_origins, $origin);
 
             if (in_array($origin, $cross_origins)) {
-                $cross_headers = Arr::get($cross, 'headers');
+                $cross_headers = Arr::get($crossConfig, 'headers');
                 if (is_array($cross_headers)) {
                     $cross_headers['Access-Control-Allow-Origin'] = $origin;
-                } else {
-                    $cross_headers = [];
+                }
+                foreach ($cross_headers as $key => $value) {
+                    $response = $response->withHeader($key, $value);
                 }
             }
-        }
-
-        foreach ($cross_headers as $key => $value) {
-            $response = $response->withHeader($key, $value);
         }
 
         return $response;
