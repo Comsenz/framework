@@ -80,8 +80,6 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $this->setSiteRequest($request);
-
         $document = new Document;
 
         BaseFormatter::setActor($request->getAttribute('actor'));
@@ -97,12 +95,6 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
         $document->setData($element);
 
         return DiscuzResponseFactory::JsonApiResponse($document);
-    }
-
-    protected function setSiteRequest(ServerRequestInterface $request)
-    {
-        static::$container->instance('request', $request);
-        static::$container->alias('request', ServerRequestInterface::class);
     }
 
     /**

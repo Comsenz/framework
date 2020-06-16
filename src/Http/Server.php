@@ -11,6 +11,7 @@ use Discuz\Foundation\SiteApp;
 use Discuz\Http\Middleware\RequestHandler;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
+use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
@@ -32,12 +33,17 @@ class Server extends SiteApp
             '/' => 'discuz.web.middleware'
         ], $this->app));
 
+        $psr17Factory = new Psr17Factory();
+        $request = (new ServerRequestCreator($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory))->fromGlobals();
+
+        $this->app->instance('request', $request);
+        $this->app->alias('request', ServerRequestInterface::class);
+
         $runner = new RequestHandlerRunner(
             $pipe,
             new SapiEmitter,
-            function () {
-                $psr17Factory = new Psr17Factory();
-                return (new ServerRequestCreator($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory))->fromGlobals();
+            function () use ($request) {
+                return $request;
             },
             function (Throwable $e) {
                 $generator = new ErrorResponseGenerator;
