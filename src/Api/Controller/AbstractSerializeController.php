@@ -82,6 +82,8 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     {
         $document = new Document;
 
+        static::$container->instance('request', $request);
+
         BaseFormatter::setActor($request->getAttribute('actor'));
 
         $data = $this->data($request, $document);
