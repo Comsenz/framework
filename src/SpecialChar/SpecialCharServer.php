@@ -17,7 +17,8 @@ interface SpecialCharServer
 {
     /**
      * @param $string
+     * @param null $config
      * @return string
      */
-    public function purify($string);
+    public function purify($string, $config = null);
 }
