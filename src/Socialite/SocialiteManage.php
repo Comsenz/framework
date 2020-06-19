@@ -63,6 +63,10 @@ class SocialiteManage extends Manager implements Factory
             'redirect' => $this->container->make(UrlGenerator::class)->to('/wx-sign-up-bd')
         ];
 
+        if ($redirect = Arr::get($this->request->getQueryParams(), 'redirect')) {
+            $config['redirect'] = $redirect;
+        }
+
         return $this->buildProvider(
             WechatProvider::class,
             $config
