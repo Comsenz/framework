@@ -47,18 +47,34 @@ abstract class MessageEventHandlerInterface implements EventHandlerInterface
      */
     public function __call($name, $arguments)
     {
+        // 检测模型是否设值
+        if (is_null($this->reply)) {
+            return $this->error('数据库错误：40002');
+        }
+
+        // 检测 EasyWechat 是否设值
+        if (empty($this->easyWechat)) {
+            return $this->error('数据库错误：40001');
+        }
+
         switch ($name) {
-            case 'Text': return $this->textMessages();
-            case 'Image': return $this->imageMessages();
-            case 'Video': return $this->videoMessages();
-            case 'Voice': return $this->voiceMessages();
-            case 'News': return $this->newsMessages();
+            case 'Text':
+                return $this->textMessages();
+            case 'Image':
+                return $this->imageMessages();
+            case 'Video':
+                return $this->videoMessages();
+            case 'Voice':
+                return $this->voiceMessages();
+            case 'News':
+                return $this->newsMessages();
             case 'Error':
-            default: return $this->error($arguments);
+            default:
+                return $this->error($arguments);
         }
     }
 
-    public function textMessages($content = '') : Text
+    public function textMessages($content = ''): Text
     {
         if (!empty($content)) {
             return new Text($content);
@@ -68,7 +84,7 @@ abstract class MessageEventHandlerInterface implements EventHandlerInterface
         return new Text($this->reply->content);
     }
 
-    public function imageMessages() : Image
+    public function imageMessages(): Image
     {
         // 图片消息
         return new Image($this->reply->media_id);
@@ -92,7 +108,7 @@ abstract class MessageEventHandlerInterface implements EventHandlerInterface
         return $this->textMessages($this->error());
     }
 
-    public function voiceMessages() : Voice
+    public function voiceMessages(): Voice
     {
         return new Voice($this->reply->media_id); // 声音消息
     }
@@ -100,7 +116,7 @@ abstract class MessageEventHandlerInterface implements EventHandlerInterface
     public function newsMessages()
     {
         $mediaId = $this->reply->media_id;
-
+        $this->wechatDebugLog($mediaId, '1231');
         $response = $this->easyWechat->material->get($mediaId);
 
         // 只允许一条图文消息
@@ -134,31 +150,70 @@ abstract class MessageEventHandlerInterface implements EventHandlerInterface
      * @param $data
      * @param string $param
      */
-    public function wechatDebugLog($data, $param = '')
+    protected function wechatDebugLog($data, $param = '')
     {
+        $initLog = [
+            'param' => $param,
+            'path' => 'logs/wechatDebug.log',
+            'append' => true
+        ];
+
         // 判断是否是一个数组
         if (is_array($data)) {
             $write = var_export($data, true);
             $dataType = 'array';
         } elseif ($data instanceof WechatOffiaccountReply || $data instanceof Collection) {
             $write = var_export($data->toArray(), true);
-            $dataType = 'object';
+            $dataType = 'object->toArray()';
         } else {
             $write = json_encode($data);
             $dataType = 'gettype(' . gettype($data) . ')';
+
+            // object 打印单独处理
+            if ($dataType == 'gettype(object)') {
+                $this->writeObjectPath($initLog, $dataType);
+                $initLog['path'] = 'logs/wechatDebugResourceObject.log'; // 单独写入
+                $initLog['append'] = false;
+                $write = var_export($data, true);
+            }
         }
 
-        $write = $write . PHP_EOL;
+        $this->writeLog($write, $dataType, $initLog);
+    }
 
+    /**
+     * @param $write
+     * @param $dataType
+     * @param array $params 数据参数、日志路径、是否叠加写入
+     */
+    protected function writeLog($write, $dataType, $params)
+    {
         // 拼接信息格式
         $log = '>>>>>>>>>>>>========================================<<<<<<<<<<<<' . PHP_EOL;
         $log .= '[ 捕获时间 ]：' . date('Y-m-d H:s:i') . PHP_EOL;
-        $log .= '[ 数据参数 ]：' . json_encode($param) . PHP_EOL;
+        $log .= '[ 数据参数 ]：' . json_encode($params['param']) . PHP_EOL;
         $log .= '[ 数据类型 ]：' . $dataType . PHP_EOL;
+        $log .= '[ 数据内容 ]：' . $write . PHP_EOL;
 
-        $path = storage_path('logs/wechatDebug.log');
+        $path = storage_path($params['path']);
 
-        file_put_contents($path, $log, FILE_APPEND);
-        file_put_contents($path, $write, FILE_APPEND);
+        // 是否追加
+        if ($params['append']) {
+            file_put_contents($path, $log, FILE_APPEND);
+        } else {
+            file_put_contents($path, $log);
+        }
     }
+
+    protected function writeObjectPath($originInitLog, $dataType)
+    {
+        $source = '{ 对象打印值文件路径 => ' . storage_path($originInitLog['path']) . ' }';
+
+        $this->writeLog($source, $dataType, [
+            'param' => $originInitLog['param'],
+            'path' => $originInitLog['path'],
+            'append' => $originInitLog['append']
+        ]);
+    }
+
 }
