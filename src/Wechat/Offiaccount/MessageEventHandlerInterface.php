@@ -116,7 +116,6 @@ abstract class MessageEventHandlerInterface implements EventHandlerInterface
     public function newsMessages()
     {
         $mediaId = $this->reply->media_id;
-        $this->wechatDebugLog($mediaId, '1231');
         $response = $this->easyWechat->material->get($mediaId);
 
         // 只允许一条图文消息
