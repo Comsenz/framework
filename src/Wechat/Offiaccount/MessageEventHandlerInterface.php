@@ -31,7 +31,7 @@ abstract class MessageEventHandlerInterface implements EventHandlerInterface
     /**
      * 必须要实现 EasyWechat
      *
-     * @var Application
+     * @var $easyWechat
      */
     protected $easyWechat;
 

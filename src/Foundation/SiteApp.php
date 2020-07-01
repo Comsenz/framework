@@ -20,6 +20,7 @@ use Discuz\Queue\QueueServiceProvider;
 use Discuz\Search\SearchServiceProvider;
 use Discuz\Socialite\SocialiteServiceProvider;
 use Discuz\Web\WebServiceProvider;
+use Discuz\Wechat\WechatServiceProvider;
 use Illuminate\Bus\BusServiceProvider;
 use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Encryption\EncryptionServiceProvider;
@@ -70,6 +71,7 @@ class SiteApp
         $this->app->register(QueueServiceProvider::class);
         $this->app->register(SocialiteServiceProvider::class);
         $this->app->register(NotificationServiceProvider::class);
+        $this->app->register(WechatServiceProvider::class);
 
         $this->registerServiceProvider();
 
