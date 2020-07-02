@@ -108,7 +108,7 @@ class DiscuzResponseFactory
             if (in_array($origin, $cross_origins)) {
                 $cross_headers = Arr::get($crossConfig, 'headers');
                 if (is_array($cross_headers)) {
-                    $cross_headers['Access-Control-Allow-Origin'] = $origin;
+                    $cross_headers['Access-Control-Allow-Origin'] = $origin ?: $siteUrl;
                 }
                 foreach ($cross_headers as $key => $value) {
                     $response = $response->withHeader($key, $value);
