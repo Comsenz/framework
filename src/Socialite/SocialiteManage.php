@@ -183,7 +183,7 @@ class SocialiteManage extends Manager implements Factory
     {
         $redirect = value($config['redirect']);
         return Str::startsWith($redirect, '/')
-            ? $this->container['url']->to($redirect)
+            ? $this->container->make(UrlGenerator::class)->to($redirect)
             : $redirect;
     }
 
