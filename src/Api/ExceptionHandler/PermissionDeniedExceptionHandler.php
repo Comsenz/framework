@@ -48,7 +48,6 @@ class PermissionDeniedExceptionHandler implements ExceptionHandlerInterface
             $error['code'] = 'user_deny';
         } elseif ($e->getMessage() == 'validate_reject') {
             $error['code'] = 'validate_reject';
-            $error['detail'][] = $settings->get('site_close_msg')?:'';
         } elseif ($e->getMessage() == 'validate_ignore') {
             $error['code'] = 'validate_ignore';
         } else {
