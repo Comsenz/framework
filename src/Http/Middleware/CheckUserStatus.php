@@ -32,6 +32,14 @@ class CheckUserStatus implements MiddlewareInterface
         if ($actor->status == 2) {
             throw new PermissionDeniedException('register_validate');
         }
+        // 审核拒绝
+        if ($actor->status == 3) {
+            throw new PermissionDeniedException('validate_reject');
+        }
+        // 审核忽略
+        if ($actor->status == 4) {
+            throw new PermissionDeniedException('validate_ignore');
+        }
 
         return $handler->handle($request);
     }
