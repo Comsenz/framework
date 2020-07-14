@@ -12,9 +12,6 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
-/**
- * @author Taylor Otwell
- */
 class Gate implements GateContract
 {
     /**
