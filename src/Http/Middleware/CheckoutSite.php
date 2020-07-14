@@ -8,6 +8,7 @@
 namespace Discuz\Http\Middleware;
 
 use App\Models\Group;
+use App\Models\Invite;
 use App\Models\Order;
 use Discuz\Auth\AssertPermissionTrait;
 use Discuz\Auth\Exception\PermissionDeniedException;
@@ -53,7 +54,7 @@ class CheckoutSite implements MiddlewareInterface
 
         // 处理 付费模式 逻辑， 过期之后 加入待付费组
         if (! $actor->isAdmin() && $siteMode === 'pay' && Carbon::now()->gt($actor->expired_at)) {
-            if(!$this->getOrder($actor)) {
+            if (!$this->getOrder($actor) && !$this->getInvite($actor)) {
                 $actor->setRelation('groups', Group::where('id', Group::UNPAID)->get());
             }
         }
@@ -61,13 +62,26 @@ class CheckoutSite implements MiddlewareInterface
         return $handler->handle($request);
     }
 
-    private function getOrder($actor) {
-        if($actor->isGuest()) {
+    private function getOrder($actor)
+    {
+        if ($actor->isGuest()) {
             return false;
         }
         return $actor->orders()
             ->where('type', Order::ORDER_TYPE_REGISTER)
             ->where('status', Order::ORDER_STATUS_PAID)
+            ->first();
+    }
+
+
+    private function getInvite($actor)
+    {
+        if ($actor->isGuest()) {
+            return false;
+        }
+        return Invite::where('type', Invite::TYPE_ADMIN)
+            ->where('to_user_id', $actor->id)
+            ->where('status', Invite::STATUS_USED)
             ->first();
     }
 }
