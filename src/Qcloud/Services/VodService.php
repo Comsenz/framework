@@ -93,12 +93,8 @@ class VodService extends AbstractService
         }
         //设置了动图后不需要截图
         if (!$this->qcloudVodTaskflowGif) {
-            $cover = [
-                'CoverBySnapshotTaskSet' => [
-                    ['Definition'=>$this->qcloudVodCoverTemplate,'PositionType'=>'Time','PositionValue'=>0],
-                ]
-            ];
-            array_push($params['MediaProcessTask'], $cover);
+            $cover = [['Definition'=>$this->qcloudVodCoverTemplate,'PositionType'=>'Time','PositionValue'=>0]];
+            $params['MediaProcessTask']['CoverBySnapshotTaskSet'] = $cover;
         }
         $clientRequest->fromJsonString(json_encode($params));
 
