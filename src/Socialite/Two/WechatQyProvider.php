@@ -1,21 +1,30 @@
 <?php
 
 /**
- * Discuz & Tencent Cloud
- * This is NOT a freeware, use is subject to license terms
+ * Copyright (C) 2020 Tencent Cloud.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 namespace Discuz\Socialite\Two;
 
 use Discuz\Contracts\Socialite\Provider as ProviderInterface;
-use Discuz\Http\DiscuzResponseFactory;
 use Discuz\Socialite\Exception\InvalidStateException;
 use Discuz\Socialite\Exception\SocialiteException;
 use Illuminate\Support\Arr;
-use TencentCloud\Cdb\V20170320\Models\VerifyRootAccountRequest;
 
 class WechatQyProvider extends AbstractProvider implements ProviderInterface
 {
-
     const IDENTIFIER = 'QY_WECHAT';
 
     /**
@@ -30,6 +39,7 @@ class WechatQyProvider extends AbstractProvider implements ProviderInterface
     /**
      * @inheritDoc
      */
+
     /**
      * {@inheritdoc}
      */
@@ -46,16 +56,15 @@ class WechatQyProvider extends AbstractProvider implements ProviderInterface
         return 'https://qyapi.weixin.qq.com/cgi-bin/gettoken';
     }
 
-    protected function getUserInfoUrl() {
+    protected function getUserInfoUrl()
+    {
         return'https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo';
     }
 
-    protected function getUserInfoDetailUrl() {
+    protected function getUserInfoDetailUrl()
+    {
         return 'https://qyapi.weixin.qq.com/cgi-bin/user/get';
     }
-
-
-
 
     /**
      * @inheritDoc
@@ -65,19 +74,14 @@ class WechatQyProvider extends AbstractProvider implements ProviderInterface
         // TODO: Implement getUserByToken() method.
     }
 
-
-
-
     /**
      * get userId or openId
      * @param $token
      * @param $code
      */
-    protected function  getUserByTokenAndCode($token, $code)
+    protected function getUserByTokenAndCode($token, $code)
     {
-
     }
-
 
     protected function getAccessTokenFields()
     {
@@ -87,21 +91,21 @@ class WechatQyProvider extends AbstractProvider implements ProviderInterface
         ];
     }
 
-    protected function getUserFields($token, $code) {
+    protected function getUserFields($token, $code)
+    {
         return [
             'access_token' => $token,
             'code' => $code,
         ];
     }
 
-    protected function getUserDeatilFields($token, $userId) {
+    protected function getUserDeatilFields($token, $userId)
+    {
         return [
             'access_token' => $token,
             'userid' => $userId
         ];
     }
-
-
 
     protected function getCodeFields($state = null)
     {
@@ -119,12 +123,12 @@ class WechatQyProvider extends AbstractProvider implements ProviderInterface
         return array_merge($fields, $this->parameters);
     }
 
-
     /**
      * get qy wechat access_token
      * @return mixed
      */
-    public function getAccessToken() {
+    public function getAccessToken()
+    {
         $response = $this->getHttpClient()->get($this->getTokenUrl(), [
             'query' => $this->getAccessTokenFields(),
         ]);
@@ -136,13 +140,13 @@ class WechatQyProvider extends AbstractProvider implements ProviderInterface
         return $this->credentialsResponseBody;
     }
 
-
     /**
      * @param $token
      * @param $code
      * @return mixed
      */
-    public function getWechatQyUser($token, $code) {
+    public function getWechatQyUser($token, $code)
+    {
         $response = $this->getHttpClient()->get($this->getUserInfoUrl(), [
             'query' => $this->getUserFields($token, $code)
         ]);
@@ -151,8 +155,8 @@ class WechatQyProvider extends AbstractProvider implements ProviderInterface
         return $this->credentialsResponseBody;
     }
 
-
-    public function getWechatQyUserDetail($token, $userId) {
+    public function getWechatQyUserDetail($token, $userId)
+    {
         $response = $this->getHttpClient()->get($this->getUserInfoDetailUrl(), [
             'query' => $this->getUserDeatilFields($token, $userId)
         ]);
@@ -160,7 +164,8 @@ class WechatQyProvider extends AbstractProvider implements ProviderInterface
         return $this->credentialsResponseBody;
     }
 
-    public function convertOpenIdToUserId($token, $openId) {
+    public function convertOpenIdToUserId($token, $openId)
+    {
         $url = 'https://qyapi.weixin.qq.com/cgi-bin/user/convert_to_userid?access_token='.$token;
         $response = $this->getHttpClient()->post($url, [
             'json' => ['openid' => $openId]
@@ -169,7 +174,6 @@ class WechatQyProvider extends AbstractProvider implements ProviderInterface
 
         return $this->credentialsResponseBody;
     }
-
 
     /**
      * {@inheritdoc}
@@ -183,7 +187,7 @@ class WechatQyProvider extends AbstractProvider implements ProviderInterface
         $token = Arr::get($response, 'access_token');
 
         $userInfo = $this->getWechatQyUser($token, $this->getCode());
-        if(isset($userInfo['OpenId'])) {
+        if (isset($userInfo['OpenId'])) {
             $userIdResponse = $this->convertOpenIdToUserId($token, $userInfo['OpenId']);
             $userId = (isset($userIdResponse['errcode']) && $userIdResponse['errcode'] == 0) ? $userIdResponse['userid'] : '';
         } else {
@@ -216,6 +220,4 @@ class WechatQyProvider extends AbstractProvider implements ProviderInterface
             'sex'      => isset($user['gender']) ? $user['gender'] : null
         ]);
     }
-
-
 }

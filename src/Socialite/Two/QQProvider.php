@@ -1,7 +1,19 @@
 <?php
+
 /**
- * Discuz & Tencent Cloud
- * This is NOT a freeware, use is subject to license terms
+ * Copyright (C) 2020 Tencent Cloud.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 namespace Discuz\Socialite\Two;
@@ -13,7 +25,6 @@ use Discuz\Socialite\Exception\SocialiteException;
 
 class QQProvider extends AbstractProvider implements ProviderInterface
 {
-
     const IDENTIFIER = 'QQ';
 
     /**
@@ -51,7 +62,8 @@ class QQProvider extends AbstractProvider implements ProviderInterface
      * get open_id url
      * @return string
      */
-    protected function getOpenIdUrl() {
+    protected function getOpenIdUrl()
+    {
         return 'https://graph.qq.com/oauth2.0/me';
     }
 
@@ -59,7 +71,8 @@ class QQProvider extends AbstractProvider implements ProviderInterface
      * get user info url
      * @return string
      */
-    protected function getUserInfoUrl() {
+    protected function getUserInfoUrl()
+    {
         return 'https://graph.qq.com/user/get_user_info';
     }
 
@@ -87,9 +100,8 @@ class QQProvider extends AbstractProvider implements ProviderInterface
         ];
     }
 
-
-
-    protected function getUserInfoFileds($token, $openId) {
+    protected function getUserInfoFileds($token, $openId)
+    {
         return [
             'access_token'          => $token,
             'oauth_consumer_key'    => $this->clientId,
@@ -112,16 +124,15 @@ class QQProvider extends AbstractProvider implements ProviderInterface
             $this->redirectUrl = $this->redirectUrl.(strpos($this->redirectUrl, '?') ? '&'.$sessionId : '?'.$sessionId);
         }
 
-        if($display = $this->request->getAttribute('display')) {
+        if ($display = $this->request->getAttribute('display')) {
             $displayStr = http_build_query(['display' => $display]);
-            $this->redirectUrl = $this->redirectUrl.(strpos( $this->redirectUrl, '?') ? '&'.$displayStr : '?'.$displayStr);
+            $this->redirectUrl = $this->redirectUrl.(strpos($this->redirectUrl, '?') ? '&'.$displayStr : '?'.$displayStr);
         }
-        if($redirectUrl = $this->request->getAttribute('redirect')) {
+        if ($redirectUrl = $this->request->getAttribute('redirect')) {
             $this->redirectUrl($redirectUrl);
         }
         return DiscuzResponseFactory::RedirectResponse($this->getAuthUrl($state));
     }
-
 
     /**
      * get access_token
@@ -146,7 +157,6 @@ class QQProvider extends AbstractProvider implements ProviderInterface
         return $msg;
     }
 
-
     /**
      * 授权结束后跳转至获取用户信息接口
      * @return \Psr\Http\Message\ResponseInterface
@@ -165,8 +175,6 @@ class QQProvider extends AbstractProvider implements ProviderInterface
         }
         return DiscuzResponseFactory::RedirectResponse($this->redirectUrl.'&access_token='.$accessToken.'&state='.$state);
     }
-
-
 
     protected function getUserByToken($token)
     {
@@ -198,13 +206,13 @@ class QQProvider extends AbstractProvider implements ProviderInterface
      * @param $token
      * @return mixed
      */
-    public function getOpenId($token) {
-        $graph_url = $this->getOpenIdUrl()."?access_token=".$token;
+    public function getOpenId($token)
+    {
+        $graph_url = $this->getOpenIdUrl().'?access_token='.$token;
         $str  = file_get_contents($graph_url);
-        if (strpos($str, "callback") !== false)
-        {
-            $lpos = strpos($str, "(");
-            $rpos = strrpos($str, ")");
+        if (strpos($str, 'callback') !== false) {
+            $lpos = strpos($str, '(');
+            $rpos = strrpos($str, ')');
             $str  = substr($str, $lpos + 1, $rpos - $lpos -1);
         }
         $user = json_decode($str, true);
@@ -216,7 +224,8 @@ class QQProvider extends AbstractProvider implements ProviderInterface
      * @param $token
      * @return mixed
      */
-    public function getUserInfo($token) {
+    public function getUserInfo($token)
+    {
         $response = $this->getHttpClient()->get($this->getUserInfoUrl(), [
             'query' => $this->getUserInfoFileds($token, $this->openId)
         ]);
@@ -241,7 +250,6 @@ class QQProvider extends AbstractProvider implements ProviderInterface
             'sex'      => isset($user['gender']) && $user['gender'] == '女' ? 2 : 1
         ]);
     }
-
 
     protected function getTokenUrl()
     {
