@@ -102,6 +102,11 @@ trait QcloudTrait
         return $this->getQcloud()->service('vod')->describeMediaInfos($file_ids, $filters);
     }
 
+    public function describeProcedureTemplates($name)
+    {
+        return $this->getQcloud()->service('vod')->describeProcedureTemplates($name);
+    }
+
     public function MsUserInfo()
     {
         return $this->getQcloud()->service('ms')->MsUserInfo();
