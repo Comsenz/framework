@@ -1,8 +1,19 @@
 <?php
 
 /**
- * Discuz & Tencent Cloud
- * This is NOT a freeware, use is subject to license terms
+ * Copyright (C) 2020 Tencent Cloud.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 namespace Discuz\Foundation;
@@ -20,6 +31,7 @@ use Discuz\Queue\QueueServiceProvider;
 use Discuz\Search\SearchServiceProvider;
 use Discuz\Socialite\SocialiteServiceProvider;
 use Discuz\Web\WebServiceProvider;
+use Discuz\Wechat\WechatServiceProvider;
 use Illuminate\Bus\BusServiceProvider;
 use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Encryption\EncryptionServiceProvider;
@@ -70,6 +82,7 @@ class SiteApp
         $this->app->register(QueueServiceProvider::class);
         $this->app->register(SocialiteServiceProvider::class);
         $this->app->register(NotificationServiceProvider::class);
+        $this->app->register(WechatServiceProvider::class);
 
         $this->registerServiceProvider();
 

@@ -16,31 +16,36 @@
  * limitations under the License.
  */
 
-namespace Discuz\Foundation\Bus;
+namespace Discuz\Wechat;
 
-use Illuminate\Contracts\Bus\Dispatcher;
-
-trait DispatchesJobs
+/**
+ * Trait EasyWechatTrait
+ *
+ * @package Discuz\Wechat
+ * @property \Discuz\Wechat\EasyWechatManage
+ * @method createOffiaccountDriver()
+ * @method createMiniProgramDriver()
+ */
+trait EasyWechatTrait
 {
-    /**
-     * Dispatch a job to its appropriate handler.
-     *
-     * @param  mixed  $job
-     * @return mixed
-     */
-    protected function dispatch($job)
+    protected $easyWechatFactory;
+
+    private function getFactory()
     {
-        return app(Dispatcher::class)->dispatch($job);
+        return $this->easyWechatFactory ?? $this->easyWechatFactory = app('easyWechat');
     }
 
     /**
-     * Dispatch a job to its appropriate handler in the current process.
-     *
-     * @param  mixed  $job
+     * @param array $merge
      * @return mixed
      */
-    public function dispatchNow($job)
+    public function offiaccount($merge = [])
     {
-        return app(Dispatcher::class)->dispatchNow($job);
+        return $this->getFactory()->service('offiaccount')->build($merge);
+    }
+
+    public function miniProgram($merge = [])
+    {
+        return $this->getFactory()->service('miniProgram')->build($merge);
     }
 }

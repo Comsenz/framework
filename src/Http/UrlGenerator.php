@@ -1,14 +1,26 @@
 <?php
 
 /**
- * Discuz & Tencent Cloud
- * This is NOT a freeware, use is subject to license terms
+ * Copyright (C) 2020 Tencent Cloud.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 namespace Discuz\Http;
 
 use Discuz\Foundation\Application;
 use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContracts;
+use Psr\Http\Message\ServerRequestInterface;
 
 class UrlGenerator implements UrlGeneratorContracts
 {
@@ -18,6 +30,9 @@ class UrlGenerator implements UrlGeneratorContracts
 
     protected $cachedScheme;
 
+    /**
+     * @var ServerRequestInterface
+     */
     protected static $request;
 
     public function __construct(Application $app, RouteCollection $routes)
@@ -33,7 +48,7 @@ class UrlGenerator implements UrlGeneratorContracts
      */
     public function current()
     {
-        return  collect([$this->formatConfigHost().$this->formatPath(), $this->formatQuery()])->filter()->join('?');
+        return  collect([$this->formatHost().$this->formatPath(), $this->formatQuery()])->filter()->join('?');
     }
 
     /**
@@ -57,8 +72,7 @@ class UrlGenerator implements UrlGeneratorContracts
      */
     public function to($path, $extra = [], $secure = null)
     {
-        // TODO: Implement to() method.
-        return $this->formatConfigHost().$path;
+        return $this->formatHost().$path;
     }
 
     /**
@@ -97,7 +111,7 @@ class UrlGenerator implements UrlGeneratorContracts
      */
     public function route($name, $parameters = [], $absolute = true)
     {
-        return $this->formatConfigHost().$this->routes->getPath($name, $parameters);
+        return $this->formatHost().$this->routes->getPath($name, $parameters);
     }
 
     /**
@@ -126,12 +140,8 @@ class UrlGenerator implements UrlGeneratorContracts
 
     protected function formatHost()
     {
-        return self::$request->getUri()->getHost();
-    }
-
-    protected function formatConfigHost()
-    {
-        return $this->app->config('site_url');
+        $port = self::$request->getUri()->getPort();
+        return self::$request->getUri()->getScheme() . '://' . self::$request->getUri()->getHost().(in_array($port, [80, 443, null]) ? '' : ':'.$port);
     }
 
     protected function formatScheme()
