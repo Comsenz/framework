@@ -22,7 +22,7 @@ namespace Discuz\Wechat;
  * Trait EasyWechatTrait
  *
  * @package Discuz\Wechat
- * @property \Discuz\Wechat\EasyWechatManage
+ * @property EasyWechatManage
  * @method createOffiaccountDriver()
  * @method createMiniProgramDriver()
  */
@@ -37,13 +37,17 @@ trait EasyWechatTrait
 
     /**
      * @param array $merge
-     * @return mixed
+     * @return \EasyWeChat\OfficialAccount\Application
      */
     public function offiaccount($merge = [])
     {
         return $this->getFactory()->service('offiaccount')->build($merge);
     }
 
+    /**
+     * @param array $merge
+     * @return \EasyWeChat\MiniProgram\Application
+     */
     public function miniProgram($merge = [])
     {
         return $this->getFactory()->service('miniProgram')->build($merge);
