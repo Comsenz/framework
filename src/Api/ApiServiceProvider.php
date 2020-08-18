@@ -39,6 +39,7 @@ use Discuz\Http\Middleware\CheckoutSite;
 use Discuz\Http\Middleware\CheckUserStatus;
 use Discuz\Http\Middleware\DispatchRoute;
 use Discuz\Http\Middleware\ParseJsonBody;
+use Discuz\Http\Middleware\OptionsRequest;
 use Discuz\Http\RouteCollection;
 use Illuminate\Support\ServiceProvider;
 use Tobscure\JsonApi\ErrorHandler;
@@ -57,6 +58,7 @@ class ApiServiceProvider extends ServiceProvider
             }
 
             $pipe->pipe($app->make(HandlerErrors::class));
+            $pipe->pipe($app->make(OptionsRequest::class));
             $pipe->pipe($app->make(ParseJsonBody::class));
             $pipe->pipe($app->make(AuthenticateWithHeader::class));
             $pipe->pipe($app->make(CheckoutSite::class));

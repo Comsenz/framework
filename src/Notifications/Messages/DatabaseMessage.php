@@ -31,6 +31,8 @@ abstract class DatabaseMessage
 
     protected $tplData;
 
+    protected $filterSpecialChar = true;
+
     public function template($data)
     {
         $build =  [
@@ -75,7 +77,10 @@ abstract class DatabaseMessage
     protected function getContent($data)
     {
         $replaceVars = array_map(function ($var) {
-            return is_string($var) ? htmlspecialchars($var) : $var;
+            if (is_string($var) && $this->filterSpecialChar) {
+                $var = htmlspecialchars($var);
+            }
+            return $var;
         }, $this->contentReplaceVars($data));
 
         return str_replace($this->getVars(), $replaceVars, $this->tplData->content);

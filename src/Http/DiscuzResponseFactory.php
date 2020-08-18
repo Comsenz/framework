@@ -94,17 +94,17 @@ class DiscuzResponseFactory
         if (!is_null($stream)) {
             $response = $response->withBody($stream);
         }
+        $headers = array_merge($headers, static::getCrossHeaders());
         foreach ($headers as $key => $value) {
             $response = $response->withHeader($key, $value);
         }
-        $response = static::addHeader($response);
-
         return $response;
     }
 
-    private static function addHeader(ResponseInterface $response): ResponseInterface
+    protected static function getCrossHeaders()
     {
         $crossConfig = app()->config('cross');
+        $cross_headers = [];
         if (Arr::get($crossConfig, 'status')) {
             $request       = app(ServerRequestInterface::class);
             $origin        = Arr::get($request->getServerParams(), 'HTTP_ORIGIN') ?? '';
@@ -121,12 +121,8 @@ class DiscuzResponseFactory
                 if (is_array($cross_headers)) {
                     $cross_headers['Access-Control-Allow-Origin'] = $origin ?: $siteUrl;
                 }
-                foreach ($cross_headers as $key => $value) {
-                    $response = $response->withHeader($key, $value);
-                }
             }
         }
-
-        return $response;
+        return $cross_headers;
     }
 }
