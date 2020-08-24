@@ -61,6 +61,8 @@ class PermissionDeniedExceptionHandler implements ExceptionHandlerInterface
             $error['code'] = 'validate_reject';
         } elseif ($e->getMessage() == 'validate_ignore') {
             $error['code'] = 'validate_ignore';
+        } elseif ($e->getMessage() == 'register_close') {
+            $error['code'] = 'register_close';
         } else {
             $error['code'] = 'permission_denied';
         }
