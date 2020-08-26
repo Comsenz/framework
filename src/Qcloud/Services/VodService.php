@@ -18,7 +18,7 @@
 
 namespace Discuz\Qcloud\Services;
 
-use TencentCloud\Mps\V20190612\Models\DescribeTranscodeTemplatesRequest;
+use TencentCloud\Vod\V20180717\Models\DescribeTranscodeTemplatesRequest;
 use TencentCloud\Vod\V20180717\Models\DeleteMediaRequest;
 use TencentCloud\Vod\V20180717\Models\DescribeMediaInfosRequest;
 use TencentCloud\Vod\V20180717\Models\DescribeProcedureTemplatesRequest;
