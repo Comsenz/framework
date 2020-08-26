@@ -20,6 +20,7 @@ namespace Discuz\Http;
 
 use Discuz\Foundation\Application;
 use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContracts;
+use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 
 class UrlGenerator implements UrlGeneratorContracts
@@ -124,7 +125,7 @@ class UrlGenerator implements UrlGeneratorContracts
      */
     public function action($action, $parameters = [], $absolute = true)
     {
-        // TODO: Implement action() method.
+        return rtrim($this->to($action), '/') . '?' . Arr::query($parameters);
     }
 
     /**
@@ -153,7 +154,7 @@ class UrlGenerator implements UrlGeneratorContracts
         return $this->cachedScheme;
     }
 
-    protected function formatPath()
+    public function formatPath()
     {
         return self::$request->getUri()->getPath();
     }
