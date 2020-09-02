@@ -39,11 +39,11 @@ class FilesystemServiceProvider extends ServiceProvider
             $settings = $this->app->make(SettingsRepository::class);
             $qcloud = $settings->tag('qcloud');
 
-             $server = $app['request']->getServerParams();
+            $server = $app['request']->getServerParams();
 
-             $container = Arr::get($server, 'KUBERNETES_SERVICE_HOST');
+            $container = Arr::get($server, 'KUBERNETES_SERVICE_HOST');
 
-            if(!is_null($container) && !Arr::get($qcloud, 'qcloud_cos')) {
+            if (!is_null($container) && !Arr::get($qcloud, 'qcloud_cos')) {
                 $data = $this->getTmpSecret($app);
                 $qcloud['qcloud_secret_id'] = Arr::get($data, 'TmpSecretId');
                 $qcloud['qcloud_secret_key'] = Arr::get($data, 'TmpSecretKey');
@@ -65,11 +65,11 @@ class FilesystemServiceProvider extends ServiceProvider
         });
     }
 
-
-    private function getTmpSecret($app) {
+    private function getTmpSecret($app)
+    {
         $data = $app['cache']->get('tmp.secret');
 
-        if(!is_null($data)) {
+        if (!is_null($data)) {
             return $data;
         }
 
