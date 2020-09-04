@@ -41,9 +41,10 @@ class AuthenticateWithHeader implements MiddlewareInterface
     {
         $headerLine = $request->getHeaderLine('authorization');
 
-        // 允许 get 携带 Token
+        // 允许 get、cookie 携带 Token
         if (! $headerLine) {
             $headerLine = Arr::get($request->getQueryParams(), 'token');
+            $headerLine = $headerLine ?: Arr::get($request->getCookieParams(), 'token');
 
             if ($headerLine) {
                 $request = $request->withHeader('authorization', $headerLine);
