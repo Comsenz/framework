@@ -59,6 +59,15 @@ class DiscuzResponseFactory
         return static::createResponse(static::getPsr17Factory()->createStreamFromFile($file), $code, $headers);
     }
 
+    public static function FileStreamResponse(string $file, int $code = 200, array $headers = []): ResponseInterface
+    {
+        if (!isset($headers['Content-Type'])) {
+            $headers['Content-Type'] = 'application/octet-stream';
+        }
+
+        return static::createResponse(static::getPsr17Factory()->createStream($file), $code, $headers);
+    }
+
     public static function EmptyResponse(int $code = 204, array $headers = []): ResponseInterface
     {
         return static::createResponse(null, $code, $headers);
