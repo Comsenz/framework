@@ -43,7 +43,7 @@ abstract class AbstractService
     {
         $this->config = $config;
 
-        $this->cred = new Credential(Arr::get($config, 'qcloud_secret_id'), Arr::get($config, 'qcloud_secret_key'), '');
+        $this->cred = new Credential(Arr::get($config, 'qcloud_secret_id'), Arr::get($config, 'qcloud_secret_key'), Arr::get($config, 'qcloud_token', ''));
 
         $this->httpProfile = new HttpProfile();
         $this->setEndpoint();

@@ -43,10 +43,13 @@ class FilesystemServiceProvider extends ServiceProvider
 
             $container = Arr::get($server, 'KUBERNETES_SERVICE_HOST');
 
-            if (!is_null($container) && !Arr::get($qcloud, 'qcloud_cos')) {
-                $data = $this->getTmpSecret($app);
-                $qcloud['qcloud_secret_id'] = Arr::get($data, 'TmpSecretId');
-                $qcloud['qcloud_secret_key'] = Arr::get($data, 'TmpSecretKey');
+            if(!is_null($container) && Arr::get($qcloud, 'qcloud_cos')) {
+		$data = $this->getTmpSecret($app);
+		if ($data) {
+			$qcloud['qcloud_secret_id'] = Arr::get($data, 'TmpSecretId');
+			$qcloud['qcloud_secret_key'] = Arr::get($data, 'TmpSecretKey');	
+			$qcloud['qcloud_token'] = Arr::get($data, 'Token');	
+		}
             }
 
             $config = array_merge($config, $app->config('filesystems.disks.cos'));
@@ -58,7 +61,7 @@ class FilesystemServiceProvider extends ServiceProvider
             $config['credentials'] = [
                 'secretId'  => Arr::get($qcloud, 'qcloud_secret_id'),  //"云 API 密钥 SecretId";
                 'secretKey' => Arr::get($qcloud, 'qcloud_secret_key'), //"云 API 密钥 SecretKey";
-                'token' => ''
+                'token' => Arr::get($qcloud, 'qcloud_token', '')
             ];
 
             return new Filesystem(new CosAdapter($config));
@@ -74,8 +77,10 @@ class FilesystemServiceProvider extends ServiceProvider
         }
 
         $client =  new Client();
-        $response = $client->request('GET', 'http://metadata.tencentyun.com/meta-data/cam/securitycredentials/TCB_QcsRole');
-        $data = json_decode($response);
+        $response = $client->request('GET', 'http://metadata.tencentyun.com/meta-data/cam/security-credentials/TCB_QcsRole');
+	$data = json_decode($response->getBody()->getContents(), TRUE);
+
+	if (is_null($data)) return false;
 
         $app['cache']->put('tmp.secret', $data, $data['ExpiredTime'] - 10);
 
