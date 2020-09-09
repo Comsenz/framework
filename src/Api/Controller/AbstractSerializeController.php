@@ -19,6 +19,7 @@
 namespace Discuz\Api\Controller;
 
 use App\Formatter\BaseFormatter;
+use Discuz\Api\Events\WillSerializeData;
 use Discuz\Http\DiscuzResponseFactory;
 use Illuminate\Contracts\Container\Container;
 use Psr\Http\Message\ResponseInterface;
@@ -98,6 +99,10 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
         BaseFormatter::setActor($request->getAttribute('actor'));
 
         $data = $this->data($request, $document);
+
+        static::$container->make('events')->dispatch(
+            new WillSerializeData($this, $data, $request, $document)
+        );
 
         $serializer = static::$container->make($this->serializer);
         $serializer->setRequest($request);
