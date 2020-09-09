@@ -167,3 +167,28 @@ if (! function_exists('ip')) {
         return $ip;
     }
 }
+
+if (! function_exists('numberFormat')) {
+    /**
+     * Digital value
+     *
+     * @param $former
+     * @param $mode
+     * @param $theLatter
+     * @param int $range
+     * @return string
+     */
+    function numberFormat($former, $mode, $theLatter, $range = 2)
+    {
+        switch ($mode) {
+            case '+':
+                return number_format($former + $theLatter, $range, '.', '');
+            case '-':
+                return number_format($former - $theLatter, $range, '.', '');
+            case '*':
+                return number_format($former * $theLatter, $range, '.', '');
+            case '/':
+                return number_format($former / $theLatter, $range, '.', '');
+        }
+    }
+}
