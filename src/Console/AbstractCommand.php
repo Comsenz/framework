@@ -19,11 +19,16 @@
 namespace Discuz\Console;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Question\Question;
 
 abstract class AbstractCommand extends Command
 {
@@ -52,6 +57,21 @@ abstract class AbstractCommand extends Command
     protected $description;
 
     protected $laravel;
+
+    protected $bufferedOutput;
+
+    protected $questionHelper;
+
+    /**
+     * AbstractCommand constructor.
+     * @param string|null $name
+     */
+    public function __construct(string $name = null)
+    {
+        parent::__construct($name);
+
+        $this->bufferedOutput = new BufferedOutput(16, false, clone new OutputFormatter());
+    }
 
     /**
      * {@inheritdoc}
@@ -282,4 +302,66 @@ abstract class AbstractCommand extends Command
     {
         $this->laravel = $laravel;
     }
+
+    public function confirm($question, $default = true)
+    {
+        return $this->askQuestion(new ConfirmationQuestion($question, $default));
+    }
+
+    public function ask($question, $default = null, $validator = null)
+    {
+        $question = new Question($question, $default);
+        $question->setValidator($validator);
+
+        return $this->askQuestion($question);
+    }
+
+    public function newLineParent($count = 1)
+    {
+        $this->output->write(str_repeat(PHP_EOL, $count));
+    }
+
+    public function newLine($count = 1)
+    {
+        $this->newLineParent($count);
+        $this->bufferedOutput->write(str_repeat("\n", $count));
+    }
+
+    private function autoPrependBlock()
+    {
+        $chars = substr(str_replace(PHP_EOL, "\n", $this->bufferedOutput->fetch()), -2);
+
+        if (!isset($chars[0])) {
+            $this->newLine(); //empty history, so we should start with a new line.
+
+            return;
+        }
+        //Prepend new line for each non LF chars (This means no blank line was output before)
+        $this->newLine(2 - substr_count($chars, "\n"));
+    }
+
+    /**
+     * @param Question $question
+     * @return bool|mixed|string|null
+     */
+    public function askQuestion(Question $question)
+    {
+        if ($this->input->isInteractive()) {
+            $this->autoPrependBlock();
+        }
+
+        if (!$this->questionHelper) {
+            $this->questionHelper = new SymfonyQuestionHelper();
+        }
+
+        $answer = $this->questionHelper->ask($this->input, $this->output, $question);
+
+        if ($this->input->isInteractive()) {
+            $this->newLine();
+            $this->bufferedOutput->write("\n");
+        }
+
+        return $answer;
+    }
+
 }
