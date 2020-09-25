@@ -18,6 +18,7 @@
 
 namespace Discuz\Foundation;
 
+use App\Models\User;
 use Illuminate\Contracts\Events\Dispatcher;
 
 trait EventsDispatchTrait
@@ -33,7 +34,7 @@ trait EventsDispatchTrait
      * 分发并清空某一个实体的所有暂存事件.
      *
      * @param object $entity
-     * @param User $actor
+     * @param User|null $actor
      */
     public function dispatchEventsFor($entity, $actor = null)
     {
