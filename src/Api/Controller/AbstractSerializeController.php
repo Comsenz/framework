@@ -55,6 +55,13 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
     public $optionalInclude = [];
 
     /**
+     * The relationships that are must to included.
+     *
+     * @var array
+     */
+    public $mustInclude = [];
+
+    /**
      * The maximum number of records that can be requested.
      *
      * @var int
@@ -140,9 +147,11 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
      */
     protected function extractInclude(ServerRequestInterface $request)
     {
-        $available = array_merge($this->include, $this->optionalInclude);
+        $available = array_merge($this->include, $this->optionalInclude, $this->mustInclude);
 
-        return $this->buildParameters($request)->getInclude($available) ?: $this->include;
+        $include = $this->buildParameters($request)->getInclude($available) ?: array_merge($this->include, $this->mustInclude);
+
+        return array_unique(array_merge($include, $this->mustInclude));
     }
 
     /**
