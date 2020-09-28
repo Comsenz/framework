@@ -21,6 +21,11 @@ namespace Discuz\Auth;
 class Anonymous extends Guest
 {
     /**
+     * {@inheritdoc}
+     */
+    public $id = -1;
+
+    /**
      * @var string
      */
     protected $username = '匿名用户';
