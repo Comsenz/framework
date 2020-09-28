@@ -51,7 +51,7 @@ class TencentCloudSDKExceptionHandler implements ExceptionHandlerInterface
         $error = [
             'status' => (string) $status,
             'code' => $e->getErrorCode(),
-            'detail' => $e->getMessage()
+            'detail' => [$e->getMessage()]
         ];
 
         return new ResponseBag($status, [$error]);
