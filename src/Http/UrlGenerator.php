@@ -141,6 +141,10 @@ class UrlGenerator implements UrlGeneratorContracts
 
     protected function formatHost()
     {
+        if (is_null(self::$request)) {
+            return '';
+        }
+
         $port = self::$request->getUri()->getPort();
         return self::$request->getUri()->getScheme() . '://' . self::$request->getUri()->getHost().(in_array($port, [80, 443, null]) ? '' : ':'.$port);
     }
