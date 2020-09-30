@@ -66,7 +66,7 @@ abstract class AbstractSerializeController implements RequestHandlerInterface
      *
      * @var int
      */
-    public $maxLimit = 50;
+    public $maxLimit = 200;
 
     /**
      * The number of records included by default.
