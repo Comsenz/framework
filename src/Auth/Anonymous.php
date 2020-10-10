@@ -47,4 +47,9 @@ class Anonymous extends Guest
     {
         return $this->username;
     }
+
+    public function getUserId()
+    {
+        return $this->id;
+    }
 }
