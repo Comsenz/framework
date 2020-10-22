@@ -23,6 +23,7 @@ use GuzzleHttp\Client;
 use Illuminate\Filesystem\FilesystemServiceProvider as ServiceProvider;
 use Illuminate\Support\Arr;
 use League\Flysystem\Filesystem;
+use Carbon\Carbon;
 
 class FilesystemServiceProvider extends ServiceProvider
 {
@@ -43,7 +44,7 @@ class FilesystemServiceProvider extends ServiceProvider
 
             $container = Arr::get($server, 'KUBERNETES_SERVICE_HOST');
 
-            if(!is_null($container) && Arr::get($qcloud, 'qcloud_cos')) {
+            if(!is_null($container) && !Arr::get($qcloud, 'qcloud_cos')) {
 		$data = $this->getTmpSecret($app);
 		if ($data) {
 			$qcloud['qcloud_secret_id'] = Arr::get($data, 'TmpSecretId');
@@ -81,8 +82,11 @@ class FilesystemServiceProvider extends ServiceProvider
 	$data = json_decode($response->getBody()->getContents(), TRUE);
 
 	if (is_null($data)) return false;
+	
+	$carbon = Carbon::createFromTimestamp($data['ExpiredTime'] - 10);
+	$expiredTime = (new Carbon())->diffInSeconds ($carbon, false);
 
-        $app['cache']->put('tmp.secret', $data, $data['ExpiredTime'] - 10);
+        $app['cache']->put('tmp.secret', $data, $expiredTime);
 
         return $data;
     }
