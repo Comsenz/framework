@@ -80,7 +80,6 @@ class Server extends SiteApp
 
         return <<<ERROR
             Discuz Q! encountered a boot error ($type)<br />
-            <b>$message</b><br />
             thrown in <b>$file</b> on line <b>$line</b>
 ERROR;
     }
