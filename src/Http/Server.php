@@ -35,8 +35,11 @@ class Server extends SiteApp
 {
     public function listen()
     {
-        $this->siteBoot();
-
+        try {
+            $this->siteBoot();
+        } catch (Throwable $e) {
+            exit($this->formatBootException($e));
+        }
         $pipe = new MiddlewarePipe();
 
         $pipe->pipe(new RequestHandler([
@@ -63,5 +66,23 @@ class Server extends SiteApp
         );
 
         $runner->run();
+    }
+
+    /**
+     * Display the most relevant information about an early exception.
+     */
+    private function formatBootException(Throwable $error): string
+    {
+        $message = $error->getMessage();
+        $file = $error->getFile();
+        $line = $error->getLine();
+        $type = get_class($error);
+
+        return <<<ERROR
+            Discuz Q! encountered a boot error ($type)<br />
+            <b>$message</b><br />
+            thrown in <b>$file</b> on line <b>$line</b>
+<pre>$error</pre>
+ERROR;
     }
 }
