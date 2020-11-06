@@ -43,7 +43,8 @@ class ErrorHandler
             $e = new Exception($e->getMessage(), $e->getCode(), $e);
         }
 
-        $this->logger->error($e);
+        $info = sprintf('%s: %s in %s:%s', get_class($e), $e->getMessage(), $e->getFile(), $e->getLine());
+        $this->logger->info($info);
         $response = $this->errorHandler->handle($e);
 
         $document = new Document;
