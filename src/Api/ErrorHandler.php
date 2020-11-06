@@ -43,6 +43,7 @@ class ErrorHandler
             $e = new Exception($e->getMessage(), $e->getCode(), $e);
         }
 
+        $this->logger->error($e);
         $response = $this->errorHandler->handle($e);
 
         $document = new Document;

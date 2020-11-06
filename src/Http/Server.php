@@ -77,6 +77,7 @@ class Server extends SiteApp
         $file = $error->getFile();
         $line = $error->getLine();
         $type = get_class($error);
+        $this->app->make('log')->error($error);
 
         return <<<ERROR
             Discuz Q! encountered a boot error ($type)<br />
