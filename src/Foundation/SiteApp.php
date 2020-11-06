@@ -167,11 +167,12 @@ class SiteApp
 
     private function registerLogger()
     {
+        //最后一条应为'alias' => 'log'。默认错误会输出到最后一条中
         $logs = [
             ['alias' => 'payLog', 'path' => 'logs/payLog.log', 'level' => Logger::INFO],
             ['alias' => 'qcloudLog', 'path' => 'logs/qcloudLog.log', 'level' => Logger::INFO],
-            ['alias' => 'log', 'path' => 'logs/log.log', 'level' => Logger::INFO],
             ['alias' => 'wechatOffiaccount', 'path' => 'logs/wechatOffiaccount.log', 'level' => Logger::INFO],
+            ['alias' => 'log', 'path' => 'logs/log.log', 'level' => Logger::INFO],
         ];
 
         foreach ($logs as $log) {
