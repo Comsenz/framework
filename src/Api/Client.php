@@ -19,8 +19,7 @@
 namespace Discuz\Api;
 
 use Discuz\Foundation\Application;
-use Nyholm\Psr7\Factory\Psr17Factory;
-use Nyholm\Psr7Server\ServerRequestCreator;
+use Laminas\Diactoros\ServerRequestFactory;
 use Psr\Http\Message\ResponseInterface;
 
 class Client
@@ -36,8 +35,7 @@ class Client
     {
         $controller = $this->app->make($controller);
 
-        $psr17Factory = new Psr17Factory();
-        $request = (new ServerRequestCreator($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory))->fromArrays($_SERVER, [], [], $query, $body);
+        $request = ServerRequestFactory::fromGlobals(null, $query, $body);
 
         $request = $request->withAttribute('actor', $actor);
 
