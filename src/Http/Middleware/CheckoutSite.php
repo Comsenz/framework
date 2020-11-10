@@ -30,6 +30,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Discuz\Common\Utils;
 
 class CheckoutSite implements MiddlewareInterface
 {
@@ -54,14 +55,22 @@ class CheckoutSite implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         // get settings
-        $siteClose = (bool)$this->settings->get('site_close');
+//        $siteClose = (bool)$this->settings->get('site_close');
+
+        $reqType = Utils::requestFrom();
+        $siteManage = json_decode($this->settings->get('site_manage'), true);
+        $siteManage = array_column($siteManage,null,'key');
+        $siteOpen = true;
+        isset($siteManage[$reqType]) && $siteOpen = $siteManage[$reqType]['value'];
+
+
         $siteMode = $this->settings->get('site_mode');
 
         if (in_array($request->getUri()->getPath(), ['/api/login', '/api/oauth/wechat/miniprogram'])) {
             return $handler->handle($request);
         }
         $actor = $request->getAttribute('actor');
-        $siteClose && $this->assertAdmin($actor);
+        !$siteOpen && $this->assertAdmin($actor);
 
         // 处理 付费模式 逻辑， 过期之后 加入待付费组
         if (! $actor->isAdmin() && $siteMode === 'pay' && Carbon::now()->gt($actor->expired_at)) {
