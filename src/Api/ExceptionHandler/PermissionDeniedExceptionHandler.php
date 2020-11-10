@@ -53,12 +53,12 @@ class PermissionDeniedExceptionHandler implements ExceptionHandlerInterface
         $reqType = Utils::requestFrom();
         $siteManage = json_decode($settings->get('site_manage'), true);
         $siteManage = array_column($siteManage,null,'key');
-        $siteClose = false;
+        $siteOpen = true;
         if(isset($siteManage[$reqType])){
-            $siteClose = $siteManage[$reqType]['value'];
+            $siteOpen = $siteManage[$reqType]['value'];
         }
-        
-        if ($siteClose) {
+
+        if (!$siteOpen) {
             $error['code'] = 'site_closed';
             $error['detail'][] = $settings->get('site_close_msg')?:'';
         } elseif ($e->getMessage() == 'ban_user') {
