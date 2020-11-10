@@ -30,6 +30,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Discuz\Common\Utils;
 
 class CheckoutSite implements MiddlewareInterface
 {
@@ -54,7 +55,15 @@ class CheckoutSite implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         // get settings
-        $siteClose = (bool)$this->settings->get('site_close');
+//        $siteClose = (bool)$this->settings->get('site_close');
+
+        $reqType = Utils::requestFrom();
+        $siteManage = json_decode($this->settings->get('site_manage'), true);
+        $siteManage = array_column($siteManage,null,'key');
+        $siteClose = false;
+        isset($siteManage[$reqType]) && $siteClose = $siteManage[$reqType]['value'];
+
+
         $siteMode = $this->settings->get('site_mode');
 
         if (in_array($request->getUri()->getPath(), ['/api/login', '/api/oauth/wechat/miniprogram'])) {

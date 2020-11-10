@@ -23,6 +23,8 @@ use Discuz\Contracts\Setting\SettingsRepository;
 use Exception;
 use Tobscure\JsonApi\Exception\Handler\ExceptionHandlerInterface;
 use Tobscure\JsonApi\Exception\Handler\ResponseBag;
+use Discuz\Common\PubEnum;
+use Discuz\Common\Utils;
 
 class PermissionDeniedExceptionHandler implements ExceptionHandlerInterface
 {
@@ -48,7 +50,15 @@ class PermissionDeniedExceptionHandler implements ExceptionHandlerInterface
         // 站点是否关闭
         $settings = app()->make(SettingsRepository::class);
 
-        if ($settings->get('site_close')) {
+        $reqType = Utils::requestFrom();
+        $siteManage = json_decode($settings->get('site_manage'), true);
+        $siteManage = array_column($siteManage,null,'key');
+        $siteClose = false;
+        if(isset($siteManage[$reqType])){
+            $siteClose = $siteManage[$reqType]['value'];
+        }
+        
+        if ($siteClose) {
             $error['code'] = 'site_closed';
             $error['detail'][] = $settings->get('site_close_msg')?:'';
         } elseif ($e->getMessage() == 'ban_user') {
