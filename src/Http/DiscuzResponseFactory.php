@@ -119,10 +119,10 @@ class DiscuzResponseFactory
 
     protected static function createBody($body = '') {
         if (\is_string($body)) {
-            $body = new Stream('php://temp', 'wb+');
-            $body->write($body);
-            $body->rewind();
-            return $body;
+            $stream = new Stream('php://temp', 'wb+');
+            $stream->write($body);
+            $stream->rewind();
+            return $stream;
         }
 
         if (\is_resource($body)) {
