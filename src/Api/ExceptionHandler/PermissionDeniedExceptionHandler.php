@@ -23,7 +23,6 @@ use Discuz\Contracts\Setting\SettingsRepository;
 use Exception;
 use Tobscure\JsonApi\Exception\Handler\ExceptionHandlerInterface;
 use Tobscure\JsonApi\Exception\Handler\ResponseBag;
-use Discuz\Common\PubEnum;
 use Discuz\Common\Utils;
 
 class PermissionDeniedExceptionHandler implements ExceptionHandlerInterface

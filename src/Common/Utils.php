@@ -17,7 +17,6 @@ namespace Discuz\Common;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 class Utils
 {
     /**
@@ -75,9 +74,19 @@ class Utils
                 break;
             }
         }
-        if(strstr(strtolower($server['HTTP_USER_AGENT']),'miniprogram')){
+        if (strstr(strtolower($server['HTTP_USER_AGENT']), 'miniprogram')) {
             $requestFrom = PubEnum::MinProgram;
         }
         return $requestFrom;
+    }
+
+    public static function isMobile()
+    {
+        $reqType = self::requestFrom();
+        if ($reqType == PubEnum::PC) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }
