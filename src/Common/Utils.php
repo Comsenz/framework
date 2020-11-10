@@ -27,8 +27,11 @@ class Utils
      */
     public static function requestFrom()
     {
-        $requestFrom = PubEnum::PC;
         $server = $_SERVER;
+        if (strstr(strtolower($server['HTTP_USER_AGENT']), 'miniprogram')) {
+            return PubEnum::MinProgram;
+        }
+        $requestFrom = PubEnum::PC;
         // 如果有HTTP_X_WAP_PROFILE则一定是移动设备
         if (isset($server['HTTP_X_WAP_PROFILE'])) {
             $requestFrom = PubEnum::H5;
@@ -74,9 +77,7 @@ class Utils
                 break;
             }
         }
-        if (strstr(strtolower($server['HTTP_USER_AGENT']), 'miniprogram')) {
-            $requestFrom = PubEnum::MinProgram;
-        }
+
         return $requestFrom;
     }
 
