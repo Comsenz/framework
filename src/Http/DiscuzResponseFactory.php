@@ -24,6 +24,7 @@ use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
 use Tobscure\JsonApi\Document;
 
 class DiscuzResponseFactory
@@ -116,10 +117,18 @@ class DiscuzResponseFactory
         return $cross_headers;
     }
 
-    protected static function createBody(string $string = '') {
-        $body = new Stream('php://temp', 'wb+');
-        $body->write($string);
-        $body->rewind();
-        return $body;
+    protected static function createBody($body = '') {
+        if (\is_string($body)) {
+            $body = new Stream('php://temp', 'wb+');
+            $body->write($body);
+            $body->rewind();
+            return $body;
+        }
+
+        if (\is_resource($body)) {
+            return new Stream($body);
+        }
+
+        throw new \InvalidArgumentException('First argument to Stream::create() must be a string, resource or StreamInterface.');
     }
 }
