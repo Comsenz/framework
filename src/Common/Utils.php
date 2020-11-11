@@ -35,7 +35,7 @@ class Utils
         if (strstr($serverStr, 'miniprogram') || strstr($headersStr, 'miniprogram')) {
             return PubEnum::MinProgram;
         }
-        app('log')->info('get_request_from_for_test_' . json_encode(['headers' => $headers, 'server' => $server], 256));
+//        app('log')->info('get_request_from_for_test_' . json_encode(['headers' => $headers, 'server' => $server], 256));
         $requestFrom = PubEnum::PC;
         // 如果有HTTP_X_WAP_PROFILE则一定是移动设备
         if (isset($server['HTTP_X_WAP_PROFILE'])) {
