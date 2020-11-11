@@ -31,6 +31,11 @@ class Utils
         if (strstr(strtolower($server['HTTP_USER_AGENT']), 'miniprogram')) {
             return PubEnum::MinProgram;
         }
+        if (isset($server['X-App-Platform'])) {
+            if (strstr(strtolower($server['X-App-Platform']), 'miniprogram')) {
+                return PubEnum::MinProgram;
+            }
+        }
         $requestFrom = PubEnum::PC;
         // 如果有HTTP_X_WAP_PROFILE则一定是移动设备
         if (isset($server['HTTP_X_WAP_PROFILE'])) {
