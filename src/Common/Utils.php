@@ -2,8 +2,6 @@
 
 namespace Discuz\Common;
 
-use Psr\Http\Message\ServerRequestInterface;
-
 /**
  * Copyright (C) 2020 Tencent Cloud.
  *
