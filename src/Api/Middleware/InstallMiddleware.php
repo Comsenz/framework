@@ -41,7 +41,7 @@ class InstallMiddleware implements MiddlewareInterface
     {
         $status = 500;
 
-        return DiscuzResponseFactory::JsonApiResponse([
+        return DiscuzResponseFactory::JsonResponse([
             'errors' => [
                 [
                     'status' => $status,
