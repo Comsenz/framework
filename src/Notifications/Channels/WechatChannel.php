@@ -19,11 +19,11 @@
 namespace Discuz\Notifications\Channels;
 
 use Discuz\Contracts\Setting\SettingsRepository;
+use EasyWeChat\Factory;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
 use EasyWeChat\Kernel\Exceptions\InvalidConfigException;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Notifications\Notification;
-use EasyWeChat\Factory;
 use Illuminate\Support\Arr;
 use RuntimeException;
 
@@ -67,7 +67,7 @@ class WechatChannel
             $build['content'] = json_decode($content, true);
 
             // get Wechat Template ID
-            $notificationData = $notification->getTplData(Arr::get($build, 'raw.tpl_id'));
+            $notificationData = $notification->getTplModel('wechat');
             $templateID = $notificationData->template_id;
 
             $appID = $this->settings->get('offiaccount_app_id', 'wx_offiaccount');
