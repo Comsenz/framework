@@ -18,6 +18,7 @@
 
 namespace Discuz\Http;
 
+use Discuz\Foundation\Application;
 use Discuz\Foundation\SiteApp;
 use Discuz\Http\Middleware\RequestHandler;
 use Laminas\Diactoros\Response;
@@ -64,6 +65,9 @@ class Server extends SiteApp
         );
 
         $runner->run();
+
+        //增加性能日志
+        $this->addPerformanceLog();
     }
 
     /**
@@ -83,5 +87,22 @@ class Server extends SiteApp
             Discuz Q! encountered a boot error ($type)<br />
             thrown in <b>$file</b> on line <b>$line</b>
 ERROR;
+    }
+
+    protected function addPerformanceLog()
+    {
+        $this->app->make('performancelog')->info(json_encode([
+            'app_version' => Application::VERSION,
+            'opcache_enable' => function_exists('opcache_get_status') ? opcache_get_status(true) : false,
+            'response_time' => microtime(true) - DISCUZ_START.'s',
+            'include_files' => count(get_included_files()),
+            'memory_use' => $this->memory_usage(),
+            'api_path' => $this->app->make('request')->getUri()->getPath(),
+        ]));
+    }
+
+    private function memory_usage()
+    {
+        return (! function_exists('memory_get_usage')) ? '0' : round(memory_get_usage()/1024/1024, 2).'MB';
     }
 }
