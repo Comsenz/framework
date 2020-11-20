@@ -62,51 +62,6 @@ trait QcloudTrait
         return $this->getQcloud()->service('discuzcloud')->report($params);
     }
 
-    public function deleteVodMedia($file_id)
-    {
-        return $this->getQcloud()->service('vod')->deleteMedia($file_id);
-    }
-
-    public function transcodeVideo($file_id, $taskType)
-    {
-        return $this->getQcloud()->service('vod')->transcodeVideo($file_id, $taskType);
-    }
-
-    public function describeStorageData($sub_app_id)
-    {
-        return $this->getQcloud()->service('vod')->describeStorageData($sub_app_id);
-    }
-
-    public function describeTaskDetail($task_id)
-    {
-        return $this->getQcloud()->service('vod')->describeTaskDetail($task_id);
-    }
-
-    public function describeSnapshotByTimeOffsetTemplates($template_id)
-    {
-        return $this->getQcloud()->service('vod')->describeSnapshotByTimeOffsetTemplates($template_id);
-    }
-
-    public function DescribeTranscodeTemplates($template_id)
-    {
-        return $this->getQcloud()->service('vod')->describeTranscodeTemplates($template_id);
-    }
-
-    public function processMediaByProcedure($file_id, $template_name)
-    {
-        return $this->getQcloud()->service('vod')->processMediaByProcedure($file_id, $template_name);
-    }
-
-    public function describeMediaInfos($file_ids, $filters)
-    {
-        return $this->getQcloud()->service('vod')->describeMediaInfos($file_ids, $filters);
-    }
-
-    public function describeProcedureTemplates($name)
-    {
-        return $this->getQcloud()->service('vod')->describeProcedureTemplates($name);
-    }
-
     public function MsUserInfo()
     {
         return $this->getQcloud()->service('ms')->MsUserInfo();
@@ -116,4 +71,58 @@ trait QcloudTrait
     {
         return $this->qcloud ?? $this->qcloud = app('qcloud');
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | 云点播
+    |--------------------------------------------------------------------------
+    */
+
+    public function describeStorageData($sub_app_id)
+    {
+        return $this->getQcloud()->service('vod')->describeStorageData($sub_app_id);
+    }
+
+    public function describeSnapshotByTimeOffsetTemplates($template_id, $qcloudVodSubAppId = null)
+    {
+        return $this->getQcloud()->service('vod')->describeSnapshotByTimeOffsetTemplates($template_id, $qcloudVodSubAppId);
+    }
+
+    public function DescribeTranscodeTemplates($template_id, $qcloudVodSubAppId = null)
+    {
+        return $this->getQcloud()->service('vod')->describeTranscodeTemplates($template_id, $qcloudVodSubAppId);
+    }
+
+    public function describeProcedureTemplates($name, $qcloudVodSubAppId = null)
+    {
+        return $this->getQcloud()->service('vod')->describeProcedureTemplates($name, $qcloudVodSubAppId);
+    }
+
+    // -------------
+
+    public function deleteVodMedia($file_id, $qcloudVodSubAppId = null)
+    {
+        return $this->getQcloud()->service('vod')->deleteMedia($file_id, $qcloudVodSubAppId);
+    }
+
+    public function transcodeVideo($file_id, $taskType, $qcloudVodSubAppId = null)
+    {
+        return $this->getQcloud()->service('vod')->transcodeVideo($file_id, $taskType, $qcloudVodSubAppId);
+    }
+
+    public function describeTaskDetail($task_id, $qcloudVodSubAppId = null)
+    {
+        return $this->getQcloud()->service('vod')->describeTaskDetail($task_id, $qcloudVodSubAppId);
+    }
+
+    public function describeMediaInfos($file_ids, $filters, $qcloudVodSubAppId = null)
+    {
+        return $this->getQcloud()->service('vod')->describeMediaInfos($file_ids, $filters, $qcloudVodSubAppId);
+    }
+
+    public function processMediaByProcedure($file_id, $template_name, $qcloudVodSubAppId = null)
+    {
+        return $this->getQcloud()->service('vod')->processMediaByProcedure($file_id, $template_name, $qcloudVodSubAppId);
+    }
+
 }

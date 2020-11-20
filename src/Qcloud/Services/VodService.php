@@ -18,13 +18,13 @@
 
 namespace Discuz\Qcloud\Services;
 
-use TencentCloud\Vod\V20180717\Models\DescribeTranscodeTemplatesRequest;
 use TencentCloud\Vod\V20180717\Models\DeleteMediaRequest;
 use TencentCloud\Vod\V20180717\Models\DescribeMediaInfosRequest;
 use TencentCloud\Vod\V20180717\Models\DescribeProcedureTemplatesRequest;
 use TencentCloud\Vod\V20180717\Models\DescribeSnapshotByTimeOffsetTemplatesRequest;
 use TencentCloud\Vod\V20180717\Models\DescribeStorageDataRequest;
 use TencentCloud\Vod\V20180717\Models\DescribeTaskDetailRequest;
+use TencentCloud\Vod\V20180717\Models\DescribeTranscodeTemplatesRequest;
 use TencentCloud\Vod\V20180717\Models\ModifyMediaInfoRequest;
 use TencentCloud\Vod\V20180717\Models\ProcessMediaByProcedureRequest;
 use TencentCloud\Vod\V20180717\Models\ProcessMediaRequest;
@@ -59,15 +59,16 @@ class VodService extends AbstractService
 
     /**
      * @param $fileId
+     *@param int|null $qcloudVodSubAppId
      * @return mixed
      */
-    public function deleteMedia($fileId)
+    public function deleteMedia($fileId, int $qcloudVodSubAppId = null)
     {
         $clientRequest = new DeleteMediaRequest();
 
         $params = [
             'FileId' => $fileId,
-            'SubAppId' => $this->qcloudVodSubAppId,
+            'SubAppId' => $qcloudVodSubAppId ?: $this->qcloudVodSubAppId,
         ];
 
         $clientRequest->fromJsonString(json_encode($params));
@@ -78,9 +79,10 @@ class VodService extends AbstractService
     /**
      * @param $fileId
      * @param $taskType (TranscodeTaskSet | ...)
+     *@param int|null $qcloudVodSubAppId
      * @return mixed
      */
-    public function transcodeVideo($fileId, $taskType)
+    public function transcodeVideo($fileId, $taskType, int $qcloudVodSubAppId = null)
     {
         $clientRequest = new ProcessMediaRequest();
 
@@ -93,7 +95,7 @@ class VodService extends AbstractService
                 ],
             ],
             'FileId' => $fileId,
-            'SubAppId' => $this->qcloudVodSubAppId,
+            'SubAppId' => $qcloudVodSubAppId ?: $this->qcloudVodSubAppId,
         ];
         if ($this->qcloudVodWatermark) {
             $waterMark = [
@@ -113,18 +115,20 @@ class VodService extends AbstractService
 
     /**
      * 修改视频过期时间（默认不过期）
+     *
      * @param $fileId
      * @param string $ExpireTime
+     *@param int|null $qcloudVodSubAppId
      * @return mixed
      */
-    public function modifyMedia($fileId, $ExpireTime = '9999-12-31T23:59:59Z')
+    public function modifyMedia($fileId, $ExpireTime = '9999-12-31T23:59:59Z', int $qcloudVodSubAppId = null)
     {
         $clientRequest = new ModifyMediaInfoRequest();
 
         $params = [
             'FileId' => $fileId,
             'ExpireTime' => $ExpireTime,
-            'SubAppId' => $this->qcloudVodSubAppId,
+            'SubAppId' => $qcloudVodSubAppId ?: $this->qcloudVodSubAppId,
         ];
 
         $clientRequest->fromJsonString(json_encode($params));
@@ -151,16 +155,18 @@ class VodService extends AbstractService
 
     /**
      * 查询通知的任务
+     *
      * @param $task_id
+     *@param int|null $qcloudVodSubAppId
      * @return mixed
      */
-    public function describeTaskDetail($task_id)
+    public function describeTaskDetail($task_id, int $qcloudVodSubAppId = null)
     {
         $clientRequest = new DescribeTaskDetailRequest();
 
         $params = [
             'TaskId' => $task_id,
-            'SubAppId' => $this->qcloudVodSubAppId,
+            'SubAppId' => $qcloudVodSubAppId ?: $this->qcloudVodSubAppId,
         ];
         $clientRequest->fromJsonString(json_encode($params));
 
@@ -169,16 +175,18 @@ class VodService extends AbstractService
 
     /**
      * 获取自定义时间截图模板数据
+     *
      * @param $template_id
+     *@param int|null $qcloudVodSubAppId
      * @return mixed
      */
-    public function describeSnapshotByTimeOffsetTemplates($template_id)
+    public function describeSnapshotByTimeOffsetTemplates($template_id, int $qcloudVodSubAppId = null)
     {
         $clientRequest = new DescribeSnapshotByTimeOffsetTemplatesRequest();
 
         $params = [
             'Definitions' => [(int)$template_id],
-            'SubAppId' => $this->qcloudVodSubAppId,
+            'SubAppId' => $qcloudVodSubAppId ?: $this->qcloudVodSubAppId,
         ];
         $clientRequest->fromJsonString(json_encode($params));
 
@@ -187,17 +195,20 @@ class VodService extends AbstractService
 
     /**
      * 获取转码模板数据
+     *
      * @param $template_id
+     * @param int|null $qcloudVodSubAppId
      * @return mixed
      */
-    public function describeTranscodeTemplates($template_id)
+    public function describeTranscodeTemplates($template_id, int $qcloudVodSubAppId = null)
     {
         $clientRequest = new DescribeTranscodeTemplatesRequest();
 
         $params = [
             'Definitions' => [(int)$template_id],
-            'SubAppId' => $this->qcloudVodSubAppId,
+            'SubAppId' => $qcloudVodSubAppId ?: $this->qcloudVodSubAppId,
         ];
+
         $clientRequest->fromJsonString(json_encode($params));
 
         return $this->client->DescribeTranscodeTemplates($clientRequest);
@@ -205,18 +216,20 @@ class VodService extends AbstractService
 
     /**
      * 对媒体文件进行任务流处理
+     *
      * @param $fileId
      * @param $template_name
+     *@param int|null $qcloudVodSubAppId
      * @return mixed
      */
-    public function processMediaByProcedure($fileId, $template_name)
+    public function processMediaByProcedure($fileId, $template_name, int $qcloudVodSubAppId = null)
     {
         $clientRequest = new ProcessMediaByProcedureRequest();
 
         $params = [
             'FileId' => $fileId,
             'ProcedureName' => $template_name,
-            'SubAppId' => $this->qcloudVodSubAppId,
+            'SubAppId' => $qcloudVodSubAppId ?: $this->qcloudVodSubAppId,
         ];
         $clientRequest->fromJsonString(json_encode($params));
 
@@ -226,16 +239,17 @@ class VodService extends AbstractService
     /**
      * @param $fileIds
      * @param $filters
+     *@param int|null $qcloudVodSubAppId
      * @return mixed
      */
-    public function describeMediaInfos($fileIds, $filters)
+    public function describeMediaInfos($fileIds, $filters, int $qcloudVodSubAppId = null)
     {
         $clientRequest = new DescribeMediaInfosRequest();
 
         $params = [
             'FileIds' => $fileIds,
             'Filters' => $filters,
-            'SubAppId' => $this->qcloudVodSubAppId,
+            'SubAppId' => $qcloudVodSubAppId ?: $this->qcloudVodSubAppId,
         ];
         $clientRequest->fromJsonString(json_encode($params));
 
@@ -244,16 +258,18 @@ class VodService extends AbstractService
 
     /**
      * 获取任务流模板
+     *
      * @param $name
+     *@param int|null $qcloudVodSubAppId
      * @return mixed
      */
-    public function describeProcedureTemplates($name)
+    public function describeProcedureTemplates($name, int $qcloudVodSubAppId = null)
     {
         $clientRequest = new DescribeProcedureTemplatesRequest();
 
         $params = [
             'Names' => [$name],
-            'SubAppId' => $this->qcloudVodSubAppId,
+            'SubAppId' => $qcloudVodSubAppId ?: $this->qcloudVodSubAppId,
         ];
         $clientRequest->fromJsonString(json_encode($params));
 
