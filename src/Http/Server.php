@@ -67,7 +67,7 @@ class Server extends SiteApp
         $runner->run();
 
         //增加性能日志
-        $this->addPerformanceLog();
+        //$this->addPerformanceLog();
     }
 
     /**
