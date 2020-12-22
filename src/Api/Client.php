@@ -31,7 +31,7 @@ class Client
         $this->app = $app;
     }
 
-    public function send($controller, $actor, $query, $body) : ResponseInterface
+    public function send($controller, $actor = null, $query = [], $body = []) : ResponseInterface
     {
         $controller = $this->app->make($controller);
 

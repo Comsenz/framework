@@ -41,7 +41,9 @@
         "overtrue/easy-sms": "^1.1",
         "dragonmantank/cron-expression": "^2.3",
         "ramsey/uuid": "^3.9",
-        "phpoffice/phpspreadsheet": "^1.10"
+        "phpoffice/phpspreadsheet": "^1.10",
+	"wikimedia/less.php": "^3.1",
+	"fortawesome/font-awesome": "^5.15"
     },
     "autoload": {
         "files": [
