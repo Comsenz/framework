@@ -1,6 +1,7 @@
 {
     "name": "discuz/core",
     "description": "The Discuz Framework",
+    "license": "Apache-2.0",
     "require": {
         "php": "^7.2",
         "ext-json": "*",
